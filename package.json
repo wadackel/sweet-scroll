@@ -4,8 +4,12 @@
   "description": "Modern and the sweet smooth scroll library.",
   "main": "sweet-scroll.js",
   "scripts": {
-    "start": "",
-    "build": ""
+    "start": "npm run karma",
+    "test": "npm run lint && NODE_ENV=test karma start --single-run",
+    "build": "NODE_ENV=production rollup -c rollup.config.js && npm run uglify",
+    "karma": "NODE_ENV=test karma start",
+    "uglify": "uglifyjs -c -o sweet-scroll.min.js sweet-scroll.js --comments",
+    "lint": "eslint src/**/*.js test/**/*.js"
   },
   "keywords": [
     "smooth scroll",
@@ -21,5 +25,26 @@
   "bugs": {
     "url": "https://github.com/tsuyoshiwada/sweet-scroll/issues"
   },
-  "homepage": "https://github.com/tsuyoshiwada/sweet-scroll"
+  "homepage": "https://github.com/tsuyoshiwada/sweet-scroll",
+  "devDependencies": {
+    "babel-plugin-espower": "^2.0.0",
+    "babel-preset-es2015": "^6.1.18",
+    "babel-preset-es2015-rollup": "^1.0.0",
+    "babelify": "^7.2.0",
+    "eslint": "^1.10.3",
+    "espower-babel": "^4.0.0",
+    "karma-browserify": "^4.4.2",
+    "karma-fixture": "^0.2.5",
+    "karma-html2js-preprocessor": "^0.1.0",
+    "karma-mocha": "^0.2.1",
+    "karma-phantomjs-launcher": "^0.2.1",
+    "phantomjs": "^1.9.19",
+    "power-assert": "^1.2.0",
+    "rollup": "^0.21.1",
+    "rollup-plugin-babel": "^2.2.0",
+    "uglify-js": "^2.6.1"
+  },
+  "dependencies": {
+    "karma": "^0.13.15"
+  }
 }
