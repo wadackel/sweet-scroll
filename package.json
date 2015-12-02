@@ -1,0 +1,25 @@
+{
+  "name": "sweet-scroll",
+  "version": "0.0.1",
+  "description": "Modern and the sweet smooth scroll library.",
+  "main": "sweet-scroll.js",
+  "scripts": {
+    "start": "",
+    "build": ""
+  },
+  "keywords": [
+    "smooth scroll",
+    "scroll",
+    "animation"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tsuyoshiwada/sweet-scroll.git"
+  },
+  "author": "tsuyoshiwada",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/tsuyoshiwada/sweet-scroll/issues"
+  },
+  "homepage": "https://github.com/tsuyoshiwada/sweet-scroll"
+}
