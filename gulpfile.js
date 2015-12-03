@@ -44,7 +44,8 @@ gulp.task("demo:sass", function() {
     .pipe($.plumber())
     .pipe($.sass({outputStyle: "compressed"}).on("error", $.sass.logError))
     .pipe($.autoprefixer())
-    .pipe(gulp.dest("./demo/css"));
+    .pipe(gulp.dest("./demo/css"))
+    .pipe(server.stream());
 });
 
 
@@ -63,6 +64,7 @@ gulp.task("rollup", function(cb) {
     });
     fs.writeFileSync("sweet-scroll.js", result.code);
     fs.writeFileSync("demo/js/sweet-scroll.js", result.code);
+    server.reload();
     cb();
   });
 });
@@ -73,7 +75,8 @@ gulp.task("uglify", function() {
     .pipe($.plumber())
     .pipe($.uglify({preserveComments: "license"}))
     .pipe($.rename({extname: ".min.js"}))
-    .pipe(gulp.dest("./"));
+    .pipe(gulp.dest("./"))
+    .pipe(server.stream());
 });
 
 

@@ -8,13 +8,19 @@
  * @version 0.0.1
  */
 (function (global, factory) {
-	typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-	typeof define === 'function' && define.amd ? define(factory) :
-	global.SweetScroll = factory();
+  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+  typeof define === 'function' && define.amd ? define(factory) :
+  global.SweetScroll = factory();
 }(this, function () { 'use strict';
 
-	var sweetScroll = {};
+  class SweetScroll {
+    static initialize() {}
 
-	return sweetScroll;
+    static destroy() {}
+
+    static to() {}
+  }
+
+  return SweetScroll;
 
 }));
