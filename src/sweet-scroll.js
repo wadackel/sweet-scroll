@@ -1,20 +1,55 @@
+import * as Util from "./utils"
+import {$$} from "./selectors"
+import {scrollableFind} from "./scrollable-elements"
+
 class SweetScroll {
-  static initialize() {
+  static defaults = {
+    trigger: "[data-scroll]",
+    target: null,
+    duration: 1000,
+    delay: 0,
+    easing: "easeOutQuint",
+    offset: 0,
+    changeHash: "",
+    stopScroll: true,
+    stopPropagation: true,
+    beforeScroll: null,
+    afterScroll: null,
+    cancelScroll: null
   }
-  
-  static destroy() {
+
+  constructor(options = {}, container = "body, html") {
+    this.options = Util.merge(SweetScroll.defaults, options);
+    this.container = scrollableFind(container);
   }
-  
-  static to() {
+
+  to(distance, options = {}) {
   }
 }
+
+const sweetScroll = new SweetScroll({
+  trigger: "a[href^='#']"
+});
 
 export default SweetScroll;
 /*
 Usage:
-SweetScroll.initialize("[data-scroll]", {key: "value"});
-SweetScroll.initialize(document.getElementById("pagetop"), {key: "value"});
-SweetScroll.initialize(document.querySelectorAll("a"), {key: "value"});
-SweetScroll.to(100);
-SweetScroll.to(100, document.getElementById("scrollable"));
+const sweetScroll = new SweetScroll({
+  trigger: "[data-scroll]",
+  target: null,
+  duration: 1000,
+  delay: 0,
+  easing: "easeOutQuint",
+  offset: 0
+  changeHash: "",
+  stopScroll: true,
+  stopPropagation: true,
+  beforeScroll: null,
+  afterScroll: null,
+  cancelScroll: null
+});
+
+const sweetScroll = new SweetScroll({}, "#container");
+sweetScroll.to(100);
+
 */
