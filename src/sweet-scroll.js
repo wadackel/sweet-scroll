@@ -19,11 +19,36 @@ class SweetScroll {
   }
 
   constructor(options = {}, container = "body, html") {
-    this.options = Util.merge(SweetScroll.defaults, options);
+    this.options = Util.merge({}, SweetScroll.defaults, options);
     this.container = scrollableFind(container);
+    this.el = $$(this.options.trigger);
+    Util.each(this.el, (el) => {
+      el.addEventListener("click", this._handleTriggerClick.bind(this), false);
+    });
   }
 
   to(distance, options = {}) {
+    // @TODO
+  }
+
+  destroy() {
+    // @TODO
+  }
+
+  formatCoodinate(coodinate, verticalEnable = false) {
+    // @TODO
+  }
+
+  encodeCoodinate(coodinate) {
+    // @TODO
+  }
+
+  _handleTriggerClick(e) {
+    e.preventDefault();
+    if (this.options.stopPropagation) {
+      e.stopPropagation();
+    }
+    // @TODO
   }
 }
 

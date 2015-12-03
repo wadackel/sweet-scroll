@@ -42,7 +42,7 @@ export function isBoolean(obj) {
 }
 
 export function hasProp(obj, key) {
-  return obj && obj.hasOwnProperty(key);
+  return obj && Object.prototype.hasOwnProperty.call(obj, key);
 }
 
 export function toArray(obj) {
@@ -64,13 +64,11 @@ export function values(obj) {
   return v;
 }
 
-export function merge(obj, source, deep = false) {
-  each(source, (value, key) => {
-    if (deep && hasProp(obj, key) && isArrayLike(value)) {
-      merge(obj[key], value, deep);
-    } else {
+export function merge(obj, ...sources) {
+  each(sources, (source) => {
+    each(source, (value, key) => {
       obj[key] = value;
-    }
+    })
   });
   return obj;
 }

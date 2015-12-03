@@ -44,6 +44,76 @@
   })();
 
   babelHelpers;
+  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+  var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
+  var classTypes = {};
+
+  classTypeList.forEach(function (name) {
+    classTypes["[object " + name + "]"] = name.toLowerCase();
+  });
+
+  function getType(obj) {
+    if (obj == null) {
+      return obj + "";
+    }
+    return (typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj);
+  }
+
+  function isArray(obj) {
+    return Array.isArray(obj);
+  }
+
+  function isArrayLike(obj) {
+    var length = obj == null ? null : obj.length;
+    return isNumber(length) && length >= 0 && length <= MAX_ARRAY_INDEX;
+  }
+
+  function isObject(obj) {
+    return !isArray(obj) && getType(obj) === "object";
+  }
+
+  function isNumber(obj) {
+    return getType(obj) === "number";
+  }
+
+  function hasProp(obj, key) {
+    return obj && Object.prototype.hasOwnProperty.call(obj, key);
+  }
+
+  function merge(obj) {
+    for (var _len = arguments.length, sources = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+      sources[_key - 1] = arguments[_key];
+    }
+
+    each(sources, function (source) {
+      each(source, function (value, key) {
+        obj[key] = value;
+      });
+    });
+    return obj;
+  }
+
+  function each(obj, iterate, context) {
+    if (obj == null) return obj;
+
+    context = context || obj;
+
+    if (isObject(obj)) {
+      for (var key in obj) {
+        if (!hasProp(obj, key)) continue;
+        if (iterate.call(context, obj[key], key) === false) break;
+      }
+    } else if (isArrayLike(obj)) {
+      var i = undefined,
+          length = obj.length;
+      for (i = 0; i < length; i++) {
+        if (iterate.call(context, obj[i], i) === false) break;
+      }
+    }
+
+    return obj;
+  }
+
   function $$(selector) {
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
@@ -87,90 +157,54 @@
     return scrollables.length >= 1 ? scrollables[0] : undefined;
   }
 
-  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-  var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
-  var classTypes = {};
-
-  classTypeList.forEach(function (name) {
-    classTypes["[object " + name + "]"] = name.toLowerCase();
-  });
-
-  function getType(obj) {
-    if (obj == null) {
-      return obj + "";
-    }
-    return (typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj);
-  }
-
-  function isArray(obj) {
-    return Array.isArray(obj);
-  }
-
-  function isArrayLike(obj) {
-    var length = obj == null ? null : obj.length;
-    return isNumber(length) && length >= 0 && length <= MAX_ARRAY_INDEX;
-  }
-
-  function isObject(obj) {
-    return !isArray(obj) && getType(obj) === "object";
-  }
-
-  function isNumber(obj) {
-    return getType(obj) === "number";
-  }
-
-  function hasProp(obj, key) {
-    return obj && obj.hasOwnProperty(key);
-  }
-
-  function merge(obj, source) {
-    var deep = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
-
-    each(source, function (value, key) {
-      if (deep && hasProp(obj, key) && isArrayLike(value)) {
-        merge(obj[key], value, deep);
-      } else {
-        obj[key] = value;
-      }
-    });
-    return obj;
-  }
-
-  function each(obj, iterate, context) {
-    if (obj == null) return obj;
-
-    context = context || obj;
-
-    if (isObject(obj)) {
-      for (var key in obj) {
-        if (!hasProp(obj, key)) continue;
-        if (iterate.call(context, obj[key], key) === false) break;
-      }
-    } else if (isArrayLike(obj)) {
-      var i = undefined,
-          length = obj.length;
-      for (i = 0; i < length; i++) {
-        if (iterate.call(context, obj[i], i) === false) break;
-      }
-    }
-
-    return obj;
-  }
-
   var SweetScroll = (function () {
     function SweetScroll() {
+      var _this = this;
+
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
       var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
       babelHelpers.classCallCheck(this, SweetScroll);
 
-      this.options = merge(SweetScroll.defaults, options);
+      this.options = merge({}, SweetScroll.defaults, options);
       this.container = scrollableFind(container);
+      this.el = $$(this.options.trigger);
+      each(this.el, function (el) {
+        el.addEventListener("click", _this._handleTriggerClick.bind(_this), false);
+      });
     }
 
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
+        // @TODO
+
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      }
+    }, {
+      key: "destroy",
+      value: function destroy() {
+        // @TODO
+      }
+    }, {
+      key: "formatCoodinate",
+      value: function formatCoodinate(coodinate) {
+        // @TODO
+
+        var verticalEnable = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
+      }
+    }, {
+      key: "encodeCoodinate",
+      value: function encodeCoodinate(coodinate) {
+        // @TODO
+      }
+    }, {
+      key: "_handleTriggerClick",
+      value: function _handleTriggerClick(e) {
+        e.preventDefault();
+        if (this.options.stopPropagation) {
+          e.stopPropagation();
+        }
+        // @TODO
       }
     }]);
     return SweetScroll;
