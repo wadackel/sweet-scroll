@@ -1,3 +1,7 @@
+export function linear(p) {
+  return p;
+}
+
 export function easeInQuad(x, t, b, c, d) {
   return c * (t /= d) * t + b;
 }
