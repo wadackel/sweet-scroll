@@ -53,6 +53,7 @@ gulp.task("demo", ["demo:sass"]);
 
 
 gulp.task("rollup", function(cb) {
+  process.env.NODE_ENV = "production";
   rollup.rollup({
     entry: "src/sweet-scroll.js",
     plugins: [babel()]
@@ -65,6 +66,9 @@ gulp.task("rollup", function(cb) {
     fs.writeFileSync("sweet-scroll.js", result.code);
     fs.writeFileSync("demo/js/sweet-scroll.js", result.code);
     server.reload();
+    cb();
+  }).catch(function(err) {
+    console.log(err);
     cb();
   });
 });
