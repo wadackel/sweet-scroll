@@ -76,6 +76,10 @@
     return getType(obj) === "number";
   }
 
+  function isString(obj) {
+    return getType(obj) === "string";
+  }
+
   function hasProp(obj, key) {
     return obj && Object.prototype.hasOwnProperty.call(obj, key);
   }
@@ -112,6 +116,42 @@
     }
 
     return obj;
+  }
+
+  function isRootContainer(el) {
+    var doc = document;
+    return el === doc.documentElement || el === doc.body;
+  }
+
+  function getOffset(el) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    if (!el.getClientRects().length) return { top: 0, left: 0 };
+    var rect = el.getBoundingClientRect();
+    if (rect.width || rect.height) {
+      var scroll = {};
+      var ctx = undefined;
+      if (context == null || isRootContainer(context)) {
+        ctx = el.ownerDocument.documentElement;
+        scroll.top = window.pageYOffset;
+        scroll.left = window.pageXOffset;
+      } else {
+        ctx = context;
+        scroll.top = ctx.scrollTop;
+        scroll.left = ctx.scrollLeft;
+      }
+      return {
+        top: rect.top + scroll.top - ctx.clientTop,
+        left: rect.left + scroll.left - ctx.clientLeft
+      };
+    }
+    return rect;
+  }
+
+  function $(selector) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    return (context == null ? document : context).querySelector(selector);
   }
 
   function $$(selector) {
@@ -157,6 +197,9 @@
     return scrollables.length >= 1 ? scrollables[0] : undefined;
   }
 
+  var doc = document;
+  var win = window;
+
   var SweetScroll = (function () {
     function SweetScroll() {
       var _this = this;
@@ -176,9 +219,72 @@
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
-        // @TODO
-
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+        this.stop();
+
+        var container = this.container;
+
+        var params = merge({}, this.options, options);
+        var scroll = {};
+        var offset = this.formatCoodinate(params.offset);
+
+        if (isString(distance)) {
+          if (!/[:,]/.test(distance)) {
+            var target = $(distance);
+            var targetOffset = getOffset(target, container);
+            if (!targetOffset) return;
+            scroll.top = targetOffset.top;
+            scroll.left = targetOffset.left;
+          } else {
+            // @TODO
+          }
+        } else {}
+          // @TODO
+
+          // @TODO
+          // scroll.top += offset.top;
+          // scroll.left += offset.left;
+
+        var frameSize = undefined;
+        var size = undefined;
+        if (isRootContainer(container)) {
+          frameSize = { width: win.innerWidth, height: win.innerHeight };
+          size = { width: doc.body.scrollWidth, height: doc.body.scrollHeight };
+        } else {
+          frameSize = { width: container.clientWidth, height: container.clientHeight };
+          size = { width: container.scrollWidth, height: container.scrollHeight };
+        }
+
+        scroll.top = scroll.top + frameSize.height > size.height ? size.height - frameSize.height : scroll.top;
+        scroll.left = scroll.left + frameSize.width > size.width ? size.width - frameSize.width : scroll.left;
+
+        // @TODO animation
+      }
+    }, {
+      key: "toTop",
+      value: function toTop(distance) {
+        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+        this.to(distance, merge({}, this.options, {
+          verticalScroll: true,
+          horizontalScroll: false
+        }));
+      }
+    }, {
+      key: "toLeft",
+      value: function toLeft(distance) {
+        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+        this.to(distance, merge({}, this.options, {
+          verticalScroll: false,
+          horizontalScroll: true
+        }));
+      }
+    }, {
+      key: "stop",
+      value: function stop() {
+        // @TODO
       }
     }, {
       key: "destroy",
@@ -189,8 +295,6 @@
       key: "formatCoodinate",
       value: function formatCoodinate(coodinate) {
         // @TODO
-
-        var verticalEnable = arguments.length <= 1 || arguments[1] === undefined ? false : arguments[1];
       }
     }, {
       key: "encodeCoodinate",
@@ -200,11 +304,22 @@
     }, {
       key: "_handleTriggerClick",
       value: function _handleTriggerClick(e) {
+        var options = this.options;
+
+        var href = e.currentTarget.getAttribute("href");
+
         e.preventDefault();
-        if (this.options.stopPropagation) {
-          e.stopPropagation();
+        if (options.stopPropagation) e.stopPropagation();
+
+        if (options.horizontalScroll && options.verticalScroll) {
+          this.to(href);
+        } else if (options.verticalScroll) {
+          this.toTop(href);
+        } else if (options.horizontalScroll) {
+          this.toLeft(href);
+        } else {
+          // @TODO
         }
-        // @TODO
       }
     }]);
     return SweetScroll;
@@ -212,12 +327,13 @@
 
   SweetScroll.defaults = {
     trigger: "[data-scroll]",
-    target: null,
     duration: 1000,
     delay: 0,
     easing: "easeOutQuint",
     offset: 0,
-    changeHash: "",
+    changeHash: false,
+    verticalScroll: true,
+    horizontalScroll: false,
     stopScroll: true,
     stopPropagation: true,
     beforeScroll: null,
