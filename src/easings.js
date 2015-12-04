@@ -105,7 +105,7 @@ export function easeInOutCirc(x, t, b, c, d) {
 }
 
 export function easeInElastic(x, t, b, c, d) {
-  let s = 1.70158, p = 0, a = c, s;
+  let s = 1.70158, p = 0, a = c;
   if (t === 0) return b;
   if ((t /= d) === 1) return b + c;
   if (!p) p = d *.3;
@@ -119,7 +119,7 @@ export function easeInElastic(x, t, b, c, d) {
 }
 
 export function easeOutElastic(x, t, b, c, d) {
-  let s = 1.70158, p = 0, a = c, s;
+  let s = 1.70158, p = 0, a = c;
   if (t === 0) return b;
   if ((t /= d) === 1) return b + c;
   if (!p) p = d * .3;
@@ -133,7 +133,7 @@ export function easeOutElastic(x, t, b, c, d) {
 }
 
 export function easeInOutElastic(x, t, b, c, d) {
-  let s = 1.70158, p = 0, a = c, s;
+  let s = 1.70158, p = 0, a = c;
   if (t === 0) return b;
   if ((t /= d / 2) === 2) return b + c;
   if (!p) p = d * (.3 * 1.5);
@@ -149,18 +149,15 @@ export function easeInOutElastic(x, t, b, c, d) {
   return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
 }
 
-export function easeInBack(x, t, b, c, d, s) {
-  if (s === undefined) s = 1.70158;
+export function easeInBack(x, t, b, c, d, s = 1.70158) {
   return c * (t /= d) * t * ((s + 1) * t - s) + b;
 }
 
-export function easeOutBack(x, t, b, c, d, s) {
-  if (s === undefined) s = 1.70158;
+export function easeOutBack(x, t, b, c, d, s = 1.70158) {
   return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 }
 
-export function easeInOutBack(x, t, b, c, d, s) {
-  if (s === undefined) s = 1.70158;
+export function easeInOutBack(x, t, b, c, d, s = 1.70158) {
   if ((t /= d / 2) < 1) {
     return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
   }
