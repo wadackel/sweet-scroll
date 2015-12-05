@@ -84,6 +84,10 @@
     return getType(obj) === "function";
   }
 
+  function isNumeric(obj) {
+    return !isArray(obj) && obj - parseFloat(obj) + 1 >= 0;
+  }
+
   function hasProp(obj, key) {
     return obj && Object.prototype.hasOwnProperty.call(obj, key);
   }
@@ -120,6 +124,10 @@
     }
 
     return obj;
+  }
+
+  function removeSpaces(str) {
+    return str.replace(/\s*/g, "") || "";
   }
 
   function $(selector) {
@@ -501,9 +509,9 @@
         this.delay = delay;
         this.easing = easing;
         this.callback = callback;
+        this.progress = true;
 
         setTimeout(function () {
-          _this.progress = true;
           _this.startProps = {
             x: getScroll(_this.el, "x"),
             y: getScroll(_this.el, "y")
@@ -610,6 +618,8 @@
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
+        var _this2 = this;
+
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
         this.stop();
@@ -617,25 +627,26 @@
         var container = this.container;
 
         var params = merge({}, this.options, options);
-        var scroll = {};
-        var offset = this._formatCoodinate(params.offset);
+        var offset = this._parseCoodinate(params.offset);
+        var scroll = this._parseCoodinate(distance);
 
-        if (isString(distance)) {
-          if (!/[:,]/.test(distance)) {
+        if (!scroll && isString(distance)) {
+          if (distance === "#") {
+            scroll = { top: 0, left: 0 };
+          } else if (!/[:,]/.test(distance)) {
             var target = $(distance);
             var targetOffset = getOffset(target, container);
             if (!targetOffset) return;
-            scroll.top = targetOffset.top;
-            scroll.left = targetOffset.left;
-          } else {
-            // @TODO
+            scroll = targetOffset;
           }
-        } else {}
-          // @TODO
+        }
 
-          // @TODO
-          // scroll.top += offset.top;
-          // scroll.left += offset.left;
+        if (!scroll) return;
+
+        if (offset) {
+          scroll.top += offset.top;
+          scroll.left += offset.left;
+        }
 
         var frameSize = undefined;
         var size = undefined;
@@ -659,10 +670,10 @@
           scroll.left = getScroll(container, "x");
         }
 
-        // @TODO beforeScroll
+        if (this._hook(params.beforeScroll, scroll) === false) return;
 
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
-          // @TODO afterScroll
+          _this2._hook(params.afterScroll, scroll);
         });
 
         this.stopScrollListener = this._handleStopScroll.bind(this);
@@ -675,7 +686,7 @@
       value: function toTop(distance) {
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-        this.to(distance, merge({}, this.options, {
+        this.to(distance, merge({}, options, {
           verticalScroll: true,
           horizontalScroll: false
         }));
@@ -685,7 +696,7 @@
       value: function toLeft(distance) {
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-        this.to(distance, merge({}, this.options, {
+        this.to(distance, merge({}, options, {
           verticalScroll: false,
           horizontalScroll: true
         }));
@@ -695,21 +706,84 @@
       value: function stop() {
         var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
-        doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener);
-        doc.removeEventListener("touchstart", this.stopScrollListener);
-        doc.removeEventListener("touchmove", this.stopScrollListener);
+        if (this.stopScrollListener) {
+          doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener, false);
+          doc.removeEventListener("touchstart", this.stopScrollListener, false);
+          doc.removeEventListener("touchmove", this.stopScrollListener, false);
+        }
         this.tween.stop(gotoEnd);
+      }
+    }, {
+      key: "update",
+      value: function update() {
+        // @TODO
       }
     }, {
       key: "destroy",
       value: function destroy() {
+        var _this3 = this;
+
         this.stop();
-        // @TODO
+
+        if (this.triggerClickListener) {
+          each(this.el, function (el) {
+            el.removeEventListener("click", _this3.triggerClickListener, false);
+          });
+        }
       }
     }, {
-      key: "_formatCoodinate",
-      value: function _formatCoodinate(coodinate) {
-        // @TODO
+      key: "_hook",
+      value: function _hook(callback) {
+        if (isFunction(callback)) {
+          for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            args[_key - 1] = arguments[_key];
+          }
+
+          return callback.apply(this, args);
+        }
+      }
+    }, {
+      key: "_parseCoodinate",
+      value: function _parseCoodinate(coodinate) {
+        var enableTop = this.options.horizontalScroll;
+        var scroll = { top: 0, left: 0 };
+
+        if (hasProp(coodinate, "top") || hasProp(coodinate, "left")) {
+          scroll = merge(scroll, coodinate);
+        } else if (isArray(coodinate)) {
+          if (coodinate.length === 2) {
+            scroll.top = coodinate[0];
+            scroll.left = coodinate[1];
+          } else {
+            scroll.top = enableTop ? coodinate[0] : 0;
+            scroll.left = !enableTop ? coodinate[0] : 0;
+          }
+        } else if (isNumeric(coodinate)) {
+          scroll.top = enableTop ? coodinate : 0;
+          scroll.left = !enableTop ? coodinate : 0;
+        } else if (isString(coodinate)) {
+          coodinate = removeSpaces(coodinate);
+
+          if (/^\d+,\d+$/.test(coodinate)) {
+            coodinate = coodinate.split(",");
+            scroll.top = coodinate[0];
+            scroll.left = coodinate[1];
+          } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(coodinate)) {
+            var top = coodinate.match(/top:(\d+)/);
+            var left = coodinate.match(/left:(\d+)/);
+            scroll.top = top ? top[1] : 0;
+            scroll.left = left ? left[1] : 0;
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
+
+        scroll.top = parseInt(scroll.top);
+        scroll.left = parseInt(scroll.left);
+
+        return scroll;
       }
     }, {
       key: "_encodeCoodinate",
@@ -720,7 +794,9 @@
       key: "_handleStopScroll",
       value: function _handleStopScroll(e) {
         if (this.options.stopScroll) {
-          this.stop();
+          if (this._hook(this.options.cancelScroll) !== false) {
+            this.stop();
+          }
         } else {
           e.stopPropagation();
         }
@@ -730,10 +806,11 @@
       value: function _handleTriggerClick(e) {
         var options = this.options;
 
-        var href = e.currentTarget.getAttribute("href");
+        var el = e.currentTarget;
+        var data = el.getAttribute("data-scroll");
+        var href = data || el.getAttribute("href");
 
         e.preventDefault();
-
         if (options.stopPropagation) e.stopPropagation();
 
         if (options.horizontalScroll && options.verticalScroll) {
@@ -742,8 +819,6 @@
           this.toTop(href);
         } else if (options.horizontalScroll) {
           this.toLeft(href);
-        } else {
-          // @TODO
         }
       }
     }]);
@@ -756,7 +831,6 @@
     delay: 0,
     easing: "easeOutQuint",
     offset: 0,
-    changeHash: false,
     verticalScroll: true,
     horizontalScroll: false,
     stopScroll: true,
@@ -765,10 +839,6 @@
     afterScroll: null,
     cancelScroll: null
   };
-
-  var sweetScroll = new SweetScroll({
-    trigger: "a[href^='#']"
-  });
 
   return SweetScroll;
 

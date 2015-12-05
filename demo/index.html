@@ -26,10 +26,25 @@
   <section id="content04"><h2>Content 04</h2><a href="#">page top</a></section>
   <section id="content05"><h2>Content 05</h2><a href="#">page top</a></section>
   <footer id="footer">Footer</footer>
-  
+
   <script src="./js/sweet-scroll.js"></script>
   <script>
-  // SweetScroll.initialize("a[href^='#']");
+  document.addEventListener("DOMContentLoaded", () => {
+    var sweetScroll = new SweetScroll({
+      trigger: "a[href^='#']",
+      beforeScroll: function(scroll) {
+        console.log("beforeScroll: ", scroll);
+        // return false;
+      },
+      afterScroll: function(scroll) {
+        console.log("afterScroll: ", scroll);
+      },
+      cancelScroll: function() {
+        console.log("cancelScroll");
+        // return false;
+      }
+    });
+  }, false);
   </script>
 </body>
 </html>

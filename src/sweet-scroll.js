@@ -14,7 +14,6 @@ class SweetScroll {
     delay: 0,
     easing: "easeOutQuint",
     offset: 0,
-    changeHash: false,
     verticalScroll: true,
     horizontalScroll: false,
     stopScroll: true,
@@ -33,7 +32,6 @@ class SweetScroll {
     Util.each(this.el, (el) => {
       el.addEventListener("click", this.triggerClickListener, false);
     });
-
   }
 
   to(distance, options = {}) {
@@ -41,26 +39,27 @@ class SweetScroll {
 
     const {container} = this;
     const params = Util.merge({}, this.options, options);
-    const scroll = {};
-    const offset = this._formatCoodinate(params.offset);
+    const offset = this._parseCoodinate(params.offset);
+    let scroll = this._parseCoodinate(distance);
 
-    if (Util.isString(distance)) {
-      if (!/[:,]/.test(distance)) {
+    if (!scroll && Util.isString(distance)) {
+      if (distance === "#") {
+        scroll = {top: 0, left: 0};
+
+      } else if (!/[:,]/.test(distance)) {
         const target = $(distance);
         const targetOffset = Dom.getOffset(target, container);
         if (!targetOffset) return;
-        scroll.top = targetOffset.top;
-        scroll.left = targetOffset.left;
-      } else {
-        // @TODO
+        scroll = targetOffset;
       }
-    } else {
-      // @TODO
     }
 
-    // @TODO
-    // scroll.top += offset.top;
-    // scroll.left += offset.left;
+    if (!scroll) return;
+
+    if (offset) {
+      scroll.top += offset.top;
+      scroll.left +=  offset.left;
+    }
 
     let frameSize;
     let size;
@@ -84,10 +83,10 @@ class SweetScroll {
       scroll.left = Dom.getScroll(container, "x");
     }
 
-    // @TODO beforeScroll
+    if (this._hook(params.beforeScroll, scroll) === false) return;
 
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
-      // @TODO afterScroll
+      this._hook(params.afterScroll, scroll);
     });
 
     this.stopScrollListener = this._handleStopScroll.bind(this);
@@ -97,33 +96,94 @@ class SweetScroll {
   }
 
   toTop(distance, options = {}) {
-    this.to(distance, Util.merge({}, this.options, {
+    this.to(distance, Util.merge({}, options, {
       verticalScroll: true,
       horizontalScroll: false,
     }));
   }
 
   toLeft(distance, options = {}) {
-    this.to(distance, Util.merge({}, this.options, {
+    this.to(distance, Util.merge({}, options, {
       verticalScroll: false,
       horizontalScroll: true,
     }));
   }
 
   stop(gotoEnd = false) {
-    doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener);
-    doc.removeEventListener("touchstart", this.stopScrollListener);
-    doc.removeEventListener("touchmove", this.stopScrollListener);
+    if (this.stopScrollListener) {
+      doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener, false);
+      doc.removeEventListener("touchstart", this.stopScrollListener, false);
+      doc.removeEventListener("touchmove", this.stopScrollListener, false);
+    }
     this.tween.stop(gotoEnd);
+  }
+
+  update() {
+    // @TODO
   }
 
   destroy() {
     this.stop();
-    // @TODO
+
+    if (this.triggerClickListener) {
+      Util.each(this.el, (el) => {
+        el.removeEventListener("click", this.triggerClickListener, false);
+      });
+    }
   }
 
-  _formatCoodinate(coodinate) {
-    // @TODO
+  _hook(callback, ...args) {
+    if (Util.isFunction(callback)) {
+      return callback.apply(this, args);
+    }
+  }
+
+  _parseCoodinate(coodinate) {
+    const enableTop = this.options.horizontalScroll;
+    let scroll = {top: 0, left: 0};
+
+    if (Util.hasProp(coodinate, "top") || Util.hasProp(coodinate, "left")) {
+      scroll = Util.merge(scroll, coodinate);
+
+    } else if (Util.isArray(coodinate)) {
+      if (coodinate.length === 2) {
+        scroll.top = coodinate[0];
+        scroll.left = coodinate[1];
+      } else {
+        scroll.top = enableTop ? coodinate[0] : 0;
+        scroll.left = !enableTop ? coodinate[0] : 0;
+      }
+
+    } else if (Util.isNumeric(coodinate)) {
+      scroll.top = enableTop ? coodinate : 0;
+      scroll.left = !enableTop ? coodinate : 0;
+
+    } else if (Util.isString(coodinate)) {
+      coodinate = Util.removeSpaces(coodinate);
+
+      if (/^\d+,\d+$/.test(coodinate)) {
+        coodinate = coodinate.split(",");
+        scroll.top = coodinate[0];
+        scroll.left = coodinate[1];
+
+      } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(coodinate)) {
+        const top = coodinate.match(/top:(\d+)/);
+        const left = coodinate.match(/left:(\d+)/);
+        scroll.top = top ? top[1] : 0;
+        scroll.left = left ? left[1] : 0;
+
+      } else {
+        return null;
+      }
+
+    } else {
+      return null;
+    }
+
+    scroll.top = parseInt(scroll.top);
+    scroll.left = parseInt(scroll.left);
+
+    return scroll;
   }
 
   _encodeCoodinate(coodinate) {
@@ -132,7 +192,9 @@ class SweetScroll {
 
   _handleStopScroll(e) {
     if (this.options.stopScroll) {
-      this.stop();
+      if (this._hook(this.options.cancelScroll) !== false) {
+        this.stop();
+      }
     } else {
       e.stopPropagation();
     }
@@ -140,10 +202,11 @@ class SweetScroll {
 
   _handleTriggerClick(e) {
     const {options} = this;
-    const href = e.currentTarget.getAttribute("href");
+    const el = e.currentTarget;
+    const data = el.getAttribute("data-scroll");
+    const href = data || el.getAttribute("href");
 
     e.preventDefault();
-
     if (options.stopPropagation) e.stopPropagation();
 
     if (options.horizontalScroll && options.verticalScroll) {
@@ -154,15 +217,9 @@ class SweetScroll {
 
     } else if (options.horizontalScroll) {
       this.toLeft(href);
-
-    } else {
-      // @TODO
     }
   }
 }
 
-const sweetScroll = new SweetScroll({
-  trigger: "a[href^='#']"
-});
 
 export default SweetScroll;

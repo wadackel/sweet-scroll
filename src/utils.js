@@ -6,7 +6,6 @@ classTypeList.forEach((name) => {
   classTypes[`[object ${name}]`] = name.toLowerCase();
 });
 
-
 export function getType(obj) {
   if (obj == null) {
     return obj + "";
@@ -43,6 +42,10 @@ export function isBoolean(obj) {
 
 export function isFunction(obj) {
   return getType(obj) === "function";
+}
+
+export function isNumeric(obj) {
+  return !isArray(obj) && (obj - parseFloat(obj) + 1) >= 0;
 }
 
 export function hasProp(obj, key) {
@@ -107,4 +110,8 @@ export function map(obj, iterate, context) {
     }
   });
   return results;
+}
+
+export function removeSpaces(str) {
+  return str.replace(/\s*/g, "") || "";
 }
