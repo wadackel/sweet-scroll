@@ -41,6 +41,10 @@ export function isBoolean(obj) {
   return getType(obj) === "boolean";
 }
 
+export function isFunction(obj) {
+  return getType(obj) === "function";
+}
+
 export function hasProp(obj, key) {
   return obj && Object.prototype.hasOwnProperty.call(obj, key);
 }
