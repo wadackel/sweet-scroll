@@ -31,9 +31,9 @@ export default class ScrollTween {
     this.delay = delay;
     this.easing = easing;
     this.callback = callback;
+    this.progress = true;
 
     setTimeout(() => {
-      this.progress = true;
       this.startProps = {
         x: Dom.getScroll(this.el, "x"),
         y: Dom.getScroll(this.el, "y")
