@@ -80,6 +80,10 @@
     return getType(obj) === "string";
   }
 
+  function isFunction(obj) {
+    return getType(obj) === "function";
+  }
+
   function hasProp(obj, key) {
     return obj && Object.prototype.hasOwnProperty.call(obj, key);
   }
@@ -118,9 +122,89 @@
     return obj;
   }
 
+  function $(selector) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    return (context == null ? document : context).querySelector(selector);
+  }
+
+  function $$(selector) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    return (context == null ? document : context).querySelectorAll(selector);
+  }
+
+  var directionMethodMap = {
+    y: "scrollTop",
+    x: "scrollLeft"
+  };
+
+  var directionPropMap = {
+    y: "pageYOffset",
+    x: "pageXOffset"
+  };
+
   function isRootContainer(el) {
     var doc = document;
     return el === doc.documentElement || el === doc.body;
+  }
+
+  function getScrollable(selectors) {
+    var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
+    var all = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+
+    var method = directionMethodMap[direction];
+    var elements = $$(selectors);
+    var scrollables = [];
+
+    for (var i = 0; i < elements.length; i++) {
+      var el = elements[i];
+
+      if (el[method] > 0) {
+        scrollables.push(el);
+      } else {
+        el[method] = 1;
+        if (el[method] > 0) {
+          scrollables.push(el);
+        }
+        el[method] = 0;
+      }
+
+      if (!all && scrollables.length > 0) break;
+    }
+
+    return scrollables;
+  }
+
+  function scrollableFind(selectors, direction) {
+    var scrollables = getScrollable(selectors, direction, false);
+    return scrollables.length >= 1 ? scrollables[0] : undefined;
+  }
+
+  function getWindow(el) {
+    return el != null && el === el.window ? el : el.nodeType === 9 && el.defaultView;
+  }
+
+  function getScroll(el) {
+    var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
+
+    var method = directionMethodMap[direction];
+    var prop = directionPropMap[direction];
+    var win = getWindow(el);
+    return win ? win[prop] : el[method];
+  }
+
+  function setScroll(el, offset) {
+    var direction = arguments.length <= 2 || arguments[2] === undefined ? "y" : arguments[2];
+
+    var method = directionMethodMap[direction];
+    var win = getWindow(el);
+    var top = direction === "y";
+    if (win) {
+      win.scrollTo(!top ? offset : win.pageXOffset, top ? offset : win.pageYOffset);
+    } else {
+      el[method] = offset;
+    }
   }
 
   function getOffset(el) {
@@ -148,57 +232,362 @@
     return rect;
   }
 
-  function $(selector) {
-    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-    return (context == null ? document : context).querySelector(selector);
+  function linear(p) {
+    return p;
   }
 
-  function $$(selector) {
-    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-    return (context == null ? document : context).querySelectorAll(selector);
+  function easeInQuad(x, t, b, c, d) {
+    return c * (t /= d) * t + b;
   }
 
-  var directionPropMap = {
-    y: "scrollTop",
-    x: "scrollLeft"
+  function easeOutQuad(x, t, b, c, d) {
+    return -c * (t /= d) * (t - 2) + b;
+  }
+
+  function easeInOutQuad(x, t, b, c, d) {
+    if ((t /= d / 2) < 1) {
+      return c / 2 * t * t + b;
+    }
+    return -c / 2 * (--t * (t - 2) - 1) + b;
+  }
+
+  function easeInCubic(x, t, b, c, d) {
+    return c * (t /= d) * t * t + b;
+  }
+
+  function easeOutCubic(x, t, b, c, d) {
+    return c * ((t = t / d - 1) * t * t + 1) + b;
+  }
+
+  function easeInOutCubic(x, t, b, c, d) {
+    if ((t /= d / 2) < 1) {
+      return c / 2 * t * t * t + b;
+    }
+    return c / 2 * ((t -= 2) * t * t + 2) + b;
+  }
+
+  function easeInQuart(x, t, b, c, d) {
+    return c * (t /= d) * t * t * t + b;
+  }
+
+  function easeOutQuart(x, t, b, c, d) {
+    return -c * ((t = t / d - 1) * t * t * t - 1) + b;
+  }
+
+  function easeInOutQuart(x, t, b, c, d) {
+    if ((t /= d / 2) < 1) {
+      return c / 2 * t * t * t * t + b;
+    }
+    return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
+  }
+
+  function easeInQuint(x, t, b, c, d) {
+    return c * (t /= d) * t * t * t * t + b;
+  }
+
+  function easeOutQuint(x, t, b, c, d) {
+    return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
+  }
+
+  function easeInOutQuint(x, t, b, c, d) {
+    if ((t /= d / 2) < 1) {
+      return c / 2 * t * t * t * t * t + b;
+    }
+    return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
+  }
+
+  function easeInSine(x, t, b, c, d) {
+    return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
+  }
+
+  function easeOutSine(x, t, b, c, d) {
+    return c * Math.sin(t / d * (Math.PI / 2)) + b;
+  }
+
+  function easeInOutSine(x, t, b, c, d) {
+    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+  }
+
+  function easeInExpo(x, t, b, c, d) {
+    return t === 0 ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+  }
+
+  function easeOutExpo(x, t, b, c, d) {
+    return t === d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+  }
+
+  function easeInOutExpo(x, t, b, c, d) {
+    if (t === 0) return b;
+    if (t === d) return b + c;
+    if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+    return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+  }
+
+  function easeInCirc(x, t, b, c, d) {
+    return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+  }
+
+  function easeOutCirc(x, t, b, c, d) {
+    return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+  }
+
+  function easeInOutCirc(x, t, b, c, d) {
+    if ((t /= d / 2) < 1) {
+      return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+    }
+    return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+  }
+
+  function easeInElastic(x, t, b, c, d) {
+    var s = 1.70158,
+        p = 0,
+        a = c;
+    if (t === 0) return b;
+    if ((t /= d) === 1) return b + c;
+    if (!p) p = d * .3;
+    if (a < Math.abs(c)) {
+      a = c;
+      s = p / 4;
+    } else {
+      s = p / (2 * Math.PI) * Math.asin(c / a);
+    }
+    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+  }
+
+  function easeOutElastic(x, t, b, c, d) {
+    var s = 1.70158,
+        p = 0,
+        a = c;
+    if (t === 0) return b;
+    if ((t /= d) === 1) return b + c;
+    if (!p) p = d * .3;
+    if (a < Math.abs(c)) {
+      a = c;
+      s = p / 4;
+    } else {
+      s = p / (2 * Math.PI) * Math.asin(c / a);
+    }
+    return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+  }
+
+  function easeInOutElastic(x, t, b, c, d) {
+    var s = 1.70158,
+        p = 0,
+        a = c;
+    if (t === 0) return b;
+    if ((t /= d / 2) === 2) return b + c;
+    if (!p) p = d * (.3 * 1.5);
+    if (a < Math.abs(c)) {
+      a = c;
+      s = p / 4;
+    } else {
+      s = p / (2 * Math.PI) * Math.asin(c / a);
+    }
+    if (t < 1) {
+      return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+    }
+    return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+  }
+
+  function easeInBack(x, t, b, c, d) {
+    var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
+
+    return c * (t /= d) * t * ((s + 1) * t - s) + b;
+  }
+
+  function easeOutBack(x, t, b, c, d) {
+    var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
+
+    return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+  }
+
+  function easeInOutBack(x, t, b, c, d) {
+    var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
+
+    if ((t /= d / 2) < 1) {
+      return c / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + b;
+    }
+    return c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
+  }
+
+  function easeInBounce(x, t, b, c, d) {
+    return c - easeOutBounce(x, d - t, 0, c, d) + b;
+  }
+
+  function easeOutBounce(x, t, b, c, d) {
+    if ((t /= d) < 1 / 2.75) {
+      return c * (7.5625 * t * t) + b;
+    } else if (t < 2 / 2.75) {
+      return c * (7.5625 * (t -= 1.5 / 2.75) * t + .75) + b;
+    } else if (t < 2.5 / 2.75) {
+      return c * (7.5625 * (t -= 2.25 / 2.75) * t + .9375) + b;
+    } else {
+      return c * (7.5625 * (t -= 2.625 / 2.75) * t + .984375) + b;
+    }
+  }
+
+  function easeInOutBounce(x, t, b, c, d) {
+    if (t < d / 2) {
+      return easeInBounce(x, t * 2, 0, c, d) * .5 + b;
+    }
+    return easeOutBounce(x, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+  }
+
+  var Easing = Object.freeze({
+    linear: linear,
+    easeInQuad: easeInQuad,
+    easeOutQuad: easeOutQuad,
+    easeInOutQuad: easeInOutQuad,
+    easeInCubic: easeInCubic,
+    easeOutCubic: easeOutCubic,
+    easeInOutCubic: easeInOutCubic,
+    easeInQuart: easeInQuart,
+    easeOutQuart: easeOutQuart,
+    easeInOutQuart: easeInOutQuart,
+    easeInQuint: easeInQuint,
+    easeOutQuint: easeOutQuint,
+    easeInOutQuint: easeInOutQuint,
+    easeInSine: easeInSine,
+    easeOutSine: easeOutSine,
+    easeInOutSine: easeInOutSine,
+    easeInExpo: easeInExpo,
+    easeOutExpo: easeOutExpo,
+    easeInOutExpo: easeInOutExpo,
+    easeInCirc: easeInCirc,
+    easeOutCirc: easeOutCirc,
+    easeInOutCirc: easeInOutCirc,
+    easeInElastic: easeInElastic,
+    easeOutElastic: easeOutElastic,
+    easeInOutElastic: easeInOutElastic,
+    easeInBack: easeInBack,
+    easeOutBack: easeOutBack,
+    easeInOutBack: easeInOutBack,
+    easeInBounce: easeInBounce,
+    easeOutBounce: easeOutBounce,
+    easeInOutBounce: easeInOutBounce
+  });
+
+  var lastTime = 0;
+  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+    var currentTime = Date.now();
+    var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
+    var id = window.setTimeout(function () {
+      callback(currentTime + timeToCall);
+    }, timeToCall);
+    lastTime = currentTime + timeToCall;
+    return id;
   };
 
-  function getScrollable(selectors) {
-    var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
-    var all = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+  var ScrollTween = (function () {
+    function ScrollTween(el) {
+      babelHelpers.classCallCheck(this, ScrollTween);
 
-    var prop = directionPropMap[direction];
-    var elements = $$(selectors);
-    var scrollables = [];
-
-    for (var i = 0; i < elements.length; i++) {
-      var el = elements[i];
-
-      if (el[prop] > 0) {
-        scrollables.push(el);
-      } else {
-        el[prop] = 1;
-        if (el[prop] > 0) {
-          scrollables.push(el);
-        }
-        el[prop] = 0;
-      }
-
-      if (!all && scrollables.length > 0) break;
+      this.el = el;
+      this.props = {};
+      this.progress = false;
+      this.startTime = null;
     }
 
-    return scrollables;
-  }
+    babelHelpers.createClass(ScrollTween, [{
+      key: "run",
+      value: function run(x, y, duration, delay, easing) {
+        var _this = this;
 
-  function scrollableFind(selectors, direction) {
-    var scrollables = getScrollable(selectors, direction, false);
-    return scrollables.length >= 1 ? scrollables[0] : undefined;
-  }
+        var callback = arguments.length <= 5 || arguments[5] === undefined ? function () {} : arguments[5];
+
+        if (this.progress) return;
+        this.props = { x: x, y: y };
+        this.duration = duration;
+        this.delay = delay;
+        this.easing = easing;
+        this.callback = callback;
+
+        setTimeout(function () {
+          _this.progress = true;
+          _this.startProps = {
+            x: getScroll(_this.el, "x"),
+            y: getScroll(_this.el, "y")
+          };
+          raf(function (time) {
+            return _this._loop(time);
+          });
+        }, delay);
+      }
+    }, {
+      key: "stop",
+      value: function stop() {
+        var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+
+        this.startTime = null;
+        this.progress = false;
+
+        if (gotoEnd) {
+          setScroll(this.el, this.props.x, "x");
+          setScroll(this.el, this.props.y, "y");
+        }
+
+        if (isFunction(this.callback)) {
+          this.callback();
+        }
+
+        this.callback = null;
+      }
+    }, {
+      key: "_loop",
+      value: function _loop(time) {
+        var _this2 = this;
+
+        if (!this.startTime) {
+          this.startTime = time;
+        }
+
+        if (!this.progress) {
+          this.stop(false);
+          return;
+        }
+
+        var el = this.el;
+        var props = this.props;
+        var duration = this.duration;
+        var delay = this.delay;
+        var startTime = this.startTime;
+        var startProps = this.startProps;
+
+        var toProps = {};
+        var easing = Easing[this.easing];
+        var timeElapsed = time - startTime;
+        var t = Math.min(1, Math.max(timeElapsed / duration, 0));
+
+        each(props, function (value, key) {
+          var initialValue = startProps[key];
+          var delta = value - initialValue;
+          var val = undefined;
+
+          if (delta === 0) return true;
+
+          val = easing(t, duration * t, 0, 1, duration);
+          val = Math.round(initialValue + delta * val);
+
+          if (val !== value) {
+            toProps[key] = val;
+          }
+        });
+
+        each(toProps, function (value, key) {
+          setScroll(el, value, key);
+        });
+
+        timeElapsed <= duration ? raf(function (time) {
+          return _this2._loop(time);
+        }) : this.stop(true);
+      }
+    }]);
+    return ScrollTween;
+  })();
 
   var doc = document;
   var win = window;
+  var WHEEL_EVENT = "onwheel" in document ? "wheel" : "onmousewheel" in document ? "mousewheel" : "DOMMouseScroll";
 
   var SweetScroll = (function () {
     function SweetScroll() {
@@ -211,8 +600,10 @@
       this.options = merge({}, SweetScroll.defaults, options);
       this.container = scrollableFind(container);
       this.el = $$(this.options.trigger);
+      this.tween = new ScrollTween(this.container);
+      this.triggerClickListener = this._handleTriggerClick.bind(this);
       each(this.el, function (el) {
-        el.addEventListener("click", _this._handleTriggerClick.bind(_this), false);
+        el.addEventListener("click", _this.triggerClickListener, false);
       });
     }
 
@@ -227,7 +618,7 @@
 
         var params = merge({}, this.options, options);
         var scroll = {};
-        var offset = this.formatCoodinate(params.offset);
+        var offset = this._formatCoodinate(params.offset);
 
         if (isString(distance)) {
           if (!/[:,]/.test(distance)) {
@@ -256,10 +647,28 @@
           size = { width: container.scrollWidth, height: container.scrollHeight };
         }
 
-        scroll.top = scroll.top + frameSize.height > size.height ? size.height - frameSize.height : scroll.top;
-        scroll.left = scroll.left + frameSize.width > size.width ? size.width - frameSize.width : scroll.left;
+        if (params.verticalScroll) {
+          scroll.top = scroll.top + frameSize.height > size.height ? size.height - frameSize.height : scroll.top;
+        } else {
+          scroll.top = getScroll(container, "y");
+        }
 
-        // @TODO animation
+        if (params.horizontalScroll) {
+          scroll.left = scroll.left + frameSize.width > size.width ? size.width - frameSize.width : scroll.left;
+        } else {
+          scroll.left = getScroll(container, "x");
+        }
+
+        // @TODO beforeScroll
+
+        this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
+          // @TODO afterScroll
+        });
+
+        this.stopScrollListener = this._handleStopScroll.bind(this);
+        doc.addEventListener(WHEEL_EVENT, this.stopScrollListener, false);
+        doc.addEventListener("touchstart", this.stopScrollListener, false);
+        doc.addEventListener("touchmove", this.stopScrollListener, false);
       }
     }, {
       key: "toTop",
@@ -284,22 +693,37 @@
     }, {
       key: "stop",
       value: function stop() {
-        // @TODO
+        var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+
+        doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener);
+        doc.removeEventListener("touchstart", this.stopScrollListener);
+        doc.removeEventListener("touchmove", this.stopScrollListener);
+        this.tween.stop(gotoEnd);
       }
     }, {
       key: "destroy",
       value: function destroy() {
+        this.stop();
         // @TODO
       }
     }, {
-      key: "formatCoodinate",
-      value: function formatCoodinate(coodinate) {
+      key: "_formatCoodinate",
+      value: function _formatCoodinate(coodinate) {
         // @TODO
       }
     }, {
-      key: "encodeCoodinate",
-      value: function encodeCoodinate(coodinate) {
+      key: "_encodeCoodinate",
+      value: function _encodeCoodinate(coodinate) {
         // @TODO
+      }
+    }, {
+      key: "_handleStopScroll",
+      value: function _handleStopScroll(e) {
+        if (this.options.stopScroll) {
+          this.stop();
+        } else {
+          e.stopPropagation();
+        }
       }
     }, {
       key: "_handleTriggerClick",
@@ -309,6 +733,7 @@
         var href = e.currentTarget.getAttribute("href");
 
         e.preventDefault();
+
         if (options.stopPropagation) e.stopPropagation();
 
         if (options.horizontalScroll && options.verticalScroll) {

@@ -1,10 +1,11 @@
 import * as Util from "./utils"
 import * as Dom from "./dom"
 import {$, $$} from "./selectors"
-import {scrollableFind} from "./scrollable-elements"
+import ScrollTween from "./scroll-tween"
 
 const doc = document;
 const win = window;
+const WHEEL_EVENT = ("onwheel" in document ? "wheel" : "onmousewheel" in document ? "mousewheel" : "DOMMouseScroll");
 
 class SweetScroll {
   static defaults = {
@@ -25,11 +26,14 @@ class SweetScroll {
 
   constructor(options = {}, container = "body, html") {
     this.options = Util.merge({}, SweetScroll.defaults, options);
-    this.container = scrollableFind(container);
+    this.container = Dom.scrollableFind(container);
     this.el = $$(this.options.trigger);
+    this.tween = new ScrollTween(this.container);
+    this.triggerClickListener = this._handleTriggerClick.bind(this);
     Util.each(this.el, (el) => {
-      el.addEventListener("click", this._handleTriggerClick.bind(this), false);
+      el.addEventListener("click", this.triggerClickListener, false);
     });
+
   }
 
   to(distance, options = {}) {
@@ -38,7 +42,7 @@ class SweetScroll {
     const {container} = this;
     const params = Util.merge({}, this.options, options);
     const scroll = {};
-    const offset = this.formatCoodinate(params.offset);
+    const offset = this._formatCoodinate(params.offset);
 
     if (Util.isString(distance)) {
       if (!/[:,]/.test(distance)) {
@@ -68,10 +72,28 @@ class SweetScroll {
       size = {width: container.scrollWidth, height: container.scrollHeight};
     }
 
-    scroll.top = scroll.top + frameSize.height > size.height ? size.height - frameSize.height : scroll.top;
-    scroll.left = scroll.left + frameSize.width > size.width ? size.width - frameSize.width : scroll.left;
+    if (params.verticalScroll) {
+      scroll.top = scroll.top + frameSize.height > size.height ? size.height - frameSize.height : scroll.top;
+    } else {
+      scroll.top = Dom.getScroll(container, "y");
+    }
 
-    // @TODO animation
+    if (params.horizontalScroll) {
+      scroll.left = scroll.left + frameSize.width > size.width ? size.width - frameSize.width : scroll.left;
+    } else {
+      scroll.left = Dom.getScroll(container, "x");
+    }
+
+    // @TODO beforeScroll
+
+    this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
+      // @TODO afterScroll
+    });
+
+    this.stopScrollListener = this._handleStopScroll.bind(this);
+    doc.addEventListener(WHEEL_EVENT, this.stopScrollListener, false);
+    doc.addEventListener("touchstart", this.stopScrollListener, false);
+    doc.addEventListener("touchmove", this.stopScrollListener, false);
   }
 
   toTop(distance, options = {}) {
@@ -88,20 +110,32 @@ class SweetScroll {
     }));
   }
 
-  stop() {
-    // @TODO
+  stop(gotoEnd = false) {
+    doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener);
+    doc.removeEventListener("touchstart", this.stopScrollListener);
+    doc.removeEventListener("touchmove", this.stopScrollListener);
+    this.tween.stop(gotoEnd);
   }
 
   destroy() {
+    this.stop();
     // @TODO
   }
 
-  formatCoodinate(coodinate) {
+  _formatCoodinate(coodinate) {
     // @TODO
   }
 
-  encodeCoodinate(coodinate) {
+  _encodeCoodinate(coodinate) {
     // @TODO
+  }
+
+  _handleStopScroll(e) {
+    if (this.options.stopScroll) {
+      this.stop();
+    } else {
+      e.stopPropagation();
+    }
   }
 
   _handleTriggerClick(e) {
@@ -109,14 +143,18 @@ class SweetScroll {
     const href = e.currentTarget.getAttribute("href");
 
     e.preventDefault();
+
     if (options.stopPropagation) e.stopPropagation();
 
     if (options.horizontalScroll && options.verticalScroll) {
       this.to(href);
+
     } else if (options.verticalScroll) {
       this.toTop(href);
+
     } else if (options.horizontalScroll) {
       this.toLeft(href);
+
     } else {
       // @TODO
     }
@@ -128,23 +166,3 @@ const sweetScroll = new SweetScroll({
 });
 
 export default SweetScroll;
-/*
-Usage:
-const sweetScroll = new SweetScroll({
-  trigger: "[data-scroll]",
-  duration: 1000,
-  delay: 0,
-  easing: "easeOutQuint",
-  offset: 0
-  changeHash: "",
-  stopScroll: true,
-  stopPropagation: true,
-  beforeScroll: null,
-  afterScroll: null,
-  cancelScroll: null
-});
-
-const sweetScroll = new SweetScroll({}, "#container");
-sweetScroll.to(100);
-
-*/
