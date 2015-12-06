@@ -53,9 +53,8 @@ export default class ScrollTween {
 
     if (Util.isFunction(this.callback)) {
       this.callback();
+      this.callback = null;
     }
-
-    this.callback = null;
   }
 
   _loop(time) {
@@ -77,16 +76,10 @@ export default class ScrollTween {
     Util.each(props, (value, key) => {
       const initialValue = startProps[key];
       const delta = value - initialValue;
-      let val;
-
       if (delta === 0) return true;
 
-      val = easing(t, duration * t, 0, 1, duration);
-      val = Math.round(initialValue + delta * val);
-
-      if (val !== value) {
-        toProps[key] = val;
-      }
+      const val = easing(t, duration * t, 0, 1, duration);
+      toProps[key] = Math.round(initialValue + delta * val);
     });
 
     Util.each(toProps, (value, key) => {

@@ -536,9 +536,8 @@
 
         if (isFunction(this.callback)) {
           this.callback();
+          this.callback = null;
         }
-
-        this.callback = null;
       }
     }, {
       key: "_loop",
@@ -569,16 +568,10 @@
         each(props, function (value, key) {
           var initialValue = startProps[key];
           var delta = value - initialValue;
-          var val = undefined;
-
           if (delta === 0) return true;
 
-          val = easing(t, duration * t, 0, 1, duration);
-          val = Math.round(initialValue + delta * val);
-
-          if (val !== value) {
-            toProps[key] = val;
-          }
+          var val = easing(t, duration * t, 0, 1, duration);
+          toProps[key] = Math.round(initialValue + delta * val);
         });
 
         each(toProps, function (value, key) {
@@ -599,8 +592,6 @@
 
   var SweetScroll = (function () {
     function SweetScroll() {
-      var _this = this;
-
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
       var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
       babelHelpers.classCallCheck(this, SweetScroll);
@@ -609,16 +600,13 @@
       this.container = scrollableFind(container);
       this.el = $$(this.options.trigger);
       this.tween = new ScrollTween(this.container);
-      this.triggerClickListener = this._handleTriggerClick.bind(this);
-      each(this.el, function (el) {
-        el.addEventListener("click", _this.triggerClickListener, false);
-      });
+      this._bindTriggerListeners();
     }
 
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
-        var _this2 = this;
+        var _this = this;
 
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
@@ -673,7 +661,7 @@
         if (this._hook(params.beforeScroll, scroll) === false) return;
 
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
-          _this2._hook(params.afterScroll, scroll);
+          _this._hook(params.afterScroll, scroll);
         });
 
         this.stopScrollListener = this._handleStopScroll.bind(this);
@@ -716,14 +704,34 @@
     }, {
       key: "update",
       value: function update() {
-        // @TODO
+        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+        this._unbindTriggerListeners();
+
+        this.options = merge({}, this.options, options);
+        this.el = $$(this.options.trigger);
+        this._bindTriggerListeners();
       }
     }, {
       key: "destroy",
       value: function destroy() {
-        var _this3 = this;
-
         this.stop();
+        this._unbindTriggerListeners();
+      }
+    }, {
+      key: "_bindTriggerListeners",
+      value: function _bindTriggerListeners() {
+        var _this2 = this;
+
+        this.triggerClickListener = this._handleTriggerClick.bind(this);
+        each(this.el, function (el) {
+          el.addEventListener("click", _this2.triggerClickListener, false);
+        });
+      }
+    }, {
+      key: "_unbindTriggerListeners",
+      value: function _unbindTriggerListeners() {
+        var _this3 = this;
 
         if (this.triggerClickListener) {
           each(this.el, function (el) {
@@ -784,11 +792,6 @@
         scroll.left = parseInt(scroll.left);
 
         return scroll;
-      }
-    }, {
-      key: "_encodeCoodinate",
-      value: function _encodeCoodinate(coodinate) {
-        // @TODO
       }
     }, {
       key: "_handleStopScroll",

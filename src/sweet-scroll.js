@@ -28,10 +28,7 @@ class SweetScroll {
     this.container = Dom.scrollableFind(container);
     this.el = $$(this.options.trigger);
     this.tween = new ScrollTween(this.container);
-    this.triggerClickListener = this._handleTriggerClick.bind(this);
-    Util.each(this.el, (el) => {
-      el.addEventListener("click", this.triggerClickListener, false);
-    });
+    this._bindTriggerListeners();
   }
 
   to(distance, options = {}) {
@@ -118,13 +115,27 @@ class SweetScroll {
     this.tween.stop(gotoEnd);
   }
 
-  update() {
-    // @TODO
+  update(options = {}) {
+    this._unbindTriggerListeners();
+
+    this.options = Util.merge({}, this.options, options);
+    this.el = $$(this.options.trigger);
+    this._bindTriggerListeners();
   }
 
   destroy() {
     this.stop();
+    this._unbindTriggerListeners();
+  }
 
+  _bindTriggerListeners() {
+    this.triggerClickListener = this._handleTriggerClick.bind(this);
+    Util.each(this.el, (el) => {
+      el.addEventListener("click", this.triggerClickListener, false);
+    });
+  }
+
+  _unbindTriggerListeners() {
     if (this.triggerClickListener) {
       Util.each(this.el, (el) => {
         el.removeEventListener("click", this.triggerClickListener, false);
@@ -184,10 +195,6 @@ class SweetScroll {
     scroll.left = parseInt(scroll.left);
 
     return scroll;
-  }
-
-  _encodeCoodinate(coodinate) {
-    // @TODO
   }
 
   _handleStopScroll(e) {
