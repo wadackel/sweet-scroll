@@ -557,7 +557,6 @@
         var el = this.el;
         var props = this.props;
         var duration = this.duration;
-        var delay = this.delay;
         var startTime = this.startTime;
         var startProps = this.startProps;
 

@@ -95,14 +95,14 @@ class SweetScroll {
   toTop(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
       verticalScroll: true,
-      horizontalScroll: false,
+      horizontalScroll: false
     }));
   }
 
   toLeft(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
       verticalScroll: false,
-      horizontalScroll: true,
+      horizontalScroll: true
     }));
   }
 

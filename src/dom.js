@@ -1,4 +1,3 @@
-import * as Util from "./utils"
 import {$$} from "./selectors";
 
 const directionMethodMap = {

@@ -1,7 +1,6 @@
 import * as Util from "./utils"
 import * as Dom from "./dom"
 import * as Easing from "./easings"
-import {$, $$} from "./selectors"
 import raf from "./request-animation-frame"
 
 export default class ScrollTween {
@@ -55,7 +54,7 @@ export default class ScrollTween {
       return;
     }
 
-    const {el, props, duration, delay, startTime, startProps} = this;
+    const {el, props, duration, startTime, startProps} = this;
     const toProps = {};
     const easing = Easing[this.easing];
     const timeElapsed = time - startTime;
