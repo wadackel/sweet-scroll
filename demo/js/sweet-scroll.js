@@ -240,6 +240,18 @@
     return rect;
   }
 
+  var lastTime = 0;
+
+  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+    var currentTime = Date.now();
+    var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
+    var id = window.setTimeout(function () {
+      callback(currentTime + timeToCall);
+    }, timeToCall);
+    lastTime = currentTime + timeToCall;
+    return id;
+  };
+
   function linear(p) {
     return p;
   }
@@ -474,17 +486,6 @@
     easeOutBounce: easeOutBounce,
     easeInOutBounce: easeInOutBounce
   });
-
-  var lastTime = 0;
-  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
-    var currentTime = Date.now();
-    var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
-    var id = window.setTimeout(function () {
-      callback(currentTime + timeToCall);
-    }, timeToCall);
-    lastTime = currentTime + timeToCall;
-    return id;
-  };
 
   var ScrollTween = (function () {
     function ScrollTween(el) {

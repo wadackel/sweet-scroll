@@ -16,12 +16,6 @@ export function isRootContainer(el) {
   return el === doc.documentElement || el === doc.body;
 }
 
-export function setAttributes(el, props) {
-  Util.each(props, (value, prop) => {
-    el.setAttribute(prop, value);
-  });
-}
-
 function getScrollable(selectors, direction = "y", all = true) {
   const method = directionMethodMap[direction];
   const elements = $$(selectors);
