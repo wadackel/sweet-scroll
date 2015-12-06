@@ -130,13 +130,15 @@ class SweetScroll {
 
   _bindTriggerListeners() {
     this.triggerClickListener = this._handleTriggerClick.bind(this);
-    Util.each(this.el, (el) => {
-      el.addEventListener("click", this.triggerClickListener, false);
-    });
+    if (this.el.length > 0) {
+      Util.each(this.el, (el) => {
+        el.addEventListener("click", this.triggerClickListener, false);
+      });
+    }
   }
 
   _unbindTriggerListeners() {
-    if (this.triggerClickListener) {
+    if (this.triggerClickListener && this.el.length > 0) {
       Util.each(this.el, (el) => {
         el.removeEventListener("click", this.triggerClickListener, false);
       });

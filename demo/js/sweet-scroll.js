@@ -167,11 +167,13 @@
 
     for (var i = 0; i < elements.length; i++) {
       var el = elements[i];
+      console.log(el.scrollTop, method);
 
       if (el[method] > 0) {
         scrollables.push(el);
       } else {
         el[method] = 1;
+        console.log(el.scrollTop);
         if (el[method] > 0) {
           scrollables.push(el);
         }
@@ -724,16 +726,18 @@
         var _this2 = this;
 
         this.triggerClickListener = this._handleTriggerClick.bind(this);
-        each(this.el, function (el) {
-          el.addEventListener("click", _this2.triggerClickListener, false);
-        });
+        if (this.el.length > 0) {
+          each(this.el, function (el) {
+            el.addEventListener("click", _this2.triggerClickListener, false);
+          });
+        }
       }
     }, {
       key: "_unbindTriggerListeners",
       value: function _unbindTriggerListeners() {
         var _this3 = this;
 
-        if (this.triggerClickListener) {
+        if (this.triggerClickListener && this.el.length > 0) {
           each(this.el, function (el) {
             el.removeEventListener("click", _this3.triggerClickListener, false);
           });

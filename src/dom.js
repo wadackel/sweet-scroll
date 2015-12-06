@@ -22,12 +22,14 @@ function getScrollable(selectors, direction = "y", all = true) {
 
   for ( let i = 0; i < elements.length; i++ ) {
     let el = elements[i];
+    console.log(el.scrollTop, method);
 
     if( el[method] > 0 ) {
       scrollables.push(el);
 
     } else {
       el[method] = 1;
+      console.log(el.scrollTop);
       if( el[method] > 0 ) {
         scrollables.push(el);
       }

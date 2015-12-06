@@ -1,7 +1,7 @@
 module.exports = function(config) {
   config.set({
     basePath: "",
-    frameworks: ["mocha", "browserify", "fixture"],
+    frameworks: ["mocha", "browserify", "fixture", "phantomjs-shim"],
     files: [
       "test/**/*.spec.js",
       "test/fixtures/**/*.html"
