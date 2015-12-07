@@ -13,8 +13,9 @@ describe("SweetScroll", () => {
   describe("Initialize", () => {
     it("Should be initialize module", () => {
       const sweetScroll = new SweetScroll();
-      console.log(sweetScroll.container);
       assert(sweetScroll);
+      // console.log(document.body.height, document.documentElement.height);
+      console.log(window.innerWidth, window.innerHeight, getComputedStyle(document.body)["height"]);
       // assert(sweetScroll.container === document.body || sweetScroll.container === document.documentElement);
     });
   });
