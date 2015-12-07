@@ -167,13 +167,11 @@
 
     for (var i = 0; i < elements.length; i++) {
       var el = elements[i];
-      console.log(el.scrollTop, method);
 
       if (el[method] > 0) {
         scrollables.push(el);
       } else {
         el[method] = 1;
-        console.log(el.scrollTop);
         if (el[method] > 0) {
           scrollables.push(el);
         }
@@ -590,7 +588,7 @@
 
   var doc = document;
   var win = window;
-  var WHEEL_EVENT = "onwheel" in document ? "wheel" : "onmousewheel" in document ? "mousewheel" : "DOMMouseScroll";
+  var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
 
   var SweetScroll = (function () {
     function SweetScroll() {
@@ -599,6 +597,7 @@
       babelHelpers.classCallCheck(this, SweetScroll);
 
       this.options = merge({}, SweetScroll.defaults, options);
+      this.containerSelector = container;
       this.container = scrollableFind(container);
       this.el = $$(this.options.trigger);
       this.tween = new ScrollTween(this.container);
@@ -619,6 +618,8 @@
         var params = merge({}, this.options, options);
         var offset = this._parseCoodinate(params.offset);
         var scroll = this._parseCoodinate(distance);
+
+        if (!container) return;
 
         if (!scroll && isString(distance)) {
           if (distance === "#") {
@@ -711,6 +712,7 @@
         this._unbindTriggerListeners();
 
         this.options = merge({}, this.options, options);
+        this.container = scrollableFind(this.containerSelector);
         this.el = $$(this.options.trigger);
         this._bindTriggerListeners();
       }

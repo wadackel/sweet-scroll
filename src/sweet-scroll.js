@@ -5,7 +5,7 @@ import ScrollTween from "./scroll-tween"
 
 const doc = document;
 const win = window;
-const WHEEL_EVENT = ("onwheel" in document ? "wheel" : "onmousewheel" in document ? "mousewheel" : "DOMMouseScroll");
+const WHEEL_EVENT = ("onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll");
 
 class SweetScroll {
   static defaults = {
@@ -25,6 +25,7 @@ class SweetScroll {
 
   constructor(options = {}, container = "body, html") {
     this.options = Util.merge({}, SweetScroll.defaults, options);
+    this.containerSelector = container;
     this.container = Dom.scrollableFind(container);
     this.el = $$(this.options.trigger);
     this.tween = new ScrollTween(this.container);
@@ -38,6 +39,8 @@ class SweetScroll {
     const params = Util.merge({}, this.options, options);
     const offset = this._parseCoodinate(params.offset);
     let scroll = this._parseCoodinate(distance);
+
+    if (!container) return;
 
     if (!scroll && Util.isString(distance)) {
       if (distance === "#") {
@@ -119,6 +122,7 @@ class SweetScroll {
     this._unbindTriggerListeners();
 
     this.options = Util.merge({}, this.options, options);
+    this.container = Dom.scrollableFind(this.containerSelector);
     this.el = $$(this.options.trigger);
     this._bindTriggerListeners();
   }
