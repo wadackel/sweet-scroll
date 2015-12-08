@@ -22,19 +22,7 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ["PhantomJS_custom"],
-    customLaunchers: {
-      "PhantomJS_custom": {
-        base: "PhantomJS",
-        options: {
-           viewportSize: {
-             width: 1280,
-             height: 800
-           }
-        },
-        debug: true
-      }
-    },
+    browsers: ["PhantomJS"],
     singleRun: false,
     concurrency: Infinity
   })

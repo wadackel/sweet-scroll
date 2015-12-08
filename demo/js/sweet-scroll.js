@@ -117,7 +117,7 @@
       }
     } else if (isArrayLike(obj)) {
       var i = undefined,
-          length = obj.length;
+          letlength = obj.length;
       for (i = 0; i < length; i++) {
         if (iterate.call(context, obj[i], i) === false) break;
       }
@@ -730,7 +730,7 @@
         this.triggerClickListener = this._handleTriggerClick.bind(this);
         if (this.el.length > 0) {
           each(this.el, function (el) {
-            el.addEventListener("click", _this2.triggerClickListener, false);
+            if (el instanceof HTMLElement) el.addEventListener("click", _this2.triggerClickListener, false);
           });
         }
       }
@@ -741,7 +741,7 @@
 
         if (this.triggerClickListener && this.el.length > 0) {
           each(this.el, function (el) {
-            el.removeEventListener("click", _this3.triggerClickListener, false);
+            if (el instanceof HTMLElement) el.removeEventListener("click", _this3.triggerClickListener, false);
           });
         }
       }

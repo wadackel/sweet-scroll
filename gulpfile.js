@@ -25,6 +25,7 @@ var banner = [
 gulp.task("server", function(cb) {
   server.init({
     notify: false,
+    open: false,
     server: {
       baseDir: "./demo"
     }

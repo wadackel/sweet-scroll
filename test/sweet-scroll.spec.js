@@ -3,7 +3,7 @@ import SweetScroll from "../src/sweet-scroll"
 
 describe("SweetScroll", () => {
   before(() => {
-    document.body.innerHTML = window.__html__["test/fixtures/sweet-scroll.html"]
+    document.body.innerHTML = window.__html__["test/fixtures/sweet-scroll.html"];
   });
 
   after(() => {
@@ -11,12 +11,16 @@ describe("SweetScroll", () => {
   });
 
   describe("Initialize", () => {
+    it("Should not find container", () => {
+      document.body.innerHTML = "";
+      const sweetScroll = new SweetScroll({}, "#container");
+      assert(sweetScroll.container === undefined);
+    });
+
     it("Should be initialize module", () => {
-      const sweetScroll = new SweetScroll();
-      assert(sweetScroll);
-      // console.log(document.body.height, document.documentElement.height);
-      console.log(window.innerWidth, window.innerHeight, getComputedStyle(document.body)["height"]);
-      // assert(sweetScroll.container === document.body || sweetScroll.container === document.documentElement);
+      document.body.innerHTML = window.__html__["test/fixtures/sweet-scroll.html"];
+      const sweetScroll = new SweetScroll({trigger: "a[href^='#']"}, "#container");
+      assert(sweetScroll.container === document.querySelector("#container"));
     });
   });
 });
