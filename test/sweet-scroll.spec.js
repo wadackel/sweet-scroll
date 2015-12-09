@@ -94,4 +94,31 @@ describe("SweetScroll", () => {
       }, 500);
     });
   });
+
+  describe("Click of Anchor", () => {
+    const triggerAnchorSelector = "a[href^='#']";
+
+    function getAnchor() {
+      return document.querySelector("a[href='#content01']");
+    }
+
+    it("Should be run beforeScroll", (done) => {
+      getInstance({trigger: triggerAnchorSelector, beforeScroll: () => done()});
+      trigger(getAnchor(), "click");
+    });
+
+    it("Should be run afterScroll", (done) => {
+      getInstance({trigger: triggerAnchorSelector, afterScroll: () => done()});
+      trigger(getAnchor(), "click");
+    });
+
+    it("Should be run cancelScroll", (done) => {
+      const $container = getContainer();
+      getInstance({trigger: triggerAnchorSelector, cancelScroll: () => done()});
+      trigger(getAnchor(), "click");
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
+    });
+  });
 });
