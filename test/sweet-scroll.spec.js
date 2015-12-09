@@ -2,6 +2,12 @@ import assert from "power-assert"
 import SweetScroll from "../src/sweet-scroll"
 
 // Helpers
+function trigger(el, type) {
+  let e = document.createEvent("HTMLEvents");
+  e.initEvent(type, true, true);
+  el.dispatchEvent(e);
+}
+
 function getInstance(options = {}) {
   return new SweetScroll(options, "#container");
 }
@@ -57,6 +63,35 @@ describe("SweetScroll", () => {
       assert.deepEqual(h._parseCoodinate(1200), {top: 0, left: 1200});
       assert.deepEqual(h._parseCoodinate("200"), {top: 0, left: 200});
       assert.deepEqual(h._parseCoodinate([30]), {top: 0, left: 30});
+    });
+  });
+
+  describe("Callbacks", () => {
+    it("Should be run beforeScroll", (done) => {
+      const sweetScroll = getInstance({beforeScroll: (scroll) => {
+        assert(scroll.top === 100);
+        assert(scroll.left === 0);
+        done();
+      }});
+      sweetScroll.to(100);
+    });
+
+    it("Should be run afterScroll", (done) => {
+      const sweetScroll = getInstance({afterScroll: (scroll) => {
+        assert(scroll.top === 500);
+        assert(scroll.left === 0);
+        done();
+      }});
+      sweetScroll.to(500);
+    });
+
+    it("Should be run cancelScroll", (done) => {
+      const $container = getContainer();
+      const sweetScroll = getInstance({cancelScroll: done});
+      sweetScroll.to(1200);
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
     });
   });
 });
