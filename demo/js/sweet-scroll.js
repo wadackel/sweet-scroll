@@ -117,7 +117,7 @@
       }
     } else if (isArrayLike(obj)) {
       var i = undefined,
-          letlength = obj.length;
+          length = obj.length;
       for (i = 0; i < length; i++) {
         if (iterate.call(context, obj[i], i) === false) break;
       }
@@ -759,7 +759,7 @@
     }, {
       key: "_parseCoodinate",
       value: function _parseCoodinate(coodinate) {
-        var enableTop = this.options.horizontalScroll;
+        var enableTop = this.options.verticalScroll;
         var scroll = { top: 0, left: 0 };
 
         if (hasProp(coodinate, "top") || hasProp(coodinate, "left")) {

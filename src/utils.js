@@ -91,7 +91,7 @@ export function each(obj, iterate, context){
       if (iterate.call(context, obj[key], key) === false) break;
     }
   } else if (isArrayLike(obj)) {
-    let i, letlength = obj.length;
+    let i, length = obj.length;
     for (i = 0; i < length; i++) {
       if (iterate.call(context, obj[i], i) === false) break;
     }
