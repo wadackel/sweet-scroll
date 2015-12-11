@@ -5,6 +5,8 @@ sweet-scroll.js
 [![npm version](https://img.shields.io/npm/v/sweet-scroll.svg?style=flat-square)](http://badge.fury.io/js/sweet-scroll)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
 
+![logo](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png)
+
 Modern and the sweet smooth scroll library.
 
 [View Demo](http://__@TODO__)
