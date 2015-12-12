@@ -269,6 +269,51 @@ section {
 
 #example {
   background: $color-secondary;
+  ul {
+    margin-right: -2rem;
+    margin-left: -2rem;
+    padding-right: 2rem;
+    padding-left: 2rem;
+    list-style: none;
+    text-align: center;
+    font-size: 0;
+  }
+  li {
+    display: inline-block;
+    width: 33.33%;
+    padding: 0 1rem;
+    text-align: left;
+    font-size: 1rem;
+    > a {
+      display: block;
+      padding: 1rem;
+      color: #333;
+      text-decoration: none;
+      transition: all .2s ease-out;
+      img {
+        transform: translate(0, 0);
+        transition: all .2s ease-out;
+      }
+      &:hover {
+        background: darken($color-secondary, 5%);
+        img {
+          box-shadow: 5px 5px 0 rgba(0, 0, 0, .7);
+          transform: translate(-5px, -5px);
+        }
+      }
+    }
+  }
+  h3 {
+    margin: 0 0 .5em 0;
+    font-size: 1.2rem;
+  }
+
+  @media screen and (max-width: 768px) {
+    li {
+      display: block;
+      width: 100%;
+    }
+  }
 }
 
 #footer {

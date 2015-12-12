@@ -18,6 +18,7 @@
       <p>Modern and the <span>sweet</span> smooth scroll library.</p>
       <p>
         <a class="btn" href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> Document on GitHub</a>
+        <a class="btn" href="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/sweet-scroll.min.js"><i class="fa fa-cloud-download"></i> Download</a>
       </p>
       <a class="arrow" href="#features"><i class="fa fa-chevron-down"></i></a>
     </div>
@@ -44,14 +45,33 @@
     <pre><code class="javascript">import SweetScroll from "sweet-scroll"
 
 const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
-    <h3>3. Enjoy the smooth scroll!!</h3>
+    <h3>3. Enjoy the smooth scrolling!!</h3>
     <p>Please detailed document viewed in <a href="https://github.com/tsuyoshiwada/sweet-scroll">GitHub</a></p>
     <a class="page-top" href="#header"><i class="fa fa-angle-up"></i> Page top</a>
   </section>
 
   <section id="example">
     <h2>Examples</h2>
-    <p>__TODO__</p>
+    <ul>
+      <li>
+        <a href="./easings.html">
+          <h3><i class="fa fa-code"></i> Easings</h3>
+          <img src="./images/easings.gif" alt="Easings">
+        </a>
+      </li>
+      <li>
+        <a href="./horizontal.html">
+          <h3><i class="fa fa-code"></i> Horizontl Scroll</h3>
+          <img src="./images/horizontal.gif" alt="Horizontal Scroll">
+        </a>
+      </li>
+      <li>
+        <a href="./container.html">
+          <h3><i class="fa fa-code"></i> Container</h3>
+          <img src="./images/container.gif" alt="Container">
+        </a>
+      </li>
+    </ul>
     <a class="page-top" href="#header"><i class="fa fa-angle-up"></i> Page top</a>
   </section>
 
@@ -71,18 +91,7 @@ const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
 
     // Sweet Scroll!!
     var sweetScroll = new SweetScroll({
-      trigger: "a[href^='#']",
-      beforeScroll: function(scroll) {
-        console.log("beforeScroll: ", scroll);
-        // return false;
-      },
-      afterScroll: function(scroll) {
-        console.log("afterScroll: ", scroll);
-      },
-      cancelScroll: function() {
-        console.log("cancelScroll");
-        // return false;
-      }
+      trigger: "a[href^='#']"
     });
   }, false);
   </script>
