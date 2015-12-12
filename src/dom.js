@@ -88,8 +88,9 @@ export function getOffset(el, context = null) {
       scroll.left = window.pageXOffset;
     } else {
       ctx = context;
-      scroll.top = ctx.scrollTop;
-      scroll.left = ctx.scrollLeft;
+      const ctxRect = ctx.getBoundingClientRect();
+      scroll.top = ctxRect.top * -1 + ctx.scrollTop;
+      scroll.left = ctxRect.left * -1 + ctx.scrollLeft;
     }
     return {
       top: rect.top + scroll.top - ctx.clientTop,
