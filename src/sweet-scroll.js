@@ -1,6 +1,6 @@
 import * as Util from "./utils"
 import * as Dom from "./dom"
-import {$, $$} from "./selectors"
+import {$, $$, matches} from "./selectors"
 import ScrollTween from "./scroll-tween"
 
 const doc = document;
@@ -29,7 +29,7 @@ class SweetScroll {
     this.container = Dom.scrollableFind(container);
     this.el = $$(this.options.trigger);
     this.tween = new ScrollTween(this.container);
-    this._bindTriggerListeners();
+    this._bindContainerClick();
   }
 
   to(distance, options = {}) {
@@ -86,13 +86,11 @@ class SweetScroll {
     if (this._hook(params.beforeScroll, scroll) === false) return;
 
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
+      this._unbindContainerStop();
       this._hook(params.afterScroll, scroll);
     });
 
-    this.stopScrollListener = this._handleStopScroll.bind(this);
-    doc.addEventListener(WHEEL_EVENT, this.stopScrollListener, false);
-    doc.addEventListener("touchstart", this.stopScrollListener, false);
-    doc.addEventListener("touchmove", this.stopScrollListener, false);
+    this._bindContainerStop();
   }
 
   toTop(distance, options = {}) {
@@ -110,43 +108,43 @@ class SweetScroll {
   }
 
   stop(gotoEnd = false) {
-    if (this.stopScrollListener) {
-      doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener, false);
-      doc.removeEventListener("touchstart", this.stopScrollListener, false);
-      doc.removeEventListener("touchmove", this.stopScrollListener, false);
-    }
     this.tween.stop(gotoEnd);
-  }
-
-  update(options = {}) {
-    this._unbindTriggerListeners();
-
-    this.options = Util.merge({}, this.options, options);
-    this.container = Dom.scrollableFind(this.containerSelector);
-    this.el = $$(this.options.trigger);
-    this._bindTriggerListeners();
   }
 
   destroy() {
     this.stop();
-    this._unbindTriggerListeners();
+    this._unbindContainerClick();
+    this._unbindContainerStop();
   }
 
-  _bindTriggerListeners() {
-    this.triggerClickListener = this._handleTriggerClick.bind(this);
-    if (this.el.length > 0) {
-      Util.each(this.el, (el) => {
-        if (el instanceof HTMLElement) el.addEventListener("click", this.triggerClickListener, false);
-      });
-    }
+  _bindContainerClick() {
+    if (!this.container) return;
+    this._containerClickListener = this._handleContainerClick.bind(this);
+    this.container.addEventListener("click", this._containerClickListener, false);
   }
 
-  _unbindTriggerListeners() {
-    if (this.triggerClickListener && this.el.length > 0) {
-      Util.each(this.el, (el) => {
-        if (el instanceof HTMLElement) el.removeEventListener("click", this.triggerClickListener, false);
-      });
-    }
+  _unbindContainerClick() {
+    if (!this.container || !this._containerClickListener) return;
+    this.container.removeEventListener("click", this._containerClickListener, false);
+    this._containerClickListener = null;
+  }
+
+  _bindContainerStop() {
+    if (!this.container) return;
+    const {container} = this;
+    this._stopScrollListener = this._handleStopScroll.bind(this);
+    container.addEventListener(WHEEL_EVENT, this._stopScrollListener, false);
+    container.addEventListener("touchstart", this._stopScrollListener, false);
+    container.addEventListener("touchmove", this._stopScrollListener, false);
+  }
+
+  _unbindContainerStop() {
+    if (!this.container || !this._stopScrollListener) return;
+    const {container} = this;
+    container.removeEventListener(WHEEL_EVENT, this._stopScrollListener, false);
+    container.removeEventListener("touchstart", this._stopScrollListener, false);
+    container.removeEventListener("touchmove", this._stopScrollListener, false);
+    this._stopScrollListener = null;
   }
 
   _hook(callback, ...args) {
@@ -213,23 +211,27 @@ class SweetScroll {
     }
   }
 
-  _handleTriggerClick(e) {
+  _handleContainerClick(e) {
     const {options} = this;
-    const el = e.currentTarget;
-    const data = el.getAttribute("data-scroll");
-    const href = data || el.getAttribute("href");
+    let el = e.target;
 
-    e.preventDefault();
-    if (options.stopPropagation) e.stopPropagation();
+    for (; el && el !== doc; el = el.parentNode) {
+      if (!matches(el, options.trigger)) continue;
+      const data = el.getAttribute("data-scroll");
+      const href = data || el.getAttribute("href");
 
-    if (options.horizontalScroll && options.verticalScroll) {
-      this.to(href);
+      e.preventDefault();
+      if (options.stopPropagation) e.stopPropagation();
 
-    } else if (options.verticalScroll) {
-      this.toTop(href);
+      if (options.horizontalScroll && options.verticalScroll) {
+        this.to(href);
 
-    } else if (options.horizontalScroll) {
-      this.toLeft(href);
+      } else if (options.verticalScroll) {
+        this.toTop(href);
+
+      } else if (options.horizontalScroll) {
+        this.toLeft(href);
+      }
     }
   }
 }

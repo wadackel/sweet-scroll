@@ -44,6 +44,25 @@
   })();
 
   babelHelpers;
+  function $(selector) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    return (context == null ? document : context).querySelector(selector);
+  }
+
+  function $$(selector) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    return (context == null ? document : context).querySelectorAll(selector);
+  }
+
+  function matches(el, selector) {
+    var matches = (el.document || el.ownerDocument).querySelectorAll(selector);
+    var i = matches.length;
+    while (--i >= 0 && matches.item(i) !== el) {}
+    return i > -1;
+  }
+
   var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
   var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
   var classTypes = {};
@@ -128,18 +147,6 @@
 
   function removeSpaces(str) {
     return str.replace(/\s*/g, "") || "";
-  }
-
-  function $(selector) {
-    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-    return (context == null ? document : context).querySelector(selector);
-  }
-
-  function $$(selector) {
-    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-    return (context == null ? document : context).querySelectorAll(selector);
   }
 
   var directionMethodMap = {
@@ -603,7 +610,7 @@
       this.container = scrollableFind(container);
       this.el = $$(this.options.trigger);
       this.tween = new ScrollTween(this.container);
-      this._bindTriggerListeners();
+      this._bindContainerClick();
     }
 
     babelHelpers.createClass(SweetScroll, [{
@@ -666,13 +673,11 @@
         if (this._hook(params.beforeScroll, scroll) === false) return;
 
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
+          _this._unbindContainerStop();
           _this._hook(params.afterScroll, scroll);
         });
 
-        this.stopScrollListener = this._handleStopScroll.bind(this);
-        doc.addEventListener(WHEEL_EVENT, this.stopScrollListener, false);
-        doc.addEventListener("touchstart", this.stopScrollListener, false);
-        doc.addEventListener("touchmove", this.stopScrollListener, false);
+        this._bindContainerStop();
       }
     }, {
       key: "toTop",
@@ -699,53 +704,50 @@
       value: function stop() {
         var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
-        if (this.stopScrollListener) {
-          doc.removeEventListener(WHEEL_EVENT, this.stopScrollListener, false);
-          doc.removeEventListener("touchstart", this.stopScrollListener, false);
-          doc.removeEventListener("touchmove", this.stopScrollListener, false);
-        }
         this.tween.stop(gotoEnd);
-      }
-    }, {
-      key: "update",
-      value: function update() {
-        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-
-        this._unbindTriggerListeners();
-
-        this.options = merge({}, this.options, options);
-        this.container = scrollableFind(this.containerSelector);
-        this.el = $$(this.options.trigger);
-        this._bindTriggerListeners();
       }
     }, {
       key: "destroy",
       value: function destroy() {
         this.stop();
-        this._unbindTriggerListeners();
+        this._unbindContainerClick();
+        this._unbindContainerStop();
       }
     }, {
-      key: "_bindTriggerListeners",
-      value: function _bindTriggerListeners() {
-        var _this2 = this;
-
-        this.triggerClickListener = this._handleTriggerClick.bind(this);
-        if (this.el.length > 0) {
-          each(this.el, function (el) {
-            if (el instanceof HTMLElement) el.addEventListener("click", _this2.triggerClickListener, false);
-          });
-        }
+      key: "_bindContainerClick",
+      value: function _bindContainerClick() {
+        if (!this.container) return;
+        this._containerClickListener = this._handleContainerClick.bind(this);
+        this.container.addEventListener("click", this._containerClickListener, false);
       }
     }, {
-      key: "_unbindTriggerListeners",
-      value: function _unbindTriggerListeners() {
-        var _this3 = this;
+      key: "_unbindContainerClick",
+      value: function _unbindContainerClick() {
+        if (!this.container || !this._containerClickListener) return;
+        this.container.removeEventListener("click", this._containerClickListener, false);
+        this._containerClickListener = null;
+      }
+    }, {
+      key: "_bindContainerStop",
+      value: function _bindContainerStop() {
+        if (!this.container) return;
+        var container = this.container;
 
-        if (this.triggerClickListener && this.el.length > 0) {
-          each(this.el, function (el) {
-            if (el instanceof HTMLElement) el.removeEventListener("click", _this3.triggerClickListener, false);
-          });
-        }
+        this._stopScrollListener = this._handleStopScroll.bind(this);
+        container.addEventListener(WHEEL_EVENT, this._stopScrollListener, false);
+        container.addEventListener("touchstart", this._stopScrollListener, false);
+        container.addEventListener("touchmove", this._stopScrollListener, false);
+      }
+    }, {
+      key: "_unbindContainerStop",
+      value: function _unbindContainerStop() {
+        if (!this.container || !this._stopScrollListener) return;
+        var container = this.container;
+
+        container.removeEventListener(WHEEL_EVENT, this._stopScrollListener, false);
+        container.removeEventListener("touchstart", this._stopScrollListener, false);
+        container.removeEventListener("touchmove", this._stopScrollListener, false);
+        this._stopScrollListener = null;
       }
     }, {
       key: "_hook",
@@ -813,23 +815,27 @@
         }
       }
     }, {
-      key: "_handleTriggerClick",
-      value: function _handleTriggerClick(e) {
+      key: "_handleContainerClick",
+      value: function _handleContainerClick(e) {
         var options = this.options;
 
-        var el = e.currentTarget;
-        var data = el.getAttribute("data-scroll");
-        var href = data || el.getAttribute("href");
+        var el = e.target;
 
-        e.preventDefault();
-        if (options.stopPropagation) e.stopPropagation();
+        for (; el && el !== doc; el = el.parentNode) {
+          if (!matches(el, options.trigger)) continue;
+          var data = el.getAttribute("data-scroll");
+          var href = data || el.getAttribute("href");
 
-        if (options.horizontalScroll && options.verticalScroll) {
-          this.to(href);
-        } else if (options.verticalScroll) {
-          this.toTop(href);
-        } else if (options.horizontalScroll) {
-          this.toLeft(href);
+          e.preventDefault();
+          if (options.stopPropagation) e.stopPropagation();
+
+          if (options.horizontalScroll && options.verticalScroll) {
+            this.to(href);
+          } else if (options.verticalScroll) {
+            this.toTop(href);
+          } else if (options.horizontalScroll) {
+            this.toLeft(href);
+          }
         }
       }
     }]);
