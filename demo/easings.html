@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Easings | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./images/favicon.ico">
+  <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <style type="text/css">
+    section {
+      height: 100vh;
+    }
+    #content01 {
+      background: #f5f5f5;
+    }
+    #content02 {
+      background: #eee;
+    }
+    #content03 {
+      background: #e0e0e0;
+    }
+    #content04 {
+      background: #bdbdbd;
+    }
+    #content05 {
+      background: #9e9e9e;
+    }
+  </style>
+</head>
+<body>
+  <header id="demo-header">
+    <a href="./"><i class="fa fa-chevron-left"></i> Back front</a>
+    <ul>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/easings.html"><i class="fa fa-code"></i> <span>Source</span></i></a></li>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> <span>Document on GitHub</span></i></a></li>
+    </ul>
+  </header>
+  <section id="first">
+    <h1>Easings</h1>
+    <p>Please select the type of easing.</p>
+    <p>
+      <select id="easing-type">
+        <option value="linear">linear</option>
+        <option value="easeInQuad">easeInQuad</option>
+        <option value="easeOutQuad">easeOutQuad</option>
+        <option value="easeInOutQuad">easeInOutQuad</option>
+        <option value="easeInCubic">easeInCubic</option>
+        <option value="easeOutCubic">easeInOutCubic</option>
+        <option value="easeInQuart">easeInQuart</option>
+        <option value="easeOutQuart">easeOutQuart</option>
+        <option value="easeInOutQuart">easeInOutQuart</option>
+        <option value="easeInQuint">easeInQuint</option>
+        <option value="easeOutQuint">easeOutQuint</option>
+        <option value="easeInOutQuint">easeInOutQuint</option>
+        <option value="easeInSine">easeInSine</option>
+        <option value="easeOutSine">easeOutSine</option>
+        <option value="easeInOutSine">easeInOutSine</option>
+        <option value="easeInExpo">easeOutExpo</option>
+        <option value="easeOutExpo">easeOutExpo</option>
+        <option value="easeInOutExpo">easeInOutExpo</option>
+        <option value="easeInCirc">easeInCirc</option>
+        <option value="easeOutCirc">easeOutCirc</option>
+        <option value="easeInOutCirc">easeInOutCirc</option>
+        <option value="easeInElastic">easeInElastic</option>
+        <option value="easeOutElastic">easeOutElastic</option>
+        <option value="easeInOutElastic">easeInOutElastic</option>
+        <option value="easeInBack">easeInBack</option>
+        <option value="easeOutBack">easeOutBack</option>
+        <option value="easeInOutBack">easeInOutBack</option>
+        <option value="easeInBounce">easeInBounce</option>
+        <option value="easeOutBounce" selected="selected">easeOutBounce</option>
+        <option value="easeInOutBounce">easeInOutBounce</option>
+      </select>
+    </p>
+    <ul class="list-inline">
+      <li><a href="#" data-scroll="#content01">#Content 01</a></li>
+      <li><a href="#" data-scroll="#content02">#Content 02</a></li>
+      <li><a href="#" data-scroll="#content03">#Content 03</a></li>
+      <li><a href="#" data-scroll="#content04">#Content 04</a></li>
+      <li><a href="#" data-scroll="#content05">#Content 05</a></li>
+    </ul>
+  </section>
+
+  <section id="content01">
+    <h2>Content 01</h2>
+    <p><a href="#" data-scroll="0">Page top</a></p>
+  </section>
+
+  <section id="content02">
+    <h2>Content 02</h2>
+    <p><a href="#" data-scroll="0">Page top</a></p>
+  </section>
+
+  <section id="content03">
+    <h2>Content 03</h2>
+    <p><a href="#" data-scroll="0">Page top</a></p>
+  </section>
+
+  <section id="content04">
+    <h2>Content 04</h2>
+    <p><a href="#" data-scroll="0">Page top</a></p>
+  </section>
+
+  <section id="content05">
+    <h2>Content 05</h2>
+    <p><a href="#" data-scroll="0">Page top</a></p>
+  </section>
+
+  <script src="../js/sweet-scroll.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var sweetScroll = new SweetScroll({easing: "easeOutBounce"});
+      var $easings = document.getElementById("easing-type");
+
+      $easings.addEventListener("change", function() {
+        var easing = $easings.options[$easings.selectedIndex].value;
+        sweetScroll.destroy();
+        sweetScroll = new SweetScroll({easing: easing});
+      }, false);
+    }, false);
+  </script>
+</body>
+</html>

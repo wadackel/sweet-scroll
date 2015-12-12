@@ -4,7 +4,6 @@
 
 $color-primary: #b84045;
 $color-secondary: #c3b144;
-$color-accent: #b34068;
 
 .github-corner {
   position: absolute;
@@ -67,6 +66,24 @@ pre {
   }
 }
 
+select {
+  display: block;
+  width: 100%;
+  max-width: 600px;
+  height: 45px;
+  margin-right: auto;
+  margin-left: auto;
+  padding: .5rem 1rem;
+  background: transparent;
+  border: 1px solid #333;
+  border-radius: 0;
+  font-size: 1rem;
+  line-height: 45px;
+  &:focus {
+    outline: none;
+  }
+}
+
 ::selection {
   background-color: $color-secondary;
 }
@@ -95,6 +112,19 @@ pre {
   &:hover {
     background: $color-primary;
     color: #fff;
+  }
+}
+
+
+.list-inline {
+  padding: 0;
+  font-size: 0;
+  list-style: none;
+  > li {
+    display: inline-block;
+    margin-right: .5rem;
+    margin-left: .5rem;
+    font-size: 1rem;
   }
 }
 
@@ -148,6 +178,7 @@ pre {
   left: 0;
   z-index: 9999;
   width: 100%;
+  min-width: 320px;
   height: 50px;
   background: $color-primary;
   a {
@@ -176,6 +207,12 @@ pre {
     li {
       display: inline-block;
       font-size: 1rem;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    > ul span {
+      display: none;
     }
   }
 }
