@@ -78,6 +78,7 @@ pre {
 .btn {
   display: inline-block;
   padding: .85rem 1.2rem;
+  background: transparent;
   border: 1px solid $color-primary;
   border-radius: 3px;
   color: $color-primary;
@@ -141,19 +142,65 @@ pre {
   }
 }
 
+#demo-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 100%;
+  height: 50px;
+  background: $color-primary;
+  a {
+    @extend .btn;
+    display: block;
+    height: 50px;
+    margin: 0;
+    border: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    line-height: 50px;
+    color: #fff;
+    background: transparent;
+    &:hover {
+      color: #fff;
+      background: darken($color-primary, 10%);
+    }
+  }
+  > a {
+    float: left;
+  }
+  > ul {
+    float: right;
+    list-style: none;
+    font-size: 0;
+    li {
+      display: inline-block;
+      font-size: 1rem;
+    }
+  }
+}
+
 section {
   position: relative;
   padding: 8rem 2rem;
   text-align: center;
+  h1,
+  h2,
+  h3 {
+    font-weight: normal;
+    line-height: 1.2;
+  }
+  h1 {
+    margin: 0 0 .5em 0;
+    font-size: 3.2rem;
+  }
   h2 {
     margin: 0 0 .7em 0;
     font-size: 3rem;
-    font-weight: normal;
   }
   h3 {
     margin: 2em 0 .6em 0;
     font-size: 1.4rem;
-    font-weight: normal;
   }
 }
 
@@ -180,6 +227,7 @@ section {
   text-align: center;
   padding: 4rem 2rem;
   background: #e5e5e5;
+  font-size: .9rem;
   p {
     margin: 0;
     span {
