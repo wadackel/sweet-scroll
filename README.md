@@ -9,7 +9,7 @@ sweet-scroll.js
 
 Modern and the sweet smooth scroll library.
 
-[View Demo](http://__@TODO__)
+[View Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
 
 
 ## FEATURE
