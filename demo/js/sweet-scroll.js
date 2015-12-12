@@ -218,7 +218,9 @@
   function getOffset(el) {
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
-    if (!el.getClientRects().length) return { top: 0, left: 0 };
+    if (!el || el && !el.getClientRects().length) {
+      return { top: 0, left: 0 };
+    }
     var rect = el.getBoundingClientRect();
     if (rect.width || rect.height) {
       var scroll = {};
