@@ -66,6 +66,17 @@ pre {
   }
 }
 
+code {
+  display: inline-block;
+  margin-right: .1em;
+  margin-left: .1em;
+  padding: .05em .2em;
+  background: lighten($color-secondary, 20%);
+  border-radius: 3px;
+  font-size: .98em;
+  font-family: Consolas,"Liberation Mono",Menlo,Courier,monospace;
+}
+
 select {
   display: block;
   width: 100%;

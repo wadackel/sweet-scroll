@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Container | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./images/favicon.ico">
+  <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <style type="text/css">
+    #container {
+      overflow-x: hidden;
+      overflow-y: auto;
+      width: 100%;
+      height: 400px;
+      padding: 2rem;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      text-align: left;
+    }
+    #container h2 {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header id="demo-header">
+    <a href="./"><i class="fa fa-chevron-left"></i> Back front</a>
+    <ul>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/container.html"><i class="fa fa-code"></i> <span>Source</span></i></a></li>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> <span>Document on GitHub</span></i></a></li>
+    </ul>
+  </header>
+  <section id="first">
+    <h1>Container</h1>
+    <p>In the following example we have specified in the container for scrolling the <code>#container</code>.</p>
+    <div id="container">
+      <h2 id="heading1">Heading1</h2>
+      <p>
+        <a href="#heading2">Go to Heading2</a><br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...
+      </p>
+      <h2 id="heading2">Heading2</h2>
+      <p>
+        <a href="#demo-footer">Go to Footer</a><br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...<br>
+        ...
+      </p>
+      <h2 id="demo-footer">Footer</h2>
+      <p><a href="#top">Back to top</a></p>
+    </div>
+  </section>
+
+  <script src="../js/sweet-scroll.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var sweetScroll = new SweetScroll({
+        trigger: "a[href^='#']"
+      }, "#container");
+    }, false);
+  </script>
+</body>
+</html>
