@@ -610,6 +610,13 @@
   var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
 
   var SweetScroll = (function () {
+
+    /**
+     * SweetScroll constructor
+     * @param {object}
+     * @param {string}
+     */
+
     function SweetScroll() {
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
       var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
@@ -623,23 +630,34 @@
       this._bindContainerClick();
     }
 
+    /**
+     * Scroll animation to the specified position
+     * @param {any}
+     * @param {object}
+     * @return {void}
+     */
+
+    // Default options
+
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
         var _this = this;
 
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
-
-        this.stop();
-
         var container = this.container;
 
         var params = merge({}, this.options, options);
         var offset = this._parseCoodinate(params.offset);
         var scroll = this._parseCoodinate(distance);
 
+        // Stop current animation
+        this.stop();
+
+        // Does not move if the container is not found
         if (!container) return;
 
+        // Using the coordinates in the case of CSS Selector
         if (!scroll && isString(distance)) {
           if (distance === "#") {
             scroll = { top: 0, left: 0 };
@@ -653,15 +671,18 @@
 
         if (!scroll) return;
 
+        // Apply `offset` value
         if (offset) {
           scroll.top += offset.top;
           scroll.left += offset.left;
         }
 
+        // If the header is present apply the height
         if (this.header) {
           scroll.top -= this.header.clientHeight;
         }
 
+        // Determine the final scroll coordinates
         var frameSize = undefined;
         var size = undefined;
         if (isRootContainer(container)) {
@@ -684,15 +705,27 @@
           scroll.left = getScroll(container, "x");
         }
 
+        // Call `beforeScroll`
+        // Stop scrolling when it returns false
         if (this._hook(params.beforeScroll, scroll) === false) return;
 
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
+          // Unbind the scroll stop events, And call `afterScroll`
           _this._unbindContainerStop();
           _this._hook(params.afterScroll, scroll);
         });
 
+        // Bind the scroll stop events
         this._bindContainerStop();
       }
+
+      /**
+       * Scroll animation to the specified top position
+       * @param {any}
+       * @param {object}
+       * @return {void}
+       */
+
     }, {
       key: "toTop",
       value: function toTop(distance) {
@@ -703,6 +736,14 @@
           horizontalScroll: false
         }));
       }
+
+      /**
+       * Scroll animation to the specified left position
+       * @param {any}
+       * @param {object}
+       * @return {void}
+       */
+
     }, {
       key: "toLeft",
       value: function toLeft(distance) {
@@ -713,6 +754,13 @@
           horizontalScroll: true
         }));
       }
+
+      /**
+       * Stop the current animation
+       * @param {boolean}
+       * @return {void}
+       */
+
     }, {
       key: "stop",
       value: function stop() {
@@ -720,6 +768,13 @@
 
         this.tween.stop(gotoEnd);
       }
+
+      /**
+       * Destroy SweetScroll instance
+       * @param {boolean}
+       * @return {void}
+       */
+
     }, {
       key: "destroy",
       value: function destroy() {
@@ -727,6 +782,14 @@
         this._unbindContainerClick();
         this._unbindContainerStop();
       }
+
+      /**
+       * Get the container for the scroll, depending on the options.
+       * @param {string}
+       * @return {HTMLElement}
+       * @private
+       */
+
     }, {
       key: "_getContainer",
       value: function _getContainer(selector) {
@@ -742,6 +805,13 @@
         }
         return scrollableFind(selector, direction);
       }
+
+      /**
+       * Bind a click event to the container
+       * @return {void}
+       * @private
+       */
+
     }, {
       key: "_bindContainerClick",
       value: function _bindContainerClick() {
@@ -749,6 +819,13 @@
         this._containerClickListener = this._handleContainerClick.bind(this);
         this.container.addEventListener("click", this._containerClickListener, false);
       }
+
+      /**
+       * Unbind a click event to the container
+       * @return {void}
+       * @private
+       */
+
     }, {
       key: "_unbindContainerClick",
       value: function _unbindContainerClick() {
@@ -756,6 +833,13 @@
         this.container.removeEventListener("click", this._containerClickListener, false);
         this._containerClickListener = null;
       }
+
+      /**
+       * Bind the scroll stop of events
+       * @return {void}
+       * @private
+       */
+
     }, {
       key: "_bindContainerStop",
       value: function _bindContainerStop() {
@@ -767,6 +851,13 @@
         container.addEventListener("touchstart", this._stopScrollListener, false);
         container.addEventListener("touchmove", this._stopScrollListener, false);
       }
+
+      /**
+       * Unbind the scroll stop of events
+       * @return {void}
+       * @private
+       */
+
     }, {
       key: "_unbindContainerStop",
       value: function _unbindContainerStop() {
@@ -778,6 +869,15 @@
         container.removeEventListener("touchmove", this._stopScrollListener, false);
         this._stopScrollListener = null;
       }
+
+      /**
+       * Call the specified callback
+       * @param {string}
+       * @param {...any}
+       * @return {void}
+       * @private
+       */
+
     }, {
       key: "_hook",
       value: function _hook(callback) {
@@ -789,61 +889,89 @@
           return callback.apply(this, args);
         }
       }
+
+      /**
+       * Parse the value of coordinate
+       * @param {any}
+       * @return {object}
+       * @private
+       */
+
     }, {
       key: "_parseCoodinate",
       value: function _parseCoodinate(coodinate) {
         var enableTop = this.options.verticalScroll;
         var scroll = { top: 0, left: 0 };
 
+        // Object
         if (hasProp(coodinate, "top") || hasProp(coodinate, "left")) {
           scroll = merge(scroll, coodinate);
-        } else if (isArray(coodinate)) {
-          if (coodinate.length === 2) {
-            scroll.top = coodinate[0];
-            scroll.left = coodinate[1];
-          } else {
-            scroll.top = enableTop ? coodinate[0] : 0;
-            scroll.left = !enableTop ? coodinate[0] : 0;
-          }
-        } else if (isNumeric(coodinate)) {
-          scroll.top = enableTop ? coodinate : 0;
-          scroll.left = !enableTop ? coodinate : 0;
-        } else if (isString(coodinate)) {
-          coodinate = removeSpaces(coodinate);
 
-          if (/^\d+,\d+$/.test(coodinate)) {
-            coodinate = coodinate.split(",");
-            scroll.top = coodinate[0];
-            scroll.left = coodinate[1];
-          } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(coodinate)) {
-            var top = coodinate.match(/top:(\d+)/);
-            var left = coodinate.match(/left:(\d+)/);
-            scroll.top = top ? top[1] : 0;
-            scroll.left = left ? left[1] : 0;
-          } else if (this.container && /^(\+|-)=(\d+)$/.test(coodinate)) {
-            var current = getScroll(this.container, enableTop ? "y" : "x");
-            var _matches = coodinate.match(/^(\+|-)\=(\d+)$/);
-            var op = _matches[1];
-            var value = parseInt(_matches[2], 10);
-            if (op === "+") {
-              scroll.top = enableTop ? current + value : 0;
-              scroll.left = !enableTop ? current + value : 0;
+          // Array
+        } else if (isArray(coodinate)) {
+            if (coodinate.length === 2) {
+              scroll.top = coodinate[0];
+              scroll.left = coodinate[1];
             } else {
-              scroll.top = enableTop ? current - value : 0;
-              scroll.left = !enableTop ? current - value : 0;
+              scroll.top = enableTop ? coodinate[0] : 0;
+              scroll.left = !enableTop ? coodinate[0] : 0;
             }
-          } else {
-            return null;
-          }
-        } else {
-          return null;
-        }
+
+            // Number
+          } else if (isNumeric(coodinate)) {
+              scroll.top = enableTop ? coodinate : 0;
+              scroll.left = !enableTop ? coodinate : 0;
+
+              // String
+            } else if (isString(coodinate)) {
+                coodinate = removeSpaces(coodinate);
+
+                // "{n},{n}" (Array like syntax)
+                if (/^\d+,\d+$/.test(coodinate)) {
+                  coodinate = coodinate.split(",");
+                  scroll.top = coodinate[0];
+                  scroll.left = coodinate[1];
+
+                  // "top:{n}, left:{n}" (Object like syntax)
+                } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(coodinate)) {
+                    var top = coodinate.match(/top:(\d+)/);
+                    var left = coodinate.match(/left:(\d+)/);
+                    scroll.top = top ? top[1] : 0;
+                    scroll.left = left ? left[1] : 0;
+
+                    // "+={n}", "-={n}" (Relative position)
+                  } else if (this.container && /^(\+|-)=(\d+)$/.test(coodinate)) {
+                      var current = getScroll(this.container, enableTop ? "y" : "x");
+                      var _matches = coodinate.match(/^(\+|-)\=(\d+)$/);
+                      var op = _matches[1];
+                      var value = parseInt(_matches[2], 10);
+                      if (op === "+") {
+                        scroll.top = enableTop ? current + value : 0;
+                        scroll.left = !enableTop ? current + value : 0;
+                      } else {
+                        scroll.top = enableTop ? current - value : 0;
+                        scroll.left = !enableTop ? current - value : 0;
+                      }
+                    } else {
+                      return null;
+                    }
+              } else {
+                return null;
+              }
 
         scroll.top = parseInt(scroll.top);
         scroll.left = parseInt(scroll.left);
 
         return scroll;
       }
+
+      /**
+       * Handling of scroll stop event
+       * @param {Event}
+       * @return {void}
+       * @private
+       */
+
     }, {
       key: "_handleStopScroll",
       value: function _handleStopScroll(e) {
@@ -855,6 +983,14 @@
           e.preventDefault();
         }
       }
+
+      /**
+       * Handling of container click event
+       * @param {Event}
+       * @return {void}
+       * @private
+       */
+
     }, {
       key: "_handleContainerClick",
       value: function _handleContainerClick(e) {
@@ -862,6 +998,7 @@
 
         var el = e.target;
 
+        // Explore parent element until the trigger selector matches
         for (; el && el !== doc; el = el.parentNode) {
           if (!matches(el, options.trigger)) continue;
           var data = el.getAttribute("data-scroll");
@@ -882,6 +1019,14 @@
           }
         }
       }
+
+      /**
+       * Parse the data-scroll-options attribute
+       * @param {HTMLElement}
+       * @return {object}
+       * @private
+       */
+
     }, {
       key: "_parseDataOptions",
       value: function _parseDataOptions(el) {
@@ -892,16 +1037,20 @@
     return SweetScroll;
   })();
 
+  // Export SweetScroll class
+
   SweetScroll.defaults = {
-    trigger: "[data-scroll]",
-    header: "[data-scroll-header]",
-    duration: 1000,
-    delay: 0,
-    easing: "easeOutQuint",
-    offset: 0,
-    verticalScroll: true,
-    horizontalScroll: false,
-    stopScroll: true,
+    trigger: "[data-scroll]", // Selector for trigger (must be a valid css selector)
+    header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
+    duration: 1000, // Specifies animation duration in integer
+    delay: 0, // Specifies timer for delaying the execution of the scroll in milliseconds
+    easing: "easeOutQuint", // Specifies the pattern of easing
+    offset: 0, // Specifies the value to offset the scroll position in pixels
+    verticalScroll: true, // Enable the vertical scroll
+    horizontalScroll: false, // Enable the horizontal scroll
+    stopScroll: true, // When fired wheel or touchstart events to stop scrolling
+
+    // Callbacks
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null
