@@ -12,7 +12,7 @@ Modern and the sweet smooth scroll library.
 [View Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
 
 
-## FEATURE
+## FEATURES
 
 * Dependecy-free!!
 * ECMAScript 2015(ES6) frendly
@@ -22,41 +22,58 @@ Modern and the sweet smooth scroll library.
 * Supports container for the scroll
 
 
-## INSTALL
+## USAGE
 
-### via NPM
+### 1. Install
 
-```
+#### via NPM
+
+```bash
 $ npm install sweet-scroll
 ```
 
-#### use
+##### use
 
 ```javascript
 import SweetScroll from "sweet-scroll"
-
-const sweetScroll = new SweetScroll({/* some options */});
 ```
 
 
-### via MANUAL
+#### via MANUAL
 
 1. Download the [sweet-scroll.min.js](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/sweet-scroll.min.js)
 2. Load it in the script tag.
 
-```
+```html
 <script src="sweet-scroll.min.js"></script>
 ```
 
-#### use
+
+
+### 2. Setup of HTML
+
+```html
+<a href="#intro" data-scroll>Go to Introduction</a>
+...
+<div id="intro">Introduction</div>
+```
+
+
+
+### 3. Initialize SweetScroll
 
 ```javascript
-var sweetScroll = new SweetScroll({/* some options */});
+const sweetScroll = new SweetScroll({/* some options */});
 ```
 
 
 
 ## METHODS
+
+* `to()`
+* `toTop()`
+* `toLeft()`
+* `destory()`
 
 ```
 @TODO
@@ -66,8 +83,24 @@ var sweetScroll = new SweetScroll({/* some options */});
 
 ## OPTIONS
 
-```
-@TODO
+```javascript
+{
+  trigger: "[data-scroll]",       // Selector for trigger (must be a valid css selector)
+  header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
+  duration: 1000,                 // Specifies animation duration in integer
+  delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds.
+  easing: "easeOutQuint",         // Specifies the pattern of easing
+  offset: 0,                      // Specifies the value to offset the scroll position in pixels
+  verticalScroll: true,           // Enable the vertical scroll
+  horizontalScroll: false,        // Enable the horizontal scroll
+  stopScroll: true,               // Stop scrolling in any of the events of the wheel or touchmove
+  stopPropagation: true,          // Stop the bubbling of trigger element click events
+
+  // Callbacks
+  beforeScroll: null,
+  afterScroll: null,
+  cancelScroll: null
+}
 ```
 
 
@@ -107,7 +140,23 @@ Supports the following easing.
 * `easeOutBounce`
 * `easeInOutBounce`
 
-[Animation Sample](http://__@TODO__)
+[Animation Sample](http://tsuyoshiwada.github.io/sweet-scroll/easings.html)
+
+
+
+### Specifies the container
+
+```javascript
+__@TODO__
+```
+
+
+### Specifies a fixed header
+
+```javascript
+__@TODO__
+```
+
 
 
 ## BROWSER SUPPORT
