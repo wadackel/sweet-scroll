@@ -64,6 +64,41 @@ describe("SweetScroll", () => {
       assert.deepEqual(h._parseCoodinate("200"), {top: 0, left: 200});
       assert.deepEqual(h._parseCoodinate([30]), {top: 0, left: 30});
     });
+
+    describe("Should be parse the relative coodinate", () => {
+      it("Vertical and Horizontal", () => {
+        const sweetScroll = getInstance({verticalScroll: true, horizontalScroll: true});
+        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 100, left: 0});
+        sweetScroll.container.scrollTop = 100;
+        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 200, left: 0});
+        sweetScroll.container.scrollTop = 200;
+        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 150, left: 0});
+        sweetScroll.container.scrollTop = 150;
+        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 100, left: 0});
+      });
+
+      it("Vertical only", () => {
+        const sweetScroll = getInstance({verticalScroll: true, horizontalScroll: false});
+        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 100, left: 0});
+        sweetScroll.container.scrollTop = 100;
+        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 200, left: 0});
+        sweetScroll.container.scrollTop = 200;
+        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 150, left: 0});
+        sweetScroll.container.scrollTop = 150;
+        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 100, left: 0});
+      });
+
+      it("Horizontal only", () => {
+        const sweetScroll = getInstance({verticalScroll: false, horizontalScroll: true});
+        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 0, left: 100});
+        sweetScroll.container.scrollLeft = 100;
+        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 0, left: 200});
+        sweetScroll.container.scrollLeft = 200;
+        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 0, left: 150});
+        sweetScroll.container.scrollLeft = 150;
+        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 0, left: 100});
+      });
+    });
   });
 
   describe("Callbacks", () => {
