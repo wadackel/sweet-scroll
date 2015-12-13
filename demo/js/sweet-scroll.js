@@ -609,7 +609,7 @@
       babelHelpers.classCallCheck(this, SweetScroll);
 
       this.options = merge({}, SweetScroll.defaults, options);
-      this.container = scrollableFind(container);
+      this.container = this._getContainer(container);
       this.header = $(this.options.header);
       this.el = $$(this.options.trigger);
       this.tween = new ScrollTween(this.container);
@@ -719,6 +719,21 @@
         this.stop();
         this._unbindContainerClick();
         this._unbindContainerStop();
+      }
+    }, {
+      key: "_getContainer",
+      value: function _getContainer(selector) {
+        var _options = this.options;
+        var verticalScroll = _options.verticalScroll;
+        var horizontalScroll = _options.horizontalScroll;
+
+        var direction = undefined;
+        if (verticalScroll || verticalScroll && horizontalScroll) {
+          direction = "y";
+        } else if (horizontalScroll) {
+          direction = "x";
+        }
+        return scrollableFind(selector, direction);
       }
     }, {
       key: "_bindContainerClick",

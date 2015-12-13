@@ -25,7 +25,7 @@ class SweetScroll {
 
   constructor(options = {}, container = "body, html") {
     this.options = Util.merge({}, SweetScroll.defaults, options);
-    this.container = Dom.scrollableFind(container);
+    this.container = this._getContainer(container);
     this.header = $(this.options.header);
     this.el = $$(this.options.trigger);
     this.tween = new ScrollTween(this.container);
@@ -119,6 +119,17 @@ class SweetScroll {
     this.stop();
     this._unbindContainerClick();
     this._unbindContainerStop();
+  }
+
+  _getContainer(selector) {
+    const {verticalScroll, horizontalScroll} = this.options;
+    let direction;
+    if (verticalScroll || (verticalScroll && horizontalScroll)) {
+      direction = "y";
+    } else if (horizontalScroll) {
+      direction = "x";
+    }
+    return Dom.scrollableFind(selector, direction);
   }
 
   _bindContainerClick() {
