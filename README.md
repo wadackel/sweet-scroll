@@ -68,20 +68,9 @@ const sweetScroll = new SweetScroll({/* some options */});
 
 
 
-## METHODS
-
-* `to()`
-* `toTop()`
-* `toLeft()`
-* `destory()`
-
-```
-@TODO
-```
-
-
-
 ## OPTIONS
+
+The following options are applied by default. It can be customized as needed.
 
 ```javascript
 {
@@ -93,7 +82,7 @@ const sweetScroll = new SweetScroll({/* some options */});
   offset: 0,                      // Specifies the value to offset the scroll position in pixels
   verticalScroll: true,           // Enable the vertical scroll
   horizontalScroll: false,        // Enable the horizontal scroll
-  stopScroll: true,               // Stop scrolling in any of the events of the wheel or touchmove
+  stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
   stopPropagation: true,          // Stop the bubbling of trigger element click events
 
   // Callbacks
@@ -108,55 +97,118 @@ const sweetScroll = new SweetScroll({/* some options */});
 
 Supports the following easing.
 
-* `linear`
-* `easeInQuad`
-* `easeOutQuad`
-* `easeInOutQuad`
-* `easeInCubic`
-* `easeOutCubic`
-* `easeInOutCubic`
-* `easeInQuart`
-* `easeOutQuart`
-* `easeInOutQuart`
-* `easeInQuint`
-* `easeOutQuint`
-* `easeInOutQuint`
-* `easeInSine`
-* `easeOutSine`
-* `easeInOutSine`
-* `easeInExpo`
-* `easeOutExpo`
-* `easeInOutExpo`
-* `easeInCirc`
-* `easeOutCirc`
-* `easeInOutCirc`
-* `easeInElastic`
-* `easeOutElastic`
-* `easeInOutElastic`
-* `easeInBack`
-* `easeOutBack`
-* `easeInOutBack`
-* `easeInBounce`
-* `easeOutBounce`
-* `easeInOutBounce`
 
-[Animation Sample](http://tsuyoshiwada.github.io/sweet-scroll/easings.html)
+* **Normal**
+    - `linear`
+* **Quad**
+    - `easeInQuad`
+    - `easeOutQuad`
+    - `easeInOutQuad`
+* **Cubic**
+    - `easeInCubic`
+    - `easeOutCubic`
+    - `easeInOutCubic`
+* **Quart**
+    - `easeInQuart`
+    - `easeOutQuart`
+    - `easeInOutQuart`
+* **Quint**
+    - `easeInQuint`
+    - `easeOutQuint` (default)
+    - `easeInOutQuint`
+* **Sine**
+    - `easeInSine`
+    - `easeOutSine`
+    - `easeInOutSine`
+* **Expo**
+    - `easeInExpo`
+    - `easeOutExpo`
+    - `easeInOutExpo`
+* **Circ**
+    - `easeInCirc`
+    - `easeOutCirc`
+    - `easeInOutCirc`
+* **Elastic**
+    - `easeInElastic`
+    - `easeOutElastic`
+    - `easeInOutElastic`
+* **Back**
+    - `easeInBack`
+    - `easeOutBack`
+    - `easeInOutBack`
+* **Bounce**
+    - `easeInBounce`
+    - `easeOutBounce`
+    - `easeInOutBounce`
+
+[Live demo](http://tsuyoshiwada.github.io/sweet-scroll/easings.html)
 
 
 
 ### Specifies the container
 
+In the following example we have specified in the container for scrolling the `#container`.
+
+```html
+<div id="container">
+  <a href="#heading2" data-scroll>Go to Heading2</a>
+  ...
+  <h2 id="heading2">Heading2</h2>
+</div>
+```
+
 ```javascript
-__@TODO__
+const sweetScroll = new SweetScroll({/* some options */}, "#container");
 ```
 
 
 ### Specifies a fixed header
 
-```javascript
-__@TODO__
+Add the `data-scroll-header` attribute in order to offset the height of the fixed header.
+
+```html
+<header data-scroll-header></header>
 ```
 
+Specify the CSS Selector in `header` option instead of the `data-scroll-header` attribute.
+
+```javascript
+const sweetScroll = new SweetScroll({
+  header: "#header"
+});
+```
+
+
+## API
+
+* `new SweetScroll(options = {}, container = "body, html")`
+* `to(distance, options = {})`
+* `toTop(distance, options = {})`
+* `toLeft(distance, options = {})`
+* `destroy()`
+
+`distance` to can specify the CSS Selector or scroll position.
+
+**Example:**
+
+```javascript
+const SweetScroll = new SweetScroll();
+
+// CSS Selector of target element
+sweetScroll.to("#footer");
+
+// Object
+sweetScroll.to({top: 1000, left: 20});
+
+// Array (top:0, left:1000)
+sweetScroll.to([0, 1000]);
+
+// Number (Priority to vertical scroll position. by default.)
+sweetScroll.to(500);
+
+// String (Like object syntax)
+sweetScroll.to("top: 500, left: 100");
+```
 
 
 ## BROWSER SUPPORT
@@ -179,4 +231,34 @@ Released under the [MIT Licence](https://raw.githubusercontent.com/tsuyoshiwada/
 
 ## DEVELOPMENT
 
-__@TODO__
+Initialization of the project.
+
+```bash
+$ cd /your/project/dir
+$ git clone https://github.com/tsuyoshiwada/sweet-scroll.git
+```
+
+Install some dependencies.
+
+```bash
+$ npm install
+```
+
+Start the development.  
+You I can access the `http://localhost:3000/`.
+
+```bash
+$ npm start
+```
+
+Run lint and testing.
+
+```bash
+$ npm test
+```
+
+Generates build file.
+
+```bash
+$ npm run build
+```
