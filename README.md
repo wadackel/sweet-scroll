@@ -83,7 +83,6 @@ The following options are applied by default. It can be customized as needed.
   verticalScroll: true,           // Enable the vertical scroll
   horizontalScroll: false,        // Enable the horizontal scroll
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-  stopPropagation: true,          // Stop the bubbling of trigger element click events
 
   // Callbacks
   beforeScroll: null,

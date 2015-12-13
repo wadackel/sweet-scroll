@@ -18,7 +18,6 @@ class SweetScroll {
     verticalScroll: true,
     horizontalScroll: false,
     stopScroll: true,
-    stopPropagation: true,
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null
@@ -225,7 +224,7 @@ class SweetScroll {
         this.stop();
       }
     } else {
-      e.stopPropagation();
+      e.preventDefault();
     }
   }
 
@@ -242,7 +241,7 @@ class SweetScroll {
       options = Util.merge({}, options, dataOptions);
 
       e.preventDefault();
-      if (options.stopPropagation) e.stopPropagation();
+      e.stopPropagation();
 
       if (options.horizontalScroll && options.verticalScroll) {
         this.to(href, options);
