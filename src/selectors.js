@@ -1,8 +1,10 @@
 export function $(selector, context = null) {
+  if (!selector) return;
   return (context == null ? document : context).querySelector(selector);
 }
 
 export function $$(selector, context = null) {
+  if (!selector) return;
   return (context == null ? document : context).querySelectorAll(selector);
 }
 

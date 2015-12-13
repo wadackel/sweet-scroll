@@ -47,12 +47,14 @@
   function $(selector) {
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
+    if (!selector) return;
     return (context == null ? document : context).querySelector(selector);
   }
 
   function $$(selector) {
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
+    if (!selector) return;
     return (context == null ? document : context).querySelectorAll(selector);
   }
 
