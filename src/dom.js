@@ -17,7 +17,7 @@ export function isRootContainer(el) {
 
 function getScrollable(selectors, direction = "y", all = true) {
   const method = directionMethodMap[direction];
-  const elements = $$(selectors);
+  const elements = selectors instanceof HTMLElement ? [selectors] : $$(selectors);
   const scrollables = [];
   const $div = document.createElement("div");
 

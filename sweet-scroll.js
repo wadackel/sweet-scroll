@@ -171,7 +171,7 @@
     var all = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
     var method = directionMethodMap[direction];
-    var elements = $$(selectors);
+    var elements = selectors instanceof HTMLElement ? [selectors] : $$(selectors);
     var scrollables = [];
     var $div = document.createElement("div");
 
@@ -614,7 +614,7 @@
     /**
      * SweetScroll constructor
      * @param {object}
-     * @param {string}
+     * @param {string} | {HTMLElement}
      */
 
     function SweetScroll() {
@@ -785,7 +785,7 @@
 
       /**
        * Get the container for the scroll, depending on the options.
-       * @param {string}
+       * @param {string} | {HTMLElement}
        * @return {HTMLElement}
        * @private
        */

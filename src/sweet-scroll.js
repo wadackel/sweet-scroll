@@ -30,7 +30,7 @@ class SweetScroll {
   /**
    * SweetScroll constructor
    * @param {object}
-   * @param {string}
+   * @param {string} | {HTMLElement}
    */
   constructor(options = {}, container = "body, html") {
     this.options = Util.merge({}, SweetScroll.defaults, options);
@@ -170,7 +170,7 @@ class SweetScroll {
 
   /**
    * Get the container for the scroll, depending on the options.
-   * @param {string}
+   * @param {string} | {HTMLElement}
    * @return {HTMLElement}
    * @private
    */
