@@ -7,8 +7,12 @@
     "start": "gulp start",
     "test": "gulp test",
     "build": "gulp build",
-    "demo": "gulp demo"
+    "lint": "gulp lint"
   },
+  "files": [
+    "sweet-scroll.js",
+    "sweet-scroll.min.js"
+  ],
   "keywords": [
     "smooth scroll",
     "scroll",
