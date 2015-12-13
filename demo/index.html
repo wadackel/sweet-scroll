@@ -18,7 +18,7 @@
       <p>Modern and the <span>sweet</span> smooth scroll library.</p>
       <p>
         <a class="btn" href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> Document on GitHub</a>
-        <a class="btn" href="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/sweet-scroll.min.js"><i class="fa fa-cloud-download"></i> Download</a>
+        <a class="btn" href="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/sweet-scroll.min.js" download><i class="fa fa-cloud-download"></i> Download</a>
       </p>
       <a class="arrow" href="#features"><i class="fa fa-chevron-down"></i></a>
     </div>
@@ -29,7 +29,7 @@
     <ul>
       <li>Dependecy-free!!</li>
       <li>ECMAScript 2015(ES6) frendly</li>
-      <li>Use requestAnimationFrame API (IE9 works in setTimeout instead)</li>
+      <li>Use <code>requestAnimationFrame</code> API (IE9 works in <code>setTimeout</code> instead)</li>
       <li>Supports vertical and horizontal scroll</li>
       <li>Supports dynamic trigger</li>
       <li>Supports container for the scroll</li>
@@ -47,6 +47,32 @@
 const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
     <h3>3. Enjoy the smooth scrolling!!</h3>
     <p>Please detailed document viewed in <a href="https://github.com/tsuyoshiwada/sweet-scroll">GitHub</a></p>
+    <a class="page-top" href="#header"><i class="fa fa-angle-up"></i> Page top</a>
+  </section>
+
+  <section id="options">
+    <h2>Default Options</h2>
+    <p>
+      The following options are applied by default.<br>
+      It can be customized as needed.
+    </p>
+    <pre><code class="javascript">{
+  trigger: "[data-scroll]",       // Selector for trigger (must be a valid css selector)
+  header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
+  duration: 1000,                 // Specifies animation duration in integer
+  delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds.
+  easing: "easeOutQuint",         // Specifies the pattern of easing
+  offset: 0,                      // Specifies the value to offset the scroll position in pixels
+  verticalScroll: true,           // Enable the vertical scroll
+  horizontalScroll: false,        // Enable the horizontal scroll
+  stopScroll: true,               // Stop scrolling in any of the events of the wheel or touchmove
+  stopPropagation: true,          // Stop the bubbling of trigger element click events
+
+  // Callbacks
+  beforeScroll: null,
+  afterScroll: null,
+  cancelScroll: null
+}</code></pre>
     <a class="page-top" href="#header"><i class="fa fa-angle-up"></i> Page top</a>
   </section>
 
