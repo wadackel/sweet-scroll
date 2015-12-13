@@ -84,12 +84,11 @@ select {
   height: 45px;
   margin-right: auto;
   margin-left: auto;
-  padding: .5rem 1rem;
+  padding: .2rem 1rem;
   background: transparent;
   border: 1px solid #333;
   border-radius: 0;
   font-size: 1rem;
-  line-height: 45px;
   &:focus {
     outline: none;
   }
@@ -181,6 +180,12 @@ select {
     line-height: 40px;
     font-size: 1rem;
   }
+  
+  @media screen and (max-width: 768px) {
+    .btn {
+      font-size: .7rem;
+    }
+  }
 }
 
 #demo-header {
@@ -262,9 +267,13 @@ section {
     margin-left: auto;
     text-align: left;
   }
+  code {
+    background: lighten($color-primary, 5%);
+  }
 }
 
-#install {
+#options {
+  background: #e5e5e5;
 }
 
 #example {

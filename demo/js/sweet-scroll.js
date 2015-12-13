@@ -607,8 +607,8 @@
       babelHelpers.classCallCheck(this, SweetScroll);
 
       this.options = merge({}, SweetScroll.defaults, options);
-      this.containerSelector = container;
       this.container = scrollableFind(container);
+      this.header = $(this.options.header);
       this.el = $$(this.options.trigger);
       this.tween = new ScrollTween(this.container);
       this._bindContainerClick();
@@ -647,6 +647,10 @@
         if (offset) {
           scroll.top += offset.top;
           scroll.left += offset.left;
+        }
+
+        if (this.header) {
+          scroll.top -= this.header.clientHeight;
         }
 
         var frameSize = undefined;
@@ -845,6 +849,7 @@
 
   SweetScroll.defaults = {
     trigger: "[data-scroll]",
+    header: "[data-scroll-header]",
     duration: 1000,
     delay: 0,
     easing: "easeOutQuint",
