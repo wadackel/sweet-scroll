@@ -3,8 +3,8 @@ import * as Dom from "./dom"
 import {$, $$, matches} from "./selectors"
 import ScrollTween from "./scroll-tween"
 
-const doc = document;
 const win = window;
+const doc = document;
 const WHEEL_EVENT = ("onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll");
 
 class SweetScroll {
@@ -202,7 +202,7 @@ class SweetScroll {
         scroll.top = top ? top[1] : 0;
         scroll.left = left ? left[1] : 0;
 
-      } else if (/^(\+|-)=(\d+)$/.test(coodinate)) {
+      } else if (this.container && /^(\+|-)=(\d+)$/.test(coodinate)) {
         const current = Dom.getScroll(this.container, enableTop ? "y" : "x");
         const matches = coodinate.match(/^(\+|-)\=(\d+)$/);
         const op = matches[1];

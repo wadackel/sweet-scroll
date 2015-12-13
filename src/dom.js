@@ -19,6 +19,7 @@ function getScrollable(selectors, direction = "y", all = true) {
   const method = directionMethodMap[direction];
   const elements = $$(selectors);
   const scrollables = [];
+  const $div = document.createElement("div");
 
   for ( let i = 0; i < elements.length; i++ ) {
     let el = elements[i];
@@ -27,21 +28,23 @@ function getScrollable(selectors, direction = "y", all = true) {
       scrollables.push(el);
 
     } else {
+      $div.style.width = `${el.clientWidth + 1}px`;
+      $div.style.height = `${el.clientHeight + 1}px`;
+      el.appendChild($div);
+
       el[method] = 1;
       if( el[method] > 0 ) {
         scrollables.push(el);
       }
       el[method] = 0;
+
+      el.removeChild($div);
     }
 
     if ( !all && scrollables.length > 0 ) break;
   }
 
   return scrollables;
-}
-
-export function scrollableFindAll(selectors, direction) {
-  return getScrollable(selectors, direction, true);
 }
 
 export function scrollableFind(selectors, direction) {

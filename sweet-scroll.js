@@ -173,6 +173,7 @@
     var method = directionMethodMap[direction];
     var elements = $$(selectors);
     var scrollables = [];
+    var $div = document.createElement("div");
 
     for (var i = 0; i < elements.length; i++) {
       var el = elements[i];
@@ -180,11 +181,17 @@
       if (el[method] > 0) {
         scrollables.push(el);
       } else {
+        $div.style.width = el.clientWidth + 1 + "px";
+        $div.style.height = el.clientHeight + 1 + "px";
+        el.appendChild($div);
+
         el[method] = 1;
         if (el[method] > 0) {
           scrollables.push(el);
         }
         el[method] = 0;
+
+        el.removeChild($div);
       }
 
       if (!all && scrollables.length > 0) break;
@@ -598,8 +605,8 @@
     return ScrollTween;
   })();
 
-  var doc = document;
   var win = window;
+  var doc = document;
   var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
 
   var SweetScroll = (function () {
@@ -813,7 +820,7 @@
             var left = coodinate.match(/left:(\d+)/);
             scroll.top = top ? top[1] : 0;
             scroll.left = left ? left[1] : 0;
-          } else if (/^(\+|-)=(\d+)$/.test(coodinate)) {
+          } else if (this.container && /^(\+|-)=(\d+)$/.test(coodinate)) {
             var current = getScroll(this.container, enableTop ? "y" : "x");
             var _matches = coodinate.match(/^(\+|-)\=(\d+)$/);
             var op = _matches[1];
