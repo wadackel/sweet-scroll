@@ -157,7 +157,11 @@ In the following example we have specified in the container for scrolling the `#
 ```
 
 ```javascript
+// Specified in the CSS Selector
 const sweetScroll = new SweetScroll({/* some options */}, "#container");
+
+// Specified in the HTMLElement
+const sweetScroll = new SweetScroll({/* some options */}, document.getElementById("container"));
 ```
 
 
