@@ -44,27 +44,6 @@
   })();
 
   babelHelpers;
-  function $(selector) {
-    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-    if (!selector) return;
-    return (context == null ? document : context).querySelector(selector);
-  }
-
-  function $$(selector) {
-    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
-    if (!selector) return;
-    return (context == null ? document : context).querySelectorAll(selector);
-  }
-
-  function matches(el, selector) {
-    var matches = (el.document || el.ownerDocument).querySelectorAll(selector);
-    var i = matches.length;
-    while (--i >= 0 && matches.item(i) !== el) {}
-    return i > -1;
-  }
-
   var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
   var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
   var classTypes = {};
@@ -149,6 +128,27 @@
 
   function removeSpaces(str) {
     return str.replace(/\s*/g, "") || "";
+  }
+
+  function $(selector) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    if (!selector) return;
+    return (context == null ? document : context).querySelector(selector);
+  }
+
+  function $$(selector) {
+    var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+    if (!selector) return;
+    return (context == null ? document : context).querySelectorAll(selector);
+  }
+
+  function matches(el, selector) {
+    var matches = (el.document || el.ownerDocument).querySelectorAll(selector);
+    var i = matches.length;
+    while (--i >= 0 && matches.item(i) !== el) {}
+    return i > -1;
   }
 
   var directionMethodMap = {
@@ -831,19 +831,28 @@
         for (; el && el !== doc; el = el.parentNode) {
           if (!matches(el, options.trigger)) continue;
           var data = el.getAttribute("data-scroll");
+          var dataOptions = this._parseDataOptions(el);
           var href = data || el.getAttribute("href");
+
+          options = merge({}, options, dataOptions);
 
           e.preventDefault();
           if (options.stopPropagation) e.stopPropagation();
 
           if (options.horizontalScroll && options.verticalScroll) {
-            this.to(href);
+            this.to(href, options);
           } else if (options.verticalScroll) {
-            this.toTop(href);
+            this.toTop(href, options);
           } else if (options.horizontalScroll) {
-            this.toLeft(href);
+            this.toLeft(href, options);
           }
         }
+      }
+    }, {
+      key: "_parseDataOptions",
+      value: function _parseDataOptions(el) {
+        var options = el.getAttribute("data-scroll-options");
+        return options ? JSON.parse(options) : {};
       }
     }]);
     return SweetScroll;

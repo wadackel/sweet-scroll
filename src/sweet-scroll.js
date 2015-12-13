@@ -217,27 +217,35 @@ class SweetScroll {
   }
 
   _handleContainerClick(e) {
-    const {options} = this;
+    let {options} = this;
     let el = e.target;
 
     for (; el && el !== doc; el = el.parentNode) {
       if (!matches(el, options.trigger)) continue;
       const data = el.getAttribute("data-scroll");
+      const dataOptions = this._parseDataOptions(el);
       const href = data || el.getAttribute("href");
+
+      options = Util.merge({}, options, dataOptions);
 
       e.preventDefault();
       if (options.stopPropagation) e.stopPropagation();
 
       if (options.horizontalScroll && options.verticalScroll) {
-        this.to(href);
+        this.to(href, options);
 
       } else if (options.verticalScroll) {
-        this.toTop(href);
+        this.toTop(href, options);
 
       } else if (options.horizontalScroll) {
-        this.toLeft(href);
+        this.toLeft(href, options);
       }
     }
+  }
+
+  _parseDataOptions(el) {
+    const options = el.getAttribute("data-scroll-options");
+    return options ? JSON.parse(options) : {};
   }
 }
 
