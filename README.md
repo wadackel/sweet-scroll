@@ -18,7 +18,7 @@ Modern and the sweet smooth scroll library.
 * ECMAScript 2015(ES6) frendly
 * Use `requestAnimationFrame` API (IE9 works in `setTimeout` instead)
 * Supports vertical and horizontal scroll
-* Supports dynamic trigger
+* Supports dynamic trigger (event delegation)
 * Supports container for the scroll
 
 
@@ -179,6 +179,15 @@ const sweetScroll = new SweetScroll({
 ```
 
 
+### Override of options for each element
+
+You can override the default options by passing the option in `JSON` format to the `data-scroll-options`.
+
+```html
+<a href="#target" data-scroll data-scroll-options='{"easing": "easeOutBounce"}'>Go to Target</a>
+```
+
+
 ## API
 
 * `new SweetScroll(options = {}, container = "body, html")`
@@ -208,6 +217,10 @@ sweetScroll.to(500);
 
 // String (Like object syntax)
 sweetScroll.to("top: 500, left: 100");
+
+// String (Relative position)
+sweetScroll.to("+=500")
+sweetScroll.to("-=200")
 ```
 
 
