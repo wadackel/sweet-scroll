@@ -38,6 +38,11 @@ describe("SweetScroll", () => {
       assert(sweetScroll.container === getContainer());
     });
 
+    it("Should be match specified container", () => {
+      const sweetScroll = new SweetScroll({}, getContainer());
+      assert(sweetScroll.container === getContainer());
+    });
+
     it("Should be parse the coodinate", () => {
       // Vertical and Horizontal
       const vh = getInstance({verticalScroll: true, horizontalScroll: true});
