@@ -798,6 +798,18 @@
             var left = coodinate.match(/left:(\d+)/);
             scroll.top = top ? top[1] : 0;
             scroll.left = left ? left[1] : 0;
+          } else if (/^(\+|-)=(\d+)$/.test(coodinate)) {
+            var current = getScroll(this.container, enableTop ? "y" : "x");
+            var _matches = coodinate.match(/^(\+|-)\=(\d+)$/);
+            var op = _matches[1];
+            var value = parseInt(_matches[2], 10);
+            if (op === "+") {
+              scroll.top = enableTop ? current + value : 0;
+              scroll.left = !enableTop ? current + value : 0;
+            } else {
+              scroll.top = enableTop ? current - value : 0;
+              scroll.left = !enableTop ? current - value : 0;
+            }
           } else {
             return null;
           }

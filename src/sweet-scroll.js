@@ -192,6 +192,19 @@ class SweetScroll {
         scroll.top = top ? top[1] : 0;
         scroll.left = left ? left[1] : 0;
 
+      } else if (/^(\+|-)=(\d+)$/.test(coodinate)) {
+        const current = Dom.getScroll(this.container, enableTop ? "y" : "x");
+        const matches = coodinate.match(/^(\+|-)\=(\d+)$/);
+        const op = matches[1];
+        const value = parseInt(matches[2], 10);
+        if (op === "+") {
+          scroll.top = enableTop ? current + value : 0;
+          scroll.left = !enableTop ? current + value : 0;
+        } else {
+          scroll.top = enableTop ? current - value : 0;
+          scroll.left = !enableTop ? current - value : 0;
+        }
+
       } else {
         return null;
       }
