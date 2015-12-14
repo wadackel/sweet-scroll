@@ -797,13 +797,17 @@
         var verticalScroll = _options.verticalScroll;
         var horizontalScroll = _options.horizontalScroll;
 
-        var direction = undefined;
-        if (verticalScroll || verticalScroll && horizontalScroll) {
-          direction = "y";
-        } else if (horizontalScroll) {
-          direction = "x";
+        var container = undefined;
+
+        if (verticalScroll) {
+          container = scrollableFind(selector, "y");
         }
-        return scrollableFind(selector, direction);
+
+        if (!container && horizontalScroll) {
+          container = scrollableFind(selector, "x");
+        }
+
+        return container;
       }
 
       /**

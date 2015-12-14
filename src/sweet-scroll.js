@@ -176,13 +176,17 @@ class SweetScroll {
    */
   _getContainer(selector) {
     const {verticalScroll, horizontalScroll} = this.options;
-    let direction;
-    if (verticalScroll || (verticalScroll && horizontalScroll)) {
-      direction = "y";
-    } else if (horizontalScroll) {
-      direction = "x";
+    let container;
+
+    if (verticalScroll) {
+      container = Dom.scrollableFind(selector, "y");
     }
-    return Dom.scrollableFind(selector, direction);
+
+    if (!container && horizontalScroll) {
+      container = Dom.scrollableFind(selector, "x");
+    }
+
+    return container;
   }
 
   /**
