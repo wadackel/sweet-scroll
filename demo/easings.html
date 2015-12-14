@@ -116,8 +116,7 @@
 
       $easings.addEventListener("change", function() {
         var easing = $easings.options[$easings.selectedIndex].value;
-        sweetScroll.destroy();
-        sweetScroll = new SweetScroll({easing: easing});
+        sweetScroll.update({easing: easing});
       }, false);
     }, false);
   </script>
