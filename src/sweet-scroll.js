@@ -81,7 +81,7 @@ class SweetScroll {
 
     // If the header is present apply the height
     if (this.header) {
-      scroll.top -= this.header.clientHeight;
+      scroll.top = Math.max(0, scroll.top - this.header.clientHeight);
     }
 
     // Determine the final scroll coordinates
