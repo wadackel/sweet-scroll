@@ -20,7 +20,7 @@ Modern and the sweet smooth scroll library.
 * Supports vertical and horizontal scroll
 * Supports dynamic trigger (event delegation)
 * Supports container for the scroll
-
+* Supports many easing types
 
 ## USAGE
 
@@ -96,7 +96,6 @@ The following options are applied by default. It can be customized as needed.
 
 Supports the following easing.
 
-
 * **Normal**
     - `linear`
 * **Quad**
@@ -144,7 +143,9 @@ Supports the following easing.
 
 
 
-### Specifies the container
+### Customizing Tips
+
+#### Specifies the container
 
 In the following example we have specified in the container for scrolling the `#container`.
 
@@ -165,7 +166,7 @@ const sweetScroll = new SweetScroll({/* some options */}, document.getElementByI
 ```
 
 
-### Specifies a fixed header
+#### Specifies a fixed header
 
 Add the `data-scroll-header` attribute in order to offset the height of the fixed header.
 
@@ -182,7 +183,7 @@ const sweetScroll = new SweetScroll({
 ```
 
 
-### Override of options for each element
+#### Override of options for each element
 
 You can override the default options by passing the option in `JSON` format to the `data-scroll-options`.
 
@@ -197,7 +198,12 @@ You can override the default options by passing the option in `JSON` format to t
 * `to(distance, options = {})`
 * `toTop(distance, options = {})`
 * `toLeft(distance, options = {})`
+* `update(options = {})`
 * `destroy()`
+* **Callbacks**
+    - `beforeScroll: function(toScroll, trigger){}`
+    - `cancelScroll: function(){}`
+    - `after: function(toScroll, trigger){}`
 
 `distance` to can specify the CSS Selector or scroll position.
 
@@ -222,9 +228,129 @@ sweetScroll.to(500);
 sweetScroll.to("top: 500, left: 100");
 
 // String (Relative position)
-sweetScroll.to("+=500")
-sweetScroll.to("-=200")
+sweetScroll.to("+=500");
+sweetScroll.to("-=200");
 ```
+
+
+### new SweetScroll(options = {}, container = "body, html")
+
+**options: {object}**  
+**container: {string | HTMLElement}**  
+
+Will generate a SweetScroll instance.
+
+**Example:**
+
+```javascript
+const sweetScroll = new SweetScroll({
+  duration: 1200,
+  easing: "easeOutBounce"
+}, "#container");
+```
+
+
+### to(distance, options = {})
+
+**distance: {string | array | object}**  
+**options: {object}**
+
+Scroll animation to the specified `distance`.
+
+**Example:**
+
+```javascript
+sweetScroll.to({top: 1500, left: 400});
+```
+
+
+### toTop(distance, options = {})
+
+**distance: {string | array | object}**  
+**options: {object}**
+
+Vertical scroll animation to the specified `distance`.  
+
+**Example:**
+
+```javascript
+sweetScroll.toTop(0);
+```
+
+
+### toLeft(distance, options = {})
+
+**distance: {string | array | object}**  
+**options: {object}**
+
+Horizontal scroll animation to the specified `distance`.  
+
+**Example:**
+
+```javascript
+sweetScroll.toLeft(1500);
+```
+
+
+### update(options = {})
+
+**options: {object}**
+
+Will update the SweetScroll instance.  
+Primarily used in the case of option update.
+
+**Example:**
+
+```javascript
+sweetScroll.update({
+  trigger: "a[href^='#']"
+  duration: 3000
+});
+```
+
+
+### destroy()
+
+Will destroy the SweetScroll instance.  
+Disable of the method and event handler.
+
+**Example:**
+
+```javascript
+sweetScroll.destory();
+```
+
+
+### Callbacks
+
+In `beforeScroll` and `afterScroll`, you will pass the coordinates and the triggering element in the argument.  
+In addition, you can stop the scrolling by return a "beforeScroll" in "false".
+
+**Example:**
+
+```javascript
+const sweetScroll = new SweetScroll({
+
+  // Stop scrolling case of trigger element that contains the `is-disabled` class.
+  beforeScroll(toScroll, trigger) {
+    console.log("Before!!");
+    if (trigger && trigger.classList.contains("is-disabled")) {
+      return false;
+    }
+  },
+
+  // If the `wheel` or `touchstart` event is called
+  cancelScroll() {
+    console.log("Cancel!!");
+  },
+
+  // Scroll animation is complete
+  afterScroll(toScroll, trigger) {
+    console.log("After!!");
+  }
+});
+```
+
 
 
 ## BROWSER SUPPORT
