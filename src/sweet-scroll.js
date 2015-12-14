@@ -1,6 +1,6 @@
 import * as Util from "./utils"
 import * as Dom from "./dom"
-import {$, $$, matches} from "./selectors"
+import {$, matches} from "./selectors"
 import ScrollTween from "./scroll-tween"
 
 const win = window;
@@ -37,6 +37,7 @@ class SweetScroll {
     this.container = this._getContainer(container);
     this.header = $(this.options.header);
     this.tween = new ScrollTween(this.container);
+    this._trigger = null;
     this._bindContainerClick();
   }
 
@@ -50,7 +51,11 @@ class SweetScroll {
     const {container} = this;
     const params = Util.merge({}, this.options, options);
     const offset = this._parseCoodinate(params.offset);
+    const trigger = this._trigger;
     let scroll = this._parseCoodinate(distance);
+
+    // Remove the triggering elements which has been temporarily retained
+    this._trigger = null;
 
     // Stop current animation
     this.stop();
@@ -109,13 +114,13 @@ class SweetScroll {
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
-    if (this._hook(params.beforeScroll, scroll) === false) return;
+    if (this._hook(params.beforeScroll, scroll, trigger) === false) return;
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
       // Unbind the scroll stop events, And call `afterScroll`
       this._unbindContainerStop();
-      this._hook(params.afterScroll, scroll);
+      this._hook(params.afterScroll, scroll, trigger);
     });
 
     // Bind the scroll stop events
@@ -163,7 +168,9 @@ class SweetScroll {
    * @return {void}
    */
   update(options = {}) {
-    this.destroy();
+    this.stop();
+    this._unbindContainerClick();
+    this._unbindContainerStop();
     this.options = Util.merge({}, this.options, options);
     this.header = $(this.options.header);
     this._bindContainerClick();
@@ -178,6 +185,9 @@ class SweetScroll {
     this.stop();
     this._unbindContainerClick();
     this._unbindContainerStop();
+    this.container = null;
+    this.header = null;
+    this.tween = null;
   }
 
   /**
@@ -375,6 +385,9 @@ class SweetScroll {
 
       e.preventDefault();
       e.stopPropagation();
+
+      // Passes the trigger elements to callback
+      this._trigger = el;
 
       if (options.horizontalScroll && options.verticalScroll) {
         this.to(href, options);
