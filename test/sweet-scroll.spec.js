@@ -1,6 +1,7 @@
 import assert from "power-assert"
 import SweetScroll from "../src/sweet-scroll"
 
+
 // Helpers
 function trigger(el, type) {
   let e = document.createEvent("HTMLEvents");
@@ -103,6 +104,28 @@ describe("SweetScroll", () => {
         sweetScroll.container.scrollLeft = 150;
         assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 0, left: 100});
       });
+    });
+  });
+
+  describe("Update", () => {
+    it("Should be option updated", () => {
+      const sweetScroll = getInstance({
+        easing: "linear",
+        duration: 1000,
+        offset: -10
+      });
+
+      assert(sweetScroll.options.easing === "linear");
+      sweetScroll.update({easing: "easeOutExpo"});
+      assert(sweetScroll.options.easing === "easeOutExpo");
+
+      assert(sweetScroll.options.duration === 1000);
+      sweetScroll.update({duration: 1500});
+      assert(sweetScroll.options.duration === 1500);
+
+      assert(sweetScroll.options.offset === -10);
+      sweetScroll.update({offset: 0});
+      assert(sweetScroll.options.offset === 0);
     });
   });
 
