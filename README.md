@@ -324,7 +324,7 @@ sweetScroll.destory();
 ### Callbacks
 
 In `beforeScroll` and `afterScroll`, you will pass the coordinates and the triggering element in the argument.  
-In addition, you can stop the scrolling by return a "beforeScroll" in "false".
+In addition, you can stop the scrolling by return a `beforeScroll` in `false`.
 
 **Example:**
 
