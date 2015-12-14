@@ -625,7 +625,6 @@
       this.options = merge({}, SweetScroll.defaults, options);
       this.container = this._getContainer(container);
       this.header = $(this.options.header);
-      this.el = $$(this.options.trigger);
       this.tween = new ScrollTween(this.container);
       this._bindContainerClick();
     }
@@ -709,6 +708,7 @@
         // Stop scrolling when it returns false
         if (this._hook(params.beforeScroll, scroll) === false) return;
 
+        // Run the animation!!
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
           // Unbind the scroll stop events, And call `afterScroll`
           _this._unbindContainerStop();
@@ -767,6 +767,23 @@
         var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
         this.tween.stop(gotoEnd);
+      }
+
+      /**
+       * Update the instance
+       * @param {object}
+       * @return {void}
+       */
+
+    }, {
+      key: "update",
+      value: function update() {
+        var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+        this.destroy();
+        this.options = merge({}, this.options, options);
+        this.header = $(this.options.header);
+        this._bindContainerClick();
       }
 
       /**
