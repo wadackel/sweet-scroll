@@ -698,13 +698,13 @@
         }
 
         if (params.verticalScroll) {
-          scroll.top = scroll.top + frameSize.height > size.height ? size.height - frameSize.height : scroll.top;
+          scroll.top = Math.max(0, Math.min(size.height - frameSize.height, scroll.top));
         } else {
           scroll.top = getScroll(container, "y");
         }
 
         if (params.horizontalScroll) {
-          scroll.left = scroll.left + frameSize.width > size.width ? size.width - frameSize.width : scroll.left;
+          scroll.left = Math.max(0, Math.min(size.width - frameSize.width, scroll.left));
         } else {
           scroll.left = getScroll(container, "x");
         }
