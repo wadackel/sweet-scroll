@@ -199,6 +199,7 @@ You can override the default options by passing the option in `JSON` format to t
 * `toTop(distance, options = {})`
 * `toLeft(distance, options = {})`
 * `update(options = {})`
+* `stop(gotoEnd = false)`
 * `destroy()`
 * **Callbacks**
     - `beforeScroll: function(toScroll, trigger){}`
@@ -309,6 +310,19 @@ sweetScroll.update({
 ```
 
 
+### stop(gotoEnd = true)
+
+**gotoEnd: {boolean}**
+
+Will stop the current scroll animation.
+
+**Example:**
+
+```javascript
+sweetScroll.stop(true);
+```
+
+
 ### destroy()
 
 Will destroy the SweetScroll instance.  
@@ -404,3 +418,8 @@ Generates build file.
 ```bash
 $ npm run build
 ```
+
+
+----------
+
+Bugs, feature requests and comments are more than welcome in the [issues](https://github.com/tsuyoshiwada/sweet-scroll/issues)
