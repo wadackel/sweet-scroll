@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Relative | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./images/favicon.ico">
+  <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <style type="text/css">
+    .controller {
+      position: fixed;
+      bottom: 10%;
+      left: 50%;
+      z-index: 10;
+      text-align: center;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+    }
+    .controller .btn {
+      margin: .2em;
+    }
+    .box {
+      height: 100vh;
+    }
+    #content01 {
+      background: #f0f4c3;
+    }
+    #content02 {
+      background: #e6ee9c;
+    }
+    #content03 {
+      background: #dce775;
+    }
+    #content04 {
+      background: #d4e157;
+    }
+    #content05 {
+      background: #cddc39;
+    }
+  </style>
+</head>
+<body>
+  <header id="demo-header">
+    <a href="./"><i class="fa fa-chevron-left"></i> Back front</a>
+    <ul>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/relative.html"><i class="fa fa-code"></i> <span>Source</span></i></a></li>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> <span>Document on GitHub</span></i></a></li>
+    </ul>
+  </header>
+
+  <div class="controller">
+    <div>
+      <button class="btn" type="button" data-scroll="+=500">+=500</button>
+      <button class="btn" type="button" data-scroll="-=500">-=500</button>
+    </div>
+    <div>
+      <button class="btn" id="control-bottom" type="button">+=window.innerHeight</button><br>
+      <button class="btn" id="control-top" type="button">-=window.innerHeight</button>
+    </div>
+  </div>
+  <section class="box" id="first">
+    <h1>Relative Scroll</h1>
+  </section>
+
+  <div class="box" id="content01"></div>
+  <div class="box" id="content02"></div>
+  <div class="box" id="content03"></div>
+  <div class="box" id="content04"></div>
+  <div class="box" id="content05"></div>
+
+  <script src="./js/sweet-scroll.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function() {
+      var sweetScroll = new SweetScroll();
+      var btnBottom = document.getElementById("control-bottom");
+      var btnTop = document.getElementById("control-top");
+
+      btnBottom.addEventListener("click", function() {
+        sweetScroll.to("+=" + window.innerHeight);
+      }, false);
+
+      btnTop.addEventListener("click", function() {
+        sweetScroll.to("-=" + window.innerHeight);
+      }, false);
+    }, false);
+  </script>
+</body>
+</html>
