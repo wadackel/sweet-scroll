@@ -52,23 +52,8 @@ export function hasProp(obj, key) {
   return obj && Object.prototype.hasOwnProperty.call(obj, key);
 }
 
-export function toArray(obj) {
-  if (!obj) return [];
-  if (isArray(obj)) return Array.prototype.slice.call(obj);
-  if (isArrayLike(obj)) return map(obj, value => value);
-  return values(obj);
-}
-
 export function keys(obj) {
   return Object.keys(obj);
-}
-
-export function values(obj) {
-  let k = keys(obj), l = k.length, v = Array(l), i;
-  for (i = 0; i < l; i++) {
-    v[i] = obj[k[i]];
-  }
-  return v;
 }
 
 export function merge(obj, ...sources) {
@@ -98,18 +83,6 @@ export function each(obj, iterate, context){
   }
 
   return obj;
-}
-
-export function map(obj, iterate, context) {
-  if (obj == null) return [];
-  let results = [], val;
-  each(obj, (d, i) => {
-    val = iterate.call(context, d, i);
-    if (val != null) {
-      results[i] = val;
-    }
-  });
-  return results;
 }
 
 export function removeSpaces(str) {
