@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Vertical &amp; Horizontal Scroll | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./images/favicon.ico">
+  <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <style type="text/css">
+    body {
+      width: 2700px;
+    }
+    .controller {
+      position: fixed;
+      bottom: 5%;
+      left: 50%;
+      z-index: 100;
+      -webkit-transform: translateX(-50%);
+      transform: translateX(-50%);
+    }
+    .controller .btn {
+      width: 50px;
+      height: 50px;
+      padding: 0;
+      line-height: 50px;
+    }
+    section {
+      float: left;
+      margin: 0;
+      width: 900px;
+      height: 100vh;
+    }
+    section:nth-child(even) {
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <header id="demo-header" data-scroll-header>
+    <a href="./"><i class="fa fa-chevron-left"></i> Back front</a>
+    <ul>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/vertical-horizontal.html"><i class="fa fa-code"></i><span>Source</span></a></li>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> <span>Document on GitHub</span></a></li>
+    </ul>
+  </header>
+  <div class="controller">
+    <a class="btn" href="#first" data-scroll>1</a>
+    <a class="btn" href="#second" data-scroll>2</a>
+    <a class="btn" href="#third" data-scroll>3</a><br>
+    <a class="btn" href="#fourth" data-scroll>4</a>
+    <a class="btn" href="#fifth" data-scroll>5</a>
+    <a class="btn" href="#sixth" data-scroll>6</a><br>
+    <a class="btn" href="#seventh" data-scroll>7</a>
+    <a class="btn" href="#eighth" data-scroll>8</a>
+    <a class="btn" href="#ninth" data-scroll>9</a>
+  </div>
+  <section id="first">
+    <h1>Vertical &amp; Horizontal Scroll</h1>
+    <p>This demo is vertical and horizontal scroll example.</p>
+  </section>
+  <section id="second"><h2>Second Content</h2></section>
+  <section id="third"><h2>Third Content</h2></section>
+  <section id="fourth"><h2>Fourth Content</h2></section>
+  <section id="fifth"><h2>Fifth Content</h2></section>
+  <section id="sixth"><h2>Sixth Content</h2></section>
+  <section id="seventh"><h2>Seventh Content</h2></section>
+  <section id="eighth"><h2>Eighth Content</h2></section>
+  <section id="ninth"><h2>Ninth Content</h2></section>
+
+  <script src="./js/sweet-scroll.js"></script>
+  <script>
+    var sweetScroll = new SweetScroll({
+      verticalScroll: true,
+      horizontalScroll: true
+    });
+  </script>
+</body>
+</html>
