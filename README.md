@@ -192,6 +192,15 @@ You can override the default options by passing the option in `JSON` format to t
 ```
 
 
+#### if you want to use in non anchor element
+
+Will use the data-scroll attribute instead of href.
+
+```html
+<button type="button" data-scroll="+=500">Scroll under 500px</button>
+```
+
+
 ## API
 
 * `new SweetScroll(options = {}, container = "body, html")`
