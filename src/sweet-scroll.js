@@ -25,7 +25,7 @@ class SweetScroll {
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null
-  }
+  };
 
   /**
    * SweetScroll constructor
