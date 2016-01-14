@@ -410,7 +410,7 @@ $ npm install
 ```
 
 Start the development.  
-You I can access the `http://localhost:3000/`.
+You can access to the `http://localhost:3000/`.
 
 ```bash
 $ npm start
