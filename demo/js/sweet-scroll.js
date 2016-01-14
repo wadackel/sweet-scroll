@@ -5,7 +5,7 @@
  * @author tsuyoshiwada
  * @homepage https://github.com/tsuyoshiwada/sweet-scroll
  * @license MIT
- * @version 0.1.2
+ * @version 0.1.3
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -13,19 +13,19 @@
   global.SweetScroll = factory();
 }(this, function () { 'use strict';
 
-  var babelHelpers = {};
-
-  babelHelpers.typeof = function (obj) {
-    return obj && typeof Symbol !== "undefined" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  var babelHelpers_typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+    return typeof obj;
+  } : function (obj) {
+    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
   };
 
-  babelHelpers.classCallCheck = function (instance, Constructor) {
+  var babelHelpers_classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   };
 
-  babelHelpers.createClass = (function () {
+  var babelHelpers_createClass = function () {
     function defineProperties(target, props) {
       for (var i = 0; i < props.length; i++) {
         var descriptor = props[i];
@@ -41,9 +41,8 @@
       if (staticProps) defineProperties(Constructor, staticProps);
       return Constructor;
     };
-  })();
+  }();
 
-  babelHelpers;
   var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
   var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
   var classTypes = {};
@@ -56,7 +55,7 @@
     if (obj == null) {
       return obj + "";
     }
-    return (typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj);
+    return (typeof obj === "undefined" ? "undefined" : babelHelpers_typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers_typeof(obj);
   }
 
   function isArray(obj) {
@@ -506,9 +505,9 @@
     easeInOutBounce: easeInOutBounce
   });
 
-  var ScrollTween = (function () {
+  var ScrollTween = function () {
     function ScrollTween(el) {
-      babelHelpers.classCallCheck(this, ScrollTween);
+      babelHelpers_classCallCheck(this, ScrollTween);
 
       this.el = el;
       this.props = {};
@@ -516,7 +515,7 @@
       this.startTime = null;
     }
 
-    babelHelpers.createClass(ScrollTween, [{
+    babelHelpers_createClass(ScrollTween, [{
       key: "run",
       value: function run(x, y, duration, delay, easing) {
         var _this = this;
@@ -603,13 +602,13 @@
       }
     }]);
     return ScrollTween;
-  })();
+  }();
 
   var win = window;
   var doc = document;
   var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
 
-  var SweetScroll = (function () {
+  var SweetScroll = function () {
 
     /**
      * SweetScroll constructor
@@ -620,7 +619,7 @@
     function SweetScroll() {
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
       var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
-      babelHelpers.classCallCheck(this, SweetScroll);
+      babelHelpers_classCallCheck(this, SweetScroll);
 
       this.options = merge({}, SweetScroll.defaults, options);
       this.container = this._getContainer(container);
@@ -639,7 +638,7 @@
 
     // Default options
 
-    babelHelpers.createClass(SweetScroll, [{
+    babelHelpers_createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
         var _this = this;
@@ -1069,7 +1068,7 @@
       }
     }]);
     return SweetScroll;
-  })();
+  }();
 
   // Export SweetScroll class
 
