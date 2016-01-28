@@ -13,19 +13,20 @@
   global.SweetScroll = factory();
 }(this, function () { 'use strict';
 
-  var babelHelpers_typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  var babelHelpers = {};
+  babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
     return typeof obj;
   } : function (obj) {
     return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
   };
 
-  var babelHelpers_classCallCheck = function (instance, Constructor) {
+  babelHelpers.classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   };
 
-  var babelHelpers_createClass = function () {
+  babelHelpers.createClass = function () {
     function defineProperties(target, props) {
       for (var i = 0; i < props.length; i++) {
         var descriptor = props[i];
@@ -43,8 +44,10 @@
     };
   }();
 
+  babelHelpers;
+
   var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-  var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
+  var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Object"];
   var classTypes = {};
 
   classTypeList.forEach(function (name) {
@@ -55,7 +58,7 @@
     if (obj == null) {
       return obj + "";
     }
-    return (typeof obj === "undefined" ? "undefined" : babelHelpers_typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers_typeof(obj);
+    return (typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj);
   }
 
   function isArray(obj) {
@@ -258,6 +261,14 @@
     return rect;
   }
 
+  function addEvent(el, event, listener) {
+    el.addEventListener(event, listener, false);
+  }
+
+  function removeEvent(el, event, listener) {
+    el.removeEventListener(event, listener, false);
+  }
+
   var lastTime = 0;
 
   var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
@@ -269,6 +280,14 @@
     lastTime = currentTime + timeToCall;
     return id;
   };
+
+  var mathCos = Math.cos;
+  var mathSin = Math.sin;
+  var mathPow = Math.pow;
+  var mathAbs = Math.abs;
+  var mathSqrt = Math.sqrt;
+  var mathAsin = Math.asin;
+  var PI = Math.PI;
 
   function linear(p) {
     return p;
@@ -335,45 +354,45 @@
   }
 
   function easeInSine(x, t, b, c, d) {
-    return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
+    return -c * mathCos(t / d * (PI / 2)) + c + b;
   }
 
   function easeOutSine(x, t, b, c, d) {
-    return c * Math.sin(t / d * (Math.PI / 2)) + b;
+    return c * mathSin(t / d * (PI / 2)) + b;
   }
 
   function easeInOutSine(x, t, b, c, d) {
-    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
+    return -c / 2 * (mathCos(PI * t / d) - 1) + b;
   }
 
   function easeInExpo(x, t, b, c, d) {
-    return t === 0 ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
+    return t === 0 ? b : c * mathPow(2, 10 * (t / d - 1)) + b;
   }
 
   function easeOutExpo(x, t, b, c, d) {
-    return t === d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
+    return t === d ? b + c : c * (-mathPow(2, -10 * t / d) + 1) + b;
   }
 
   function easeInOutExpo(x, t, b, c, d) {
     if (t === 0) return b;
     if (t === d) return b + c;
-    if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
-    return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
+    if ((t /= d / 2) < 1) return c / 2 * mathPow(2, 10 * (t - 1)) + b;
+    return c / 2 * (-mathPow(2, -10 * --t) + 2) + b;
   }
 
   function easeInCirc(x, t, b, c, d) {
-    return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
+    return -c * (mathSqrt(1 - (t /= d) * t) - 1) + b;
   }
 
   function easeOutCirc(x, t, b, c, d) {
-    return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
+    return c * mathSqrt(1 - (t = t / d - 1) * t) + b;
   }
 
   function easeInOutCirc(x, t, b, c, d) {
     if ((t /= d / 2) < 1) {
-      return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+      return -c / 2 * (mathSqrt(1 - t * t) - 1) + b;
     }
-    return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
+    return c / 2 * (mathSqrt(1 - (t -= 2) * t) + 1) + b;
   }
 
   function easeInElastic(x, t, b, c, d) {
@@ -383,13 +402,13 @@
     if (t === 0) return b;
     if ((t /= d) === 1) return b + c;
     if (!p) p = d * .3;
-    if (a < Math.abs(c)) {
+    if (a < mathAbs(c)) {
       a = c;
       s = p / 4;
     } else {
-      s = p / (2 * Math.PI) * Math.asin(c / a);
+      s = p / (2 * PI) * mathAsin(c / a);
     }
-    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+    return -(a * mathPow(2, 10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p)) + b;
   }
 
   function easeOutElastic(x, t, b, c, d) {
@@ -399,13 +418,13 @@
     if (t === 0) return b;
     if ((t /= d) === 1) return b + c;
     if (!p) p = d * .3;
-    if (a < Math.abs(c)) {
+    if (a < mathAbs(c)) {
       a = c;
       s = p / 4;
     } else {
-      s = p / (2 * Math.PI) * Math.asin(c / a);
+      s = p / (2 * PI) * mathAsin(c / a);
     }
-    return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+    return a * mathPow(2, -10 * t) * mathSin((t * d - s) * (2 * PI) / p) + c + b;
   }
 
   function easeInOutElastic(x, t, b, c, d) {
@@ -415,16 +434,16 @@
     if (t === 0) return b;
     if ((t /= d / 2) === 2) return b + c;
     if (!p) p = d * (.3 * 1.5);
-    if (a < Math.abs(c)) {
+    if (a < mathAbs(c)) {
       a = c;
       s = p / 4;
     } else {
-      s = p / (2 * Math.PI) * Math.asin(c / a);
+      s = p / (2 * PI) * mathAsin(c / a);
     }
     if (t < 1) {
-      return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+      return -.5 * (a * mathPow(2, 10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p)) + b;
     }
-    return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
+    return a * mathPow(2, -10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p) * .5 + c + b;
   }
 
   function easeInBack(x, t, b, c, d) {
@@ -507,7 +526,7 @@
 
   var ScrollTween = function () {
     function ScrollTween(el) {
-      babelHelpers_classCallCheck(this, ScrollTween);
+      babelHelpers.classCallCheck(this, ScrollTween);
 
       this.el = el;
       this.props = {};
@@ -515,7 +534,7 @@
       this.startTime = null;
     }
 
-    babelHelpers_createClass(ScrollTween, [{
+    babelHelpers.createClass(ScrollTween, [{
       key: "run",
       value: function run(x, y, duration, delay, easing) {
         var _this = this;
@@ -619,7 +638,7 @@
     function SweetScroll() {
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
       var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
-      babelHelpers_classCallCheck(this, SweetScroll);
+      babelHelpers.classCallCheck(this, SweetScroll);
 
       this.options = merge({}, SweetScroll.defaults, options);
       this.container = this._getContainer(container);
@@ -638,7 +657,7 @@
 
     // Default options
 
-    babelHelpers_createClass(SweetScroll, [{
+    babelHelpers.createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
         var _this = this;
@@ -845,9 +864,11 @@
     }, {
       key: "_bindContainerClick",
       value: function _bindContainerClick() {
-        if (!this.container) return;
+        var container = this.container;
+
+        if (!container) return;
         this._containerClickListener = this._handleContainerClick.bind(this);
-        this.container.addEventListener("click", this._containerClickListener, false);
+        addEvent(container, "click", this._containerClickListener);
       }
 
       /**
@@ -859,8 +880,10 @@
     }, {
       key: "_unbindContainerClick",
       value: function _unbindContainerClick() {
-        if (!this.container || !this._containerClickListener) return;
-        this.container.removeEventListener("click", this._containerClickListener, false);
+        var container = this.container;
+
+        if (!container || !this._containerClickListener) return;
+        removeEvent(container, "click", this._containerClickListener);
         this._containerClickListener = null;
       }
 
@@ -873,13 +896,13 @@
     }, {
       key: "_bindContainerStop",
       value: function _bindContainerStop() {
-        if (!this.container) return;
         var container = this.container;
 
+        if (!container) return;
         this._stopScrollListener = this._handleStopScroll.bind(this);
-        container.addEventListener(WHEEL_EVENT, this._stopScrollListener, false);
-        container.addEventListener("touchstart", this._stopScrollListener, false);
-        container.addEventListener("touchmove", this._stopScrollListener, false);
+        addEvent(container, WHEEL_EVENT, this._stopScrollListener);
+        addEvent(container, "touchstart", this._stopScrollListener);
+        addEvent(container, "touchmove", this._stopScrollListener);
       }
 
       /**
@@ -891,12 +914,12 @@
     }, {
       key: "_unbindContainerStop",
       value: function _unbindContainerStop() {
-        if (!this.container || !this._stopScrollListener) return;
         var container = this.container;
 
-        container.removeEventListener(WHEEL_EVENT, this._stopScrollListener, false);
-        container.removeEventListener("touchstart", this._stopScrollListener, false);
-        container.removeEventListener("touchmove", this._stopScrollListener, false);
+        if (!container || !this._stopScrollListener) return;
+        removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
+        removeEvent(container, "touchstart", this._stopScrollListener);
+        removeEvent(container, "touchmove", this._stopScrollListener);
         this._stopScrollListener = null;
       }
 
@@ -989,8 +1012,8 @@
                 return null;
               }
 
-        scroll.top = parseInt(scroll.top);
-        scroll.left = parseInt(scroll.left);
+        scroll.top = parseInt(scroll.top, 10);
+        scroll.left = parseInt(scroll.left, 10);
 
         return scroll;
       }
