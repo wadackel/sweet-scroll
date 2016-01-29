@@ -5,7 +5,7 @@
  * @author tsuyoshiwada
  * @homepage https://github.com/tsuyoshiwada/sweet-scroll
  * @license MIT
- * @version 0.1.3
+ * @version 0.2.0
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -776,6 +776,24 @@
           verticalScroll: false,
           horizontalScroll: true
         }));
+      }
+
+      /**
+       * Scroll animation to the specified element
+       * @param {HTMLElement}
+       * @param {object}
+       * @return {void}
+       */
+
+    }, {
+      key: "toElement",
+      value: function toElement($el) {
+        var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+        if ($el instanceof HTMLElement) {
+          var offset = getOffset($el, this.container);
+          this.to(offset, merge({}, options));
+        }
       }
 
       /**
