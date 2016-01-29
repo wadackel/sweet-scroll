@@ -155,6 +155,19 @@ class SweetScroll {
   }
 
   /**
+   * Scroll animation to the specified element
+   * @param {HTMLElement}
+   * @param {object}
+   * @return {void}
+   */
+  toElement($el, options = {}) {
+    if ($el instanceof HTMLElement) {
+      const offset = Dom.getOffset($el, this.container);
+      this.to(offset, Util.merge({}, options));
+    }
+  }
+
+  /**
    * Stop the current animation
    * @param {boolean}
    * @return {void}
