@@ -1,6 +1,7 @@
 import * as Util from "./utils"
 import * as Dom from "./dom"
 import {$, matches} from "./selectors"
+import {addEvent, removeEvent} from "./events"
 import ScrollTween from "./scroll-tween"
 
 const win = window;
@@ -81,7 +82,7 @@ class SweetScroll {
     // Apply `offset` value
     if (offset) {
       scroll.top += offset.top;
-      scroll.left +=  offset.left;
+      scroll.left += offset.left;
     }
 
     // If the header is present apply the height
@@ -154,6 +155,19 @@ class SweetScroll {
   }
 
   /**
+   * Scroll animation to the specified element
+   * @param {HTMLElement}
+   * @param {object}
+   * @return {void}
+   */
+  toElement($el, options = {}) {
+    if ($el instanceof HTMLElement) {
+      const offset = Dom.getOffset($el, this.container);
+      this.to(offset, Util.merge({}, options));
+    }
+  }
+
+  /**
    * Stop the current animation
    * @param {boolean}
    * @return {void}
@@ -217,9 +231,10 @@ class SweetScroll {
    * @private
    */
   _bindContainerClick() {
-    if (!this.container) return;
+    const {container} = this;
+    if (!container) return;
     this._containerClickListener = this._handleContainerClick.bind(this);
-    this.container.addEventListener("click", this._containerClickListener, false);
+    addEvent(container, "click", this._containerClickListener);
   }
 
   /**
@@ -228,8 +243,9 @@ class SweetScroll {
    * @private
    */
   _unbindContainerClick() {
-    if (!this.container || !this._containerClickListener) return;
-    this.container.removeEventListener("click", this._containerClickListener, false);
+    const {container} = this;
+    if (!container || !this._containerClickListener) return;
+    removeEvent(container, "click", this._containerClickListener);
     this._containerClickListener = null;
   }
 
@@ -239,12 +255,12 @@ class SweetScroll {
    * @private
    */
   _bindContainerStop() {
-    if (!this.container) return;
     const {container} = this;
+    if (!container) return;
     this._stopScrollListener = this._handleStopScroll.bind(this);
-    container.addEventListener(WHEEL_EVENT, this._stopScrollListener, false);
-    container.addEventListener("touchstart", this._stopScrollListener, false);
-    container.addEventListener("touchmove", this._stopScrollListener, false);
+    addEvent(container, WHEEL_EVENT, this._stopScrollListener);
+    addEvent(container, "touchstart", this._stopScrollListener);
+    addEvent(container, "touchmove", this._stopScrollListener);
   }
 
   /**
@@ -253,11 +269,11 @@ class SweetScroll {
    * @private
    */
   _unbindContainerStop() {
-    if (!this.container || !this._stopScrollListener) return;
     const {container} = this;
-    container.removeEventListener(WHEEL_EVENT, this._stopScrollListener, false);
-    container.removeEventListener("touchstart", this._stopScrollListener, false);
-    container.removeEventListener("touchmove", this._stopScrollListener, false);
+    if (!container || !this._stopScrollListener) return;
+    removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
+    removeEvent(container, "touchstart", this._stopScrollListener);
+    removeEvent(container, "touchmove", this._stopScrollListener);
     this._stopScrollListener = null;
   }
 
@@ -342,8 +358,8 @@ class SweetScroll {
       return null;
     }
 
-    scroll.top = parseInt(scroll.top);
-    scroll.left = parseInt(scroll.left);
+    scroll.top = parseInt(scroll.top, 10);
+    scroll.left = parseInt(scroll.left, 10);
 
     return scroll;
   }

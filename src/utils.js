@@ -1,5 +1,5 @@
 const MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
-const classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Date", "RegExp", "Object", "Error", "Symbol"];
+const classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Object"];
 const classTypes = {};
 
 classTypeList.forEach((name) => {

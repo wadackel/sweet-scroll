@@ -1,6 +1,6 @@
 {
   "name": "sweet-scroll",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "description": "Modern and the sweet smooth scroll library.",
   "main": "sweet-scroll.js",
   "scripts": {
@@ -52,6 +52,7 @@
     "karma-mocha": "^0.2.1",
     "karma-phantomjs-launcher": "^0.2.1",
     "karma-phantomjs-shim": "^1.1.2",
+    "mocha": "^2.4.4",
     "phantomjs": "^1.9.19",
     "power-assert": "^1.2.0",
     "rollup": "^0.21.1",
