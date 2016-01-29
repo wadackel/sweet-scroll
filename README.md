@@ -207,6 +207,7 @@ Will use the data-scroll attribute instead of href.
 * `to(distance, options = {})`
 * `toTop(distance, options = {})`
 * `toLeft(distance, options = {})`
+* `toElement($el, options = {})`
 * `update(options = {})`
 * `stop(gotoEnd = false)`
 * `destroy()`
@@ -299,6 +300,20 @@ Horizontal scroll animation to the specified `distance`.
 
 ```javascript
 sweetScroll.toLeft(1500);
+```
+
+
+### toElement($el, options = {})
+
+**$el: {HTMLElement}**  
+**options: {object}**
+
+Scroll animation to the specified `HTMLElement`.
+
+**Example:**
+
+```javascript
+sweetScroll.toElement(document.getElementById("content"));
 ```
 
 
