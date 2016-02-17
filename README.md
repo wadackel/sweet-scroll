@@ -5,7 +5,7 @@ sweet-scroll.js
 [![npm version](https://img.shields.io/npm/v/sweet-scroll.svg?style=flat-square)](http://badge.fury.io/js/sweet-scroll)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
 
-![logo](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png)
+<img src="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png" width="600" height="127" alt="sweet-scroll.js">
 
 ECMAScript2015 Friendly, dependency-free smooth scroll library.
 
