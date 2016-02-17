@@ -49,7 +49,7 @@ class SweetScroll {
    * @return {void}
    */
   to(distance, options = {}) {
-    const {container} = this;
+    const {container, header} = this;
     const params = Util.merge({}, this.options, options);
     const offset = this._parseCoodinate(params.offset);
     const trigger = this._trigger;
@@ -86,8 +86,8 @@ class SweetScroll {
     }
 
     // If the header is present apply the height
-    if (this.header) {
-      scroll.top = Math.max(0, scroll.top - this.header.clientHeight);
+    if (header) {
+      scroll.top = Math.max(0, scroll.top - (header.clientHeight + header.getBoundingClientRect().top));
     }
 
     // Determine the final scroll coordinates

@@ -655,7 +655,9 @@
      * @return {void}
      */
 
+
     // Default options
+
 
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
@@ -664,6 +666,7 @@
 
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
         var container = this.container;
+        var header = this.header;
 
         var params = merge({}, this.options, options);
         var offset = this._parseCoodinate(params.offset);
@@ -700,8 +703,8 @@
         }
 
         // If the header is present apply the height
-        if (this.header) {
-          scroll.top = Math.max(0, scroll.top - this.header.clientHeight);
+        if (header) {
+          scroll.top = Math.max(0, scroll.top - (header.clientHeight + header.getBoundingClientRect().top));
         }
 
         // Determine the final scroll coordinates
@@ -1112,6 +1115,7 @@
   }();
 
   // Export SweetScroll class
+
 
   SweetScroll.defaults = {
     trigger: "[data-scroll]", // Selector for trigger (must be a valid css selector)
