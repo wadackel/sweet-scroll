@@ -7,20 +7,23 @@ sweet-scroll.js
 
 ![logo](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png)
 
-Modern and the sweet smooth scroll library.
+ECMAScript2015 Friendly, dependency-free smooth scroll library.
 
-[View Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
+[See Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
+
 
 
 ## FEATURES
 
 * Dependecy-free!!
-* ECMAScript 2015(ES6) frendly
+* ECMAScript2015 friendly
 * Use `requestAnimationFrame` API (IE9 works in `setTimeout` instead)
 * Supports vertical and horizontal scroll
 * Supports dynamic trigger (event delegation)
 * Supports container for the scroll
 * Supports many easing types
+
+
 
 ## USAGE
 
