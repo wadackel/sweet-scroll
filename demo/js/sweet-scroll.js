@@ -5,7 +5,7 @@
  * @author tsuyoshiwada
  * @homepage https://github.com/tsuyoshiwada/sweet-scroll
  * @license MIT
- * @version 0.2.1
+ * @version 0.2.2
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
@@ -704,7 +704,7 @@
 
         // If the header is present apply the height
         if (header) {
-          scroll.top = Math.max(0, scroll.top - (header.clientHeight + header.getBoundingClientRect().top));
+          scroll.top = Math.max(0, scroll.top - this.header.clientHeight);
         }
 
         // Determine the final scroll coordinates
