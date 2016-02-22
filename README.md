@@ -392,7 +392,28 @@ const sweetScroll = new SweetScroll({
 });
 ```
 
+**Extends Class:**
 
+The following is a pattern to override a method in the inheritance destination class.
+
+```javascript
+class MyScroll extends SweetScroll {
+  beforeScroll(toScroll, trigger) {
+    // Stop scrolling case of trigger element that contains the `is-disabled` class.
+    if (trigger.classList.contains("is-disabled")) {
+      return false;
+    }
+  }
+
+  cancelScroll() {
+    console.log("Canell!!");
+  }
+
+  afterScroll(toScroll, trigger) {
+    console.log("After!!");
+  }
+}
+```
 
 ## BROWSER SUPPORT
 
