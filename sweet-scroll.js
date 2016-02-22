@@ -645,6 +645,7 @@
       this.header = $(this.options.header);
       this.tween = new ScrollTween(this.container);
       this._trigger = null;
+      this._shouldCallCancelScroll = false;
       this._bindContainerClick();
     }
 
@@ -655,9 +656,7 @@
      * @return {void}
      */
 
-
     // Default options
-
 
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
@@ -675,6 +674,9 @@
 
         // Remove the triggering elements which has been temporarily retained
         this._trigger = null;
+
+        // Disable the call flag of `cancelScroll`
+        this._shouldCallCancelScroll = false;
 
         // Stop current animation
         this.stop();
@@ -718,27 +720,38 @@
           size = { width: container.scrollWidth, height: container.scrollHeight };
         }
 
+        // Call `beforeScroll`
+        // Stop scrolling when it returns false
+        if (this._hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
+          return;
+        }
+
+        // Adjustment of the maximum value
+        // vertical
         if (params.verticalScroll) {
           scroll.top = Math.max(0, Math.min(size.height - frameSize.height, scroll.top));
         } else {
           scroll.top = getScroll(container, "y");
         }
 
+        // horizontal
         if (params.horizontalScroll) {
           scroll.left = Math.max(0, Math.min(size.width - frameSize.width, scroll.left));
         } else {
           scroll.left = getScroll(container, "x");
         }
 
-        // Call `beforeScroll`
-        // Stop scrolling when it returns false
-        if (this._hook(params.beforeScroll, scroll, trigger) === false) return;
-
         // Run the animation!!
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
-          // Unbind the scroll stop events, And call `afterScroll`
+          // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
           _this._unbindContainerStop();
-          _this._hook(params.afterScroll, scroll, trigger);
+          if (_this._shouldCallCancelScroll) {
+            _this._hook(params.cancelScroll);
+            _this.cancelScroll();
+          } else {
+            _this._hook(params.afterScroll, scroll, trigger);
+            _this.afterScroll(scroll, trigger);
+          }
         });
 
         // Bind the scroll stop events
@@ -810,6 +823,9 @@
       value: function stop() {
         var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
 
+        if (this._stopScrollListener) {
+          this._shouldCallCancelScroll = true;
+        }
         this.tween.stop(gotoEnd);
       }
 
@@ -847,6 +863,43 @@
         this.container = null;
         this.header = null;
         this.tween = null;
+      }
+
+      /**
+       * Called at before of the scroll.
+       * @param {object}
+       * @param {HTMLElement}
+       * @return {boolean}
+       */
+
+    }, {
+      key: "beforeScroll",
+      value: function beforeScroll(scroll) {
+        var trigger = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+
+        return true;
+      }
+
+      /**
+       * Called at cancel of the scroll.
+       * @return {void}
+       */
+
+    }, {
+      key: "cancelScroll",
+      value: function cancelScroll() {}
+
+      /**
+       * Called at after of the scroll.
+       * @param {object}
+       * @param {HTMLElement}
+       * @return {void}
+       */
+
+    }, {
+      key: "afterScroll",
+      value: function afterScroll(scroll) {
+        var trigger = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
       }
 
       /**
@@ -1050,9 +1103,7 @@
       key: "_handleStopScroll",
       value: function _handleStopScroll(e) {
         if (this.options.stopScroll) {
-          if (this._hook(this.options.cancelScroll) !== false) {
-            this.stop();
-          }
+          this.stop();
         } else {
           e.preventDefault();
         }
@@ -1115,7 +1166,6 @@
   }();
 
   // Export SweetScroll class
-
 
   SweetScroll.defaults = {
     trigger: "[data-scroll]", // Selector for trigger (must be a valid css selector)

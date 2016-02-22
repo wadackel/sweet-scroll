@@ -39,6 +39,7 @@ class SweetScroll {
     this.header = $(this.options.header);
     this.tween = new ScrollTween(this.container);
     this._trigger = null;
+    this._shouldCallCancelScroll = false;
     this._bindContainerClick();
   }
 
@@ -57,6 +58,9 @@ class SweetScroll {
 
     // Remove the triggering elements which has been temporarily retained
     this._trigger = null;
+
+    // Disable the call flag of `cancelScroll`
+    this._shouldCallCancelScroll = false;
 
     // Stop current animation
     this.stop();
@@ -101,27 +105,38 @@ class SweetScroll {
       size = {width: container.scrollWidth, height: container.scrollHeight};
     }
 
+    // Call `beforeScroll`
+    // Stop scrolling when it returns false
+    if (this._hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
+      return;
+    }
+
+    // Adjustment of the maximum value
+    // vertical
     if (params.verticalScroll) {
       scroll.top = Math.max(0, Math.min(size.height - frameSize.height, scroll.top));
     } else {
       scroll.top = Dom.getScroll(container, "y");
     }
 
+    // horizontal
     if (params.horizontalScroll) {
       scroll.left = Math.max(0, Math.min(size.width - frameSize.width, scroll.left));
     } else {
       scroll.left = Dom.getScroll(container, "x");
     }
 
-    // Call `beforeScroll`
-    // Stop scrolling when it returns false
-    if (this._hook(params.beforeScroll, scroll, trigger) === false) return;
-
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
-      // Unbind the scroll stop events, And call `afterScroll`
+      // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
       this._unbindContainerStop();
-      this._hook(params.afterScroll, scroll, trigger);
+      if (this._shouldCallCancelScroll) {
+        this._hook(params.cancelScroll);
+        this.cancelScroll();
+      } else {
+        this._hook(params.afterScroll, scroll, trigger);
+        this.afterScroll(scroll, trigger);
+      }
     });
 
     // Bind the scroll stop events
@@ -173,6 +188,9 @@ class SweetScroll {
    * @return {void}
    */
   stop(gotoEnd = false) {
+    if (this._stopScrollListener) {
+      this._shouldCallCancelScroll = true;
+    }
     this.tween.stop(gotoEnd);
   }
 
@@ -202,6 +220,32 @@ class SweetScroll {
     this.container = null;
     this.header = null;
     this.tween = null;
+  }
+
+  /**
+   * Called at before of the scroll.
+   * @param {object}
+   * @param {HTMLElement}
+   * @return {boolean}
+   */
+  beforeScroll(scroll, trigger = null) {
+    return true;
+  }
+
+  /**
+   * Called at cancel of the scroll.
+   * @return {void}
+   */
+  cancelScroll() {
+  }
+
+  /**
+   * Called at after of the scroll.
+   * @param {object}
+   * @param {HTMLElement}
+   * @return {void}
+   */
+  afterScroll(scroll, trigger = null) {
   }
 
   /**
@@ -372,9 +416,7 @@ class SweetScroll {
    */
   _handleStopScroll(e) {
     if (this.options.stopScroll) {
-      if (this._hook(this.options.cancelScroll) !== false) {
-        this.stop();
-      }
+      this.stop();
     } else {
       e.preventDefault();
     }
