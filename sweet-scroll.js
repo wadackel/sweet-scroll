@@ -874,9 +874,7 @@
 
     }, {
       key: "beforeScroll",
-      value: function beforeScroll(scroll) {
-        var trigger = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-
+      value: function beforeScroll(toScroll, trigger) {
         return true;
       }
 
@@ -898,9 +896,7 @@
 
     }, {
       key: "afterScroll",
-      value: function afterScroll(scroll) {
-        var trigger = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
-      }
+      value: function afterScroll(toScroll, trigger) {}
 
       /**
        * Get the container for the scroll, depending on the options.

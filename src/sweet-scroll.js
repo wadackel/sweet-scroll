@@ -228,7 +228,7 @@ class SweetScroll {
    * @param {HTMLElement}
    * @return {boolean}
    */
-  beforeScroll(scroll, trigger = null) {
+  beforeScroll(toScroll, trigger) {
     return true;
   }
 
@@ -245,7 +245,7 @@ class SweetScroll {
    * @param {HTMLElement}
    * @return {void}
    */
-  afterScroll(scroll, trigger = null) {
+  afterScroll(toScroll, trigger) {
   }
 
   /**
