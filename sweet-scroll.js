@@ -631,8 +631,8 @@
 
     /**
      * SweetScroll constructor
-     * @param {object}
-     * @param {string} | {HTMLElement}
+     * @param {Object}
+     * @param {String} | {HTMLElement}
      */
 
     function SweetScroll() {
@@ -651,9 +651,9 @@
 
     /**
      * Scroll animation to the specified position
-     * @param {any}
-     * @param {object}
-     * @return {void}
+     * @param {Any}
+     * @param {Object}
+     * @return {Void}
      */
 
     // Default options
@@ -760,9 +760,9 @@
 
       /**
        * Scroll animation to the specified top position
-       * @param {any}
-       * @param {object}
-       * @return {void}
+       * @param {Any}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -778,9 +778,9 @@
 
       /**
        * Scroll animation to the specified left position
-       * @param {any}
-       * @param {object}
-       * @return {void}
+       * @param {Any}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -797,8 +797,8 @@
       /**
        * Scroll animation to the specified element
        * @param {HTMLElement}
-       * @param {object}
-       * @return {void}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -814,8 +814,8 @@
 
       /**
        * Stop the current animation
-       * @param {boolean}
-       * @return {void}
+       * @param {Boolean}
+       * @return {Void}
        */
 
     }, {
@@ -831,8 +831,8 @@
 
       /**
        * Update the instance
-       * @param {object}
-       * @return {void}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -850,8 +850,8 @@
 
       /**
        * Destroy SweetScroll instance
-       * @param {boolean}
-       * @return {void}
+       * @param {Boolean}
+       * @return {Void}
        */
 
     }, {
@@ -867,9 +867,9 @@
 
       /**
        * Called at before of the scroll.
-       * @param {object}
+       * @param {Object}
        * @param {HTMLElement}
-       * @return {boolean}
+       * @return {Boolean}
        */
 
     }, {
@@ -880,7 +880,7 @@
 
       /**
        * Called at cancel of the scroll.
-       * @return {void}
+       * @return {Void}
        */
 
     }, {
@@ -889,9 +889,9 @@
 
       /**
        * Called at after of the scroll.
-       * @param {object}
+       * @param {Object}
        * @param {HTMLElement}
-       * @return {void}
+       * @return {Void}
        */
 
     }, {
@@ -900,8 +900,8 @@
 
       /**
        * Parse the value of coordinate
-       * @param {any}
-       * @return {object}
+       * @param {Any}
+       * @return {Object}
        */
 
     }, {
@@ -974,7 +974,7 @@
 
       /**
        * Get the container for the scroll, depending on the options.
-       * @param {string} | {HTMLElement}
+       * @param {String} | {HTMLElement}
        * @return {HTMLElement}
        * @private
        */
@@ -1001,7 +1001,7 @@
 
       /**
        * Bind a click event to the container
-       * @return {void}
+       * @return {Void}
        * @private
        */
 
@@ -1017,7 +1017,7 @@
 
       /**
        * Unbind a click event to the container
-       * @return {void}
+       * @return {Void}
        * @private
        */
 
@@ -1033,7 +1033,7 @@
 
       /**
        * Bind the scroll stop of events
-       * @return {void}
+       * @return {Void}
        * @private
        */
 
@@ -1051,7 +1051,7 @@
 
       /**
        * Unbind the scroll stop of events
-       * @return {void}
+       * @return {Void}
        * @private
        */
 
@@ -1069,9 +1069,9 @@
 
       /**
        * Call the specified callback
-       * @param {string}
-       * @param {...any}
-       * @return {void}
+       * @param {Function}
+       * @param {...Any}
+       * @return {Void}
        * @private
        */
 
@@ -1090,7 +1090,7 @@
       /**
        * Handling of scroll stop event
        * @param {Event}
-       * @return {void}
+       * @return {Void}
        * @private
        */
 
@@ -1107,7 +1107,7 @@
       /**
        * Handling of container click event
        * @param {Event}
-       * @return {void}
+       * @return {Void}
        * @private
        */
 
@@ -1146,7 +1146,7 @@
       /**
        * Parse the data-scroll-options attribute
        * @param {HTMLElement}
-       * @return {object}
+       * @return {Object}
        * @private
        */
 

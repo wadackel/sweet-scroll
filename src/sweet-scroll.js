@@ -30,8 +30,8 @@ class SweetScroll {
 
   /**
    * SweetScroll constructor
-   * @param {object}
-   * @param {string} | {HTMLElement}
+   * @param {Object}
+   * @param {String} | {HTMLElement}
    */
   constructor(options = {}, container = "body, html") {
     this.options = Util.merge({}, SweetScroll.defaults, options);
@@ -45,9 +45,9 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified position
-   * @param {any}
-   * @param {object}
-   * @return {void}
+   * @param {Any}
+   * @param {Object}
+   * @return {Void}
    */
   to(distance, options = {}) {
     const {container, header} = this;
@@ -145,9 +145,9 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified top position
-   * @param {any}
-   * @param {object}
-   * @return {void}
+   * @param {Any}
+   * @param {Object}
+   * @return {Void}
    */
   toTop(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
@@ -158,9 +158,9 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified left position
-   * @param {any}
-   * @param {object}
-   * @return {void}
+   * @param {Any}
+   * @param {Object}
+   * @return {Void}
    */
   toLeft(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
@@ -172,8 +172,8 @@ class SweetScroll {
   /**
    * Scroll animation to the specified element
    * @param {HTMLElement}
-   * @param {object}
-   * @return {void}
+   * @param {Object}
+   * @return {Void}
    */
   toElement($el, options = {}) {
     if ($el instanceof HTMLElement) {
@@ -184,8 +184,8 @@ class SweetScroll {
 
   /**
    * Stop the current animation
-   * @param {boolean}
-   * @return {void}
+   * @param {Boolean}
+   * @return {Void}
    */
   stop(gotoEnd = false) {
     if (this._stopScrollListener) {
@@ -196,8 +196,8 @@ class SweetScroll {
 
   /**
    * Update the instance
-   * @param {object}
-   * @return {void}
+   * @param {Object}
+   * @return {Void}
    */
   update(options = {}) {
     this.stop();
@@ -210,8 +210,8 @@ class SweetScroll {
 
   /**
    * Destroy SweetScroll instance
-   * @param {boolean}
-   * @return {void}
+   * @param {Boolean}
+   * @return {Void}
    */
   destroy() {
     this.stop();
@@ -224,9 +224,9 @@ class SweetScroll {
 
   /**
    * Called at before of the scroll.
-   * @param {object}
+   * @param {Object}
    * @param {HTMLElement}
-   * @return {boolean}
+   * @return {Boolean}
    */
   beforeScroll(toScroll, trigger) {
     return true;
@@ -234,24 +234,24 @@ class SweetScroll {
 
   /**
    * Called at cancel of the scroll.
-   * @return {void}
+   * @return {Void}
    */
   cancelScroll() {
   }
 
   /**
    * Called at after of the scroll.
-   * @param {object}
+   * @param {Object}
    * @param {HTMLElement}
-   * @return {void}
+   * @return {Void}
    */
   afterScroll(toScroll, trigger) {
   }
 
   /**
    * Parse the value of coordinate
-   * @param {any}
-   * @return {object}
+   * @param {Any}
+   * @return {Object}
    */
   parseCoodinate(coodinate) {
     const enableTop = this.options.verticalScroll;
@@ -323,7 +323,7 @@ class SweetScroll {
 
   /**
    * Get the container for the scroll, depending on the options.
-   * @param {string} | {HTMLElement}
+   * @param {String} | {HTMLElement}
    * @return {HTMLElement}
    * @private
    */
@@ -344,7 +344,7 @@ class SweetScroll {
 
   /**
    * Bind a click event to the container
-   * @return {void}
+   * @return {Void}
    * @private
    */
   bindContainerClick() {
@@ -356,7 +356,7 @@ class SweetScroll {
 
   /**
    * Unbind a click event to the container
-   * @return {void}
+   * @return {Void}
    * @private
    */
   unbindContainerClick() {
@@ -368,7 +368,7 @@ class SweetScroll {
 
   /**
    * Bind the scroll stop of events
-   * @return {void}
+   * @return {Void}
    * @private
    */
   bindContainerStop() {
@@ -382,7 +382,7 @@ class SweetScroll {
 
   /**
    * Unbind the scroll stop of events
-   * @return {void}
+   * @return {Void}
    * @private
    */
   unbindContainerStop() {
@@ -396,9 +396,9 @@ class SweetScroll {
 
   /**
    * Call the specified callback
-   * @param {string}
-   * @param {...any}
-   * @return {void}
+   * @param {Function}
+   * @param {...Any}
+   * @return {Void}
    * @private
    */
   hook(callback, ...args) {
@@ -410,7 +410,7 @@ class SweetScroll {
   /**
    * Handling of scroll stop event
    * @param {Event}
-   * @return {void}
+   * @return {Void}
    * @private
    */
   handleStopScroll(e) {
@@ -424,7 +424,7 @@ class SweetScroll {
   /**
    * Handling of container click event
    * @param {Event}
-   * @return {void}
+   * @return {Void}
    * @private
    */
   handleContainerClick(e) {
@@ -461,7 +461,7 @@ class SweetScroll {
   /**
    * Parse the data-scroll-options attribute
    * @param {HTMLElement}
-   * @return {object}
+   * @return {Object}
    * @private
    */
   parseDataOptions(el) {
