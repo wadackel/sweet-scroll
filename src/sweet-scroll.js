@@ -30,31 +30,31 @@ class SweetScroll {
 
   /**
    * SweetScroll constructor
-   * @param {object}
-   * @param {string} | {HTMLElement}
+   * @param {Object}
+   * @param {String} | {HTMLElement}
    */
   constructor(options = {}, container = "body, html") {
     this.options = Util.merge({}, SweetScroll.defaults, options);
-    this.container = this._getContainer(container);
+    this.container = this.getContainer(container);
     this.header = $(this.options.header);
     this.tween = new ScrollTween(this.container);
     this._trigger = null;
     this._shouldCallCancelScroll = false;
-    this._bindContainerClick();
+    this.bindContainerClick();
   }
 
   /**
    * Scroll animation to the specified position
-   * @param {any}
-   * @param {object}
-   * @return {void}
+   * @param {Any}
+   * @param {Object}
+   * @return {Void}
    */
   to(distance, options = {}) {
     const {container, header} = this;
     const params = Util.merge({}, this.options, options);
-    const offset = this._parseCoodinate(params.offset);
+    const offset = this.parseCoodinate(params.offset);
     const trigger = this._trigger;
-    let scroll = this._parseCoodinate(distance);
+    let scroll = this.parseCoodinate(distance);
 
     // Remove the triggering elements which has been temporarily retained
     this._trigger = null;
@@ -107,7 +107,7 @@ class SweetScroll {
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
-    if (this._hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
+    if (this.hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
       return;
     }
 
@@ -129,25 +129,25 @@ class SweetScroll {
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
       // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
-      this._unbindContainerStop();
+      this.unbindContainerStop();
       if (this._shouldCallCancelScroll) {
-        this._hook(params.cancelScroll);
+        this.hook(params.cancelScroll);
         this.cancelScroll();
       } else {
-        this._hook(params.afterScroll, scroll, trigger);
+        this.hook(params.afterScroll, scroll, trigger);
         this.afterScroll(scroll, trigger);
       }
     });
 
     // Bind the scroll stop events
-    this._bindContainerStop();
+    this.bindContainerStop();
   }
 
   /**
    * Scroll animation to the specified top position
-   * @param {any}
-   * @param {object}
-   * @return {void}
+   * @param {Any}
+   * @param {Object}
+   * @return {Void}
    */
   toTop(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
@@ -158,9 +158,9 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified left position
-   * @param {any}
-   * @param {object}
-   * @return {void}
+   * @param {Any}
+   * @param {Object}
+   * @return {Void}
    */
   toLeft(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
@@ -172,8 +172,8 @@ class SweetScroll {
   /**
    * Scroll animation to the specified element
    * @param {HTMLElement}
-   * @param {object}
-   * @return {void}
+   * @param {Object}
+   * @return {Void}
    */
   toElement($el, options = {}) {
     if ($el instanceof HTMLElement) {
@@ -184,8 +184,8 @@ class SweetScroll {
 
   /**
    * Stop the current animation
-   * @param {boolean}
-   * @return {void}
+   * @param {Boolean}
+   * @return {Void}
    */
   stop(gotoEnd = false) {
     if (this._stopScrollListener) {
@@ -196,27 +196,27 @@ class SweetScroll {
 
   /**
    * Update the instance
-   * @param {object}
-   * @return {void}
+   * @param {Object}
+   * @return {Void}
    */
   update(options = {}) {
     this.stop();
-    this._unbindContainerClick();
-    this._unbindContainerStop();
+    this.unbindContainerClick();
+    this.unbindContainerStop();
     this.options = Util.merge({}, this.options, options);
     this.header = $(this.options.header);
-    this._bindContainerClick();
+    this.bindContainerClick();
   }
 
   /**
    * Destroy SweetScroll instance
-   * @param {boolean}
-   * @return {void}
+   * @param {Boolean}
+   * @return {Void}
    */
   destroy() {
     this.stop();
-    this._unbindContainerClick();
-    this._unbindContainerStop();
+    this.unbindContainerClick();
+    this.unbindContainerStop();
     this.container = null;
     this.header = null;
     this.tween = null;
@@ -224,9 +224,9 @@ class SweetScroll {
 
   /**
    * Called at before of the scroll.
-   * @param {object}
+   * @param {Object}
    * @param {HTMLElement}
-   * @return {boolean}
+   * @return {Boolean}
    */
   beforeScroll(toScroll, trigger) {
     return true;
@@ -234,113 +234,26 @@ class SweetScroll {
 
   /**
    * Called at cancel of the scroll.
-   * @return {void}
+   * @return {Void}
    */
   cancelScroll() {
   }
 
   /**
    * Called at after of the scroll.
-   * @param {object}
+   * @param {Object}
    * @param {HTMLElement}
-   * @return {void}
+   * @return {Void}
    */
   afterScroll(toScroll, trigger) {
   }
 
   /**
-   * Get the container for the scroll, depending on the options.
-   * @param {string} | {HTMLElement}
-   * @return {HTMLElement}
-   * @private
-   */
-  _getContainer(selector) {
-    const {verticalScroll, horizontalScroll} = this.options;
-    let container;
-
-    if (verticalScroll) {
-      container = Dom.scrollableFind(selector, "y");
-    }
-
-    if (!container && horizontalScroll) {
-      container = Dom.scrollableFind(selector, "x");
-    }
-
-    return container;
-  }
-
-  /**
-   * Bind a click event to the container
-   * @return {void}
-   * @private
-   */
-  _bindContainerClick() {
-    const {container} = this;
-    if (!container) return;
-    this._containerClickListener = this._handleContainerClick.bind(this);
-    addEvent(container, "click", this._containerClickListener);
-  }
-
-  /**
-   * Unbind a click event to the container
-   * @return {void}
-   * @private
-   */
-  _unbindContainerClick() {
-    const {container} = this;
-    if (!container || !this._containerClickListener) return;
-    removeEvent(container, "click", this._containerClickListener);
-    this._containerClickListener = null;
-  }
-
-  /**
-   * Bind the scroll stop of events
-   * @return {void}
-   * @private
-   */
-  _bindContainerStop() {
-    const {container} = this;
-    if (!container) return;
-    this._stopScrollListener = this._handleStopScroll.bind(this);
-    addEvent(container, WHEEL_EVENT, this._stopScrollListener);
-    addEvent(container, "touchstart", this._stopScrollListener);
-    addEvent(container, "touchmove", this._stopScrollListener);
-  }
-
-  /**
-   * Unbind the scroll stop of events
-   * @return {void}
-   * @private
-   */
-  _unbindContainerStop() {
-    const {container} = this;
-    if (!container || !this._stopScrollListener) return;
-    removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
-    removeEvent(container, "touchstart", this._stopScrollListener);
-    removeEvent(container, "touchmove", this._stopScrollListener);
-    this._stopScrollListener = null;
-  }
-
-  /**
-   * Call the specified callback
-   * @param {string}
-   * @param {...any}
-   * @return {void}
-   * @private
-   */
-  _hook(callback, ...args) {
-    if (Util.isFunction(callback)) {
-      return callback.apply(this, args);
-    }
-  }
-
-  /**
    * Parse the value of coordinate
-   * @param {any}
-   * @return {object}
-   * @private
+   * @param {Any}
+   * @return {Object}
    */
-  _parseCoodinate(coodinate) {
+  parseCoodinate(coodinate) {
     const enableTop = this.options.verticalScroll;
     let scroll = {top: 0, left: 0};
 
@@ -409,12 +322,98 @@ class SweetScroll {
   }
 
   /**
-   * Handling of scroll stop event
-   * @param {Event}
-   * @return {void}
+   * Get the container for the scroll, depending on the options.
+   * @param {String} | {HTMLElement}
+   * @return {HTMLElement}
    * @private
    */
-  _handleStopScroll(e) {
+  getContainer(selector) {
+    const {verticalScroll, horizontalScroll} = this.options;
+    let container;
+
+    if (verticalScroll) {
+      container = Dom.scrollableFind(selector, "y");
+    }
+
+    if (!container && horizontalScroll) {
+      container = Dom.scrollableFind(selector, "x");
+    }
+
+    return container;
+  }
+
+  /**
+   * Bind a click event to the container
+   * @return {Void}
+   * @private
+   */
+  bindContainerClick() {
+    const {container} = this;
+    if (!container) return;
+    this._containerClickListener = this.handleContainerClick.bind(this);
+    addEvent(container, "click", this._containerClickListener);
+  }
+
+  /**
+   * Unbind a click event to the container
+   * @return {Void}
+   * @private
+   */
+  unbindContainerClick() {
+    const {container} = this;
+    if (!container || !this._containerClickListener) return;
+    removeEvent(container, "click", this._containerClickListener);
+    this._containerClickListener = null;
+  }
+
+  /**
+   * Bind the scroll stop of events
+   * @return {Void}
+   * @private
+   */
+  bindContainerStop() {
+    const {container} = this;
+    if (!container) return;
+    this._stopScrollListener = this.handleStopScroll.bind(this);
+    addEvent(container, WHEEL_EVENT, this._stopScrollListener);
+    addEvent(container, "touchstart", this._stopScrollListener);
+    addEvent(container, "touchmove", this._stopScrollListener);
+  }
+
+  /**
+   * Unbind the scroll stop of events
+   * @return {Void}
+   * @private
+   */
+  unbindContainerStop() {
+    const {container} = this;
+    if (!container || !this._stopScrollListener) return;
+    removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
+    removeEvent(container, "touchstart", this._stopScrollListener);
+    removeEvent(container, "touchmove", this._stopScrollListener);
+    this._stopScrollListener = null;
+  }
+
+  /**
+   * Call the specified callback
+   * @param {Function}
+   * @param {...Any}
+   * @return {Void}
+   * @private
+   */
+  hook(callback, ...args) {
+    if (Util.isFunction(callback)) {
+      return callback.apply(this, args);
+    }
+  }
+
+  /**
+   * Handling of scroll stop event
+   * @param {Event}
+   * @return {Void}
+   * @private
+   */
+  handleStopScroll(e) {
     if (this.options.stopScroll) {
       this.stop();
     } else {
@@ -425,10 +424,10 @@ class SweetScroll {
   /**
    * Handling of container click event
    * @param {Event}
-   * @return {void}
+   * @return {Void}
    * @private
    */
-  _handleContainerClick(e) {
+  handleContainerClick(e) {
     let {options} = this;
     let el = e.target;
 
@@ -436,7 +435,7 @@ class SweetScroll {
     for (; el && el !== doc; el = el.parentNode) {
       if (!matches(el, options.trigger)) continue;
       const data = el.getAttribute("data-scroll");
-      const dataOptions = this._parseDataOptions(el);
+      const dataOptions = this.parseDataOptions(el);
       const href = data || el.getAttribute("href");
 
       options = Util.merge({}, options, dataOptions);
@@ -462,10 +461,10 @@ class SweetScroll {
   /**
    * Parse the data-scroll-options attribute
    * @param {HTMLElement}
-   * @return {object}
+   * @return {Object}
    * @private
    */
-  _parseDataOptions(el) {
+  parseDataOptions(el) {
     const options = el.getAttribute("data-scroll-options");
     return options ? JSON.parse(options) : {};
   }

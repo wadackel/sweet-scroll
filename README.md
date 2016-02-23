@@ -249,8 +249,8 @@ sweetScroll.to("-=200");
 
 ### new SweetScroll(options = {}, container = "body, html")
 
-**options: {object}**  
-**container: {string | HTMLElement}**  
+**options: {Object}**  
+**container: {String | HTMLElement}**  
 
 Will generate a SweetScroll instance.
 
@@ -266,8 +266,8 @@ const sweetScroll = new SweetScroll({
 
 ### to(distance, options = {})
 
-**distance: {string | array | object}**  
-**options: {object}**
+**distance: {String | Array | Object}**  
+**options: {Object}**
 
 Scroll animation to the specified `distance`.
 
@@ -280,8 +280,8 @@ sweetScroll.to({top: 1500, left: 400});
 
 ### toTop(distance, options = {})
 
-**distance: {string | array | object}**  
-**options: {object}**
+**distance: {String | Array | Object}**  
+**options: {Object}**
 
 Vertical scroll animation to the specified `distance`.  
 
@@ -294,8 +294,8 @@ sweetScroll.toTop(0);
 
 ### toLeft(distance, options = {})
 
-**distance: {string | array | object}**  
-**options: {object}**
+**distance: {String | Array | Object}**  
+**options: {Object}**
 
 Horizontal scroll animation to the specified `distance`.  
 
@@ -309,7 +309,7 @@ sweetScroll.toLeft(1500);
 ### toElement($el, options = {})
 
 **$el: {HTMLElement}**  
-**options: {object}**
+**options: {Object}**
 
 Scroll animation to the specified `HTMLElement`.
 
@@ -322,7 +322,7 @@ sweetScroll.toElement(document.getElementById("content"));
 
 ### update(options = {})
 
-**options: {object}**
+**options: {Object}**
 
 Will update the SweetScroll instance.  
 Primarily used in the case of option update.

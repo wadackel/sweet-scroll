@@ -47,62 +47,62 @@ describe("SweetScroll", () => {
     it("Should be parse the coodinate", () => {
       // Vertical and Horizontal
       const vh = getInstance({verticalScroll: true, horizontalScroll: true});
-      assert.deepEqual(vh._parseCoodinate({top: 0, left: 0}), {top: 0, left: 0});
-      assert.deepEqual(vh._parseCoodinate([1, 2]), {top: 1, left: 2});
-      assert.deepEqual(vh._parseCoodinate(140), {top: 140, left: 0});
-      assert.deepEqual(vh._parseCoodinate("200"), {top: 200, left: 0});
-      assert.deepEqual(vh._parseCoodinate("120,150"), {top: 120, left: 150});
-      assert.deepEqual(vh._parseCoodinate("120, 150"), {top: 120, left: 150});
-      assert.deepEqual(vh._parseCoodinate("top: 500, left: 10"), {top: 500, left: 10});
-      assert.deepEqual(vh._parseCoodinate("top:100, left:02"), {top: 100, left: 2});
-      assert(vh._parseCoodinate(null) == null);
-      assert(vh._parseCoodinate(undefined) == null);
+      assert.deepEqual(vh.parseCoodinate({top: 0, left: 0}), {top: 0, left: 0});
+      assert.deepEqual(vh.parseCoodinate([1, 2]), {top: 1, left: 2});
+      assert.deepEqual(vh.parseCoodinate(140), {top: 140, left: 0});
+      assert.deepEqual(vh.parseCoodinate("200"), {top: 200, left: 0});
+      assert.deepEqual(vh.parseCoodinate("120,150"), {top: 120, left: 150});
+      assert.deepEqual(vh.parseCoodinate("120, 150"), {top: 120, left: 150});
+      assert.deepEqual(vh.parseCoodinate("top: 500, left: 10"), {top: 500, left: 10});
+      assert.deepEqual(vh.parseCoodinate("top:100, left:02"), {top: 100, left: 2});
+      assert(vh.parseCoodinate(null) == null);
+      assert(vh.parseCoodinate(undefined) == null);
 
       // Vertical only
       const v = getInstance({verticalScroll: true, horizontalScroll: false});
-      assert.deepEqual(v._parseCoodinate(1200), {top: 1200, left: 0});
-      assert.deepEqual(v._parseCoodinate("200"), {top: 200, left: 0});
-      assert.deepEqual(v._parseCoodinate([30]), {top: 30, left: 0});
+      assert.deepEqual(v.parseCoodinate(1200), {top: 1200, left: 0});
+      assert.deepEqual(v.parseCoodinate("200"), {top: 200, left: 0});
+      assert.deepEqual(v.parseCoodinate([30]), {top: 30, left: 0});
 
       // Horizontal only
       const h = getInstance({verticalScroll: false, horizontalScroll: true});
-      assert.deepEqual(h._parseCoodinate(1200), {top: 0, left: 1200});
-      assert.deepEqual(h._parseCoodinate("200"), {top: 0, left: 200});
-      assert.deepEqual(h._parseCoodinate([30]), {top: 0, left: 30});
+      assert.deepEqual(h.parseCoodinate(1200), {top: 0, left: 1200});
+      assert.deepEqual(h.parseCoodinate("200"), {top: 0, left: 200});
+      assert.deepEqual(h.parseCoodinate([30]), {top: 0, left: 30});
     });
 
     describe("Should be parse the relative coodinate", () => {
       it("Vertical and Horizontal", () => {
         const sweetScroll = getInstance({verticalScroll: true, horizontalScroll: true});
-        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 100, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), {top: 100, left: 0});
         sweetScroll.container.scrollTop = 100;
-        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 200, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), {top: 200, left: 0});
         sweetScroll.container.scrollTop = 200;
-        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 150, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), {top: 150, left: 0});
         sweetScroll.container.scrollTop = 150;
-        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 100, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), {top: 100, left: 0});
       });
 
       it("Vertical only", () => {
         const sweetScroll = getInstance({verticalScroll: true, horizontalScroll: false});
-        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 100, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), {top: 100, left: 0});
         sweetScroll.container.scrollTop = 100;
-        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 200, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), {top: 200, left: 0});
         sweetScroll.container.scrollTop = 200;
-        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 150, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), {top: 150, left: 0});
         sweetScroll.container.scrollTop = 150;
-        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 100, left: 0});
+        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), {top: 100, left: 0});
       });
 
       it("Horizontal only", () => {
         const sweetScroll = getInstance({verticalScroll: false, horizontalScroll: true});
-        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 0, left: 100});
+        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), {top: 0, left: 100});
         sweetScroll.container.scrollLeft = 100;
-        assert.deepEqual(sweetScroll._parseCoodinate("+=100"), {top: 0, left: 200});
+        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), {top: 0, left: 200});
         sweetScroll.container.scrollLeft = 200;
-        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 0, left: 150});
+        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), {top: 0, left: 150});
         sweetScroll.container.scrollLeft = 150;
-        assert.deepEqual(sweetScroll._parseCoodinate("-=50"), {top: 0, left: 100});
+        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), {top: 0, left: 100});
       });
     });
   });
@@ -131,18 +131,18 @@ describe("SweetScroll", () => {
 
   describe("Callbacks", () => {
     it("Should be run beforeScroll", (done) => {
-      const sweetScroll = getInstance({beforeScroll: (scroll) => {
-        assert(scroll.top === 100);
-        assert(scroll.left === 0);
+      const sweetScroll = getInstance({beforeScroll: (toScroll) => {
+        assert(toScroll.top === 100);
+        assert(toScroll.left === 0);
         done();
       }});
       sweetScroll.to(100);
     });
 
     it("Should be run afterScroll", (done) => {
-      const sweetScroll = getInstance({afterScroll: (scroll) => {
-        assert(scroll.top === 500);
-        assert(scroll.left === 0);
+      const sweetScroll = getInstance({afterScroll: (toScroll) => {
+        assert(toScroll.top === 500);
+        assert(toScroll.left === 0);
         done();
       }});
       sweetScroll.to(500);
@@ -152,6 +152,46 @@ describe("SweetScroll", () => {
       const $container = getContainer();
       const sweetScroll = getInstance({cancelScroll: done});
       sweetScroll.to(1200);
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
+    });
+  });
+
+  describe("Callback Methods", () => {
+    it("Should be run beforeScroll", (done) => {
+      class MyScroll extends SweetScroll {
+        beforeScroll(toScroll, trigger) {
+          assert(toScroll.top === 100);
+          assert(toScroll.left === 0);
+          done();
+        }
+      }
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(100);
+    });
+
+    it("Should be run afterScroll", (done) => {
+      class MyScroll extends SweetScroll {
+        afterScroll(toScroll, trigger) {
+          assert(toScroll.top === 500);
+          assert(toScroll.left === 0);
+          done();
+        }
+      }
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(500);
+    });
+
+    it("Should be run cancelScroll", (done) => {
+      class MyScroll extends SweetScroll {
+        cancelScroll() {
+          done();
+        }
+      }
+      const $container = getContainer();
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(1200);
       setTimeout(() => {
         trigger($container, "touchstart");
       }, 500);

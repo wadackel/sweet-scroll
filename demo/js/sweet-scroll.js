@@ -153,6 +153,14 @@
     return i > -1;
   }
 
+  function addEvent(el, event, listener) {
+    el.addEventListener(event, listener, false);
+  }
+
+  function removeEvent(el, event, listener) {
+    el.removeEventListener(event, listener, false);
+  }
+
   var directionMethodMap = {
     y: "scrollTop",
     x: "scrollLeft"
@@ -259,14 +267,6 @@
       };
     }
     return rect;
-  }
-
-  function addEvent(el, event, listener) {
-    el.addEventListener(event, listener, false);
-  }
-
-  function removeEvent(el, event, listener) {
-    el.removeEventListener(event, listener, false);
   }
 
   var lastTime = 0;
@@ -631,8 +631,8 @@
 
     /**
      * SweetScroll constructor
-     * @param {object}
-     * @param {string} | {HTMLElement}
+     * @param {Object}
+     * @param {String} | {HTMLElement}
      */
 
     function SweetScroll() {
@@ -641,19 +641,19 @@
       babelHelpers.classCallCheck(this, SweetScroll);
 
       this.options = merge({}, SweetScroll.defaults, options);
-      this.container = this._getContainer(container);
+      this.container = this.getContainer(container);
       this.header = $(this.options.header);
       this.tween = new ScrollTween(this.container);
       this._trigger = null;
       this._shouldCallCancelScroll = false;
-      this._bindContainerClick();
+      this.bindContainerClick();
     }
 
     /**
      * Scroll animation to the specified position
-     * @param {any}
-     * @param {object}
-     * @return {void}
+     * @param {Any}
+     * @param {Object}
+     * @return {Void}
      */
 
     // Default options
@@ -668,9 +668,9 @@
         var header = this.header;
 
         var params = merge({}, this.options, options);
-        var offset = this._parseCoodinate(params.offset);
+        var offset = this.parseCoodinate(params.offset);
         var trigger = this._trigger;
-        var scroll = this._parseCoodinate(distance);
+        var scroll = this.parseCoodinate(distance);
 
         // Remove the triggering elements which has been temporarily retained
         this._trigger = null;
@@ -722,7 +722,7 @@
 
         // Call `beforeScroll`
         // Stop scrolling when it returns false
-        if (this._hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
+        if (this.hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
           return;
         }
 
@@ -744,25 +744,25 @@
         // Run the animation!!
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
           // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
-          _this._unbindContainerStop();
+          _this.unbindContainerStop();
           if (_this._shouldCallCancelScroll) {
-            _this._hook(params.cancelScroll);
+            _this.hook(params.cancelScroll);
             _this.cancelScroll();
           } else {
-            _this._hook(params.afterScroll, scroll, trigger);
+            _this.hook(params.afterScroll, scroll, trigger);
             _this.afterScroll(scroll, trigger);
           }
         });
 
         // Bind the scroll stop events
-        this._bindContainerStop();
+        this.bindContainerStop();
       }
 
       /**
        * Scroll animation to the specified top position
-       * @param {any}
-       * @param {object}
-       * @return {void}
+       * @param {Any}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -778,9 +778,9 @@
 
       /**
        * Scroll animation to the specified left position
-       * @param {any}
-       * @param {object}
-       * @return {void}
+       * @param {Any}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -797,8 +797,8 @@
       /**
        * Scroll animation to the specified element
        * @param {HTMLElement}
-       * @param {object}
-       * @return {void}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -814,8 +814,8 @@
 
       /**
        * Stop the current animation
-       * @param {boolean}
-       * @return {void}
+       * @param {Boolean}
+       * @return {Void}
        */
 
     }, {
@@ -831,8 +831,8 @@
 
       /**
        * Update the instance
-       * @param {object}
-       * @return {void}
+       * @param {Object}
+       * @return {Void}
        */
 
     }, {
@@ -841,25 +841,25 @@
         var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
 
         this.stop();
-        this._unbindContainerClick();
-        this._unbindContainerStop();
+        this.unbindContainerClick();
+        this.unbindContainerStop();
         this.options = merge({}, this.options, options);
         this.header = $(this.options.header);
-        this._bindContainerClick();
+        this.bindContainerClick();
       }
 
       /**
        * Destroy SweetScroll instance
-       * @param {boolean}
-       * @return {void}
+       * @param {Boolean}
+       * @return {Void}
        */
 
     }, {
       key: "destroy",
       value: function destroy() {
         this.stop();
-        this._unbindContainerClick();
-        this._unbindContainerStop();
+        this.unbindContainerClick();
+        this.unbindContainerStop();
         this.container = null;
         this.header = null;
         this.tween = null;
@@ -867,9 +867,9 @@
 
       /**
        * Called at before of the scroll.
-       * @param {object}
+       * @param {Object}
        * @param {HTMLElement}
-       * @return {boolean}
+       * @return {Boolean}
        */
 
     }, {
@@ -880,7 +880,7 @@
 
       /**
        * Called at cancel of the scroll.
-       * @return {void}
+       * @return {Void}
        */
 
     }, {
@@ -889,9 +889,9 @@
 
       /**
        * Called at after of the scroll.
-       * @param {object}
+       * @param {Object}
        * @param {HTMLElement}
-       * @return {void}
+       * @return {Void}
        */
 
     }, {
@@ -899,130 +899,14 @@
       value: function afterScroll(toScroll, trigger) {}
 
       /**
-       * Get the container for the scroll, depending on the options.
-       * @param {string} | {HTMLElement}
-       * @return {HTMLElement}
-       * @private
-       */
-
-    }, {
-      key: "_getContainer",
-      value: function _getContainer(selector) {
-        var _options = this.options;
-        var verticalScroll = _options.verticalScroll;
-        var horizontalScroll = _options.horizontalScroll;
-
-        var container = undefined;
-
-        if (verticalScroll) {
-          container = scrollableFind(selector, "y");
-        }
-
-        if (!container && horizontalScroll) {
-          container = scrollableFind(selector, "x");
-        }
-
-        return container;
-      }
-
-      /**
-       * Bind a click event to the container
-       * @return {void}
-       * @private
-       */
-
-    }, {
-      key: "_bindContainerClick",
-      value: function _bindContainerClick() {
-        var container = this.container;
-
-        if (!container) return;
-        this._containerClickListener = this._handleContainerClick.bind(this);
-        addEvent(container, "click", this._containerClickListener);
-      }
-
-      /**
-       * Unbind a click event to the container
-       * @return {void}
-       * @private
-       */
-
-    }, {
-      key: "_unbindContainerClick",
-      value: function _unbindContainerClick() {
-        var container = this.container;
-
-        if (!container || !this._containerClickListener) return;
-        removeEvent(container, "click", this._containerClickListener);
-        this._containerClickListener = null;
-      }
-
-      /**
-       * Bind the scroll stop of events
-       * @return {void}
-       * @private
-       */
-
-    }, {
-      key: "_bindContainerStop",
-      value: function _bindContainerStop() {
-        var container = this.container;
-
-        if (!container) return;
-        this._stopScrollListener = this._handleStopScroll.bind(this);
-        addEvent(container, WHEEL_EVENT, this._stopScrollListener);
-        addEvent(container, "touchstart", this._stopScrollListener);
-        addEvent(container, "touchmove", this._stopScrollListener);
-      }
-
-      /**
-       * Unbind the scroll stop of events
-       * @return {void}
-       * @private
-       */
-
-    }, {
-      key: "_unbindContainerStop",
-      value: function _unbindContainerStop() {
-        var container = this.container;
-
-        if (!container || !this._stopScrollListener) return;
-        removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
-        removeEvent(container, "touchstart", this._stopScrollListener);
-        removeEvent(container, "touchmove", this._stopScrollListener);
-        this._stopScrollListener = null;
-      }
-
-      /**
-       * Call the specified callback
-       * @param {string}
-       * @param {...any}
-       * @return {void}
-       * @private
-       */
-
-    }, {
-      key: "_hook",
-      value: function _hook(callback) {
-        if (isFunction(callback)) {
-          for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-            args[_key - 1] = arguments[_key];
-          }
-
-          return callback.apply(this, args);
-        }
-      }
-
-      /**
        * Parse the value of coordinate
-       * @param {any}
-       * @return {object}
-       * @private
+       * @param {Any}
+       * @return {Object}
        */
 
     }, {
-      key: "_parseCoodinate",
-      value: function _parseCoodinate(coodinate) {
+      key: "parseCoodinate",
+      value: function parseCoodinate(coodinate) {
         var enableTop = this.options.verticalScroll;
         var scroll = { top: 0, left: 0 };
 
@@ -1089,15 +973,130 @@
       }
 
       /**
-       * Handling of scroll stop event
-       * @param {Event}
-       * @return {void}
+       * Get the container for the scroll, depending on the options.
+       * @param {String} | {HTMLElement}
+       * @return {HTMLElement}
        * @private
        */
 
     }, {
-      key: "_handleStopScroll",
-      value: function _handleStopScroll(e) {
+      key: "getContainer",
+      value: function getContainer(selector) {
+        var _options = this.options;
+        var verticalScroll = _options.verticalScroll;
+        var horizontalScroll = _options.horizontalScroll;
+
+        var container = undefined;
+
+        if (verticalScroll) {
+          container = scrollableFind(selector, "y");
+        }
+
+        if (!container && horizontalScroll) {
+          container = scrollableFind(selector, "x");
+        }
+
+        return container;
+      }
+
+      /**
+       * Bind a click event to the container
+       * @return {Void}
+       * @private
+       */
+
+    }, {
+      key: "bindContainerClick",
+      value: function bindContainerClick() {
+        var container = this.container;
+
+        if (!container) return;
+        this._containerClickListener = this.handleContainerClick.bind(this);
+        addEvent(container, "click", this._containerClickListener);
+      }
+
+      /**
+       * Unbind a click event to the container
+       * @return {Void}
+       * @private
+       */
+
+    }, {
+      key: "unbindContainerClick",
+      value: function unbindContainerClick() {
+        var container = this.container;
+
+        if (!container || !this._containerClickListener) return;
+        removeEvent(container, "click", this._containerClickListener);
+        this._containerClickListener = null;
+      }
+
+      /**
+       * Bind the scroll stop of events
+       * @return {Void}
+       * @private
+       */
+
+    }, {
+      key: "bindContainerStop",
+      value: function bindContainerStop() {
+        var container = this.container;
+
+        if (!container) return;
+        this._stopScrollListener = this.handleStopScroll.bind(this);
+        addEvent(container, WHEEL_EVENT, this._stopScrollListener);
+        addEvent(container, "touchstart", this._stopScrollListener);
+        addEvent(container, "touchmove", this._stopScrollListener);
+      }
+
+      /**
+       * Unbind the scroll stop of events
+       * @return {Void}
+       * @private
+       */
+
+    }, {
+      key: "unbindContainerStop",
+      value: function unbindContainerStop() {
+        var container = this.container;
+
+        if (!container || !this._stopScrollListener) return;
+        removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
+        removeEvent(container, "touchstart", this._stopScrollListener);
+        removeEvent(container, "touchmove", this._stopScrollListener);
+        this._stopScrollListener = null;
+      }
+
+      /**
+       * Call the specified callback
+       * @param {Function}
+       * @param {...Any}
+       * @return {Void}
+       * @private
+       */
+
+    }, {
+      key: "hook",
+      value: function hook(callback) {
+        if (isFunction(callback)) {
+          for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+            args[_key - 1] = arguments[_key];
+          }
+
+          return callback.apply(this, args);
+        }
+      }
+
+      /**
+       * Handling of scroll stop event
+       * @param {Event}
+       * @return {Void}
+       * @private
+       */
+
+    }, {
+      key: "handleStopScroll",
+      value: function handleStopScroll(e) {
         if (this.options.stopScroll) {
           this.stop();
         } else {
@@ -1108,13 +1107,13 @@
       /**
        * Handling of container click event
        * @param {Event}
-       * @return {void}
+       * @return {Void}
        * @private
        */
 
     }, {
-      key: "_handleContainerClick",
-      value: function _handleContainerClick(e) {
+      key: "handleContainerClick",
+      value: function handleContainerClick(e) {
         var options = this.options;
 
         var el = e.target;
@@ -1123,7 +1122,7 @@
         for (; el && el !== doc; el = el.parentNode) {
           if (!matches(el, options.trigger)) continue;
           var data = el.getAttribute("data-scroll");
-          var dataOptions = this._parseDataOptions(el);
+          var dataOptions = this.parseDataOptions(el);
           var href = data || el.getAttribute("href");
 
           options = merge({}, options, dataOptions);
@@ -1147,13 +1146,13 @@
       /**
        * Parse the data-scroll-options attribute
        * @param {HTMLElement}
-       * @return {object}
+       * @return {Object}
        * @private
        */
 
     }, {
-      key: "_parseDataOptions",
-      value: function _parseDataOptions(el) {
+      key: "parseDataOptions",
+      value: function parseDataOptions(el) {
         var options = el.getAttribute("data-scroll-options");
         return options ? JSON.parse(options) : {};
       }
