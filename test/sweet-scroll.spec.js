@@ -131,18 +131,18 @@ describe("SweetScroll", () => {
 
   describe("Callbacks", () => {
     it("Should be run beforeScroll", (done) => {
-      const sweetScroll = getInstance({beforeScroll: (scroll) => {
-        assert(scroll.top === 100);
-        assert(scroll.left === 0);
+      const sweetScroll = getInstance({beforeScroll: (toScroll) => {
+        assert(toScroll.top === 100);
+        assert(toScroll.left === 0);
         done();
       }});
       sweetScroll.to(100);
     });
 
     it("Should be run afterScroll", (done) => {
-      const sweetScroll = getInstance({afterScroll: (scroll) => {
-        assert(scroll.top === 500);
-        assert(scroll.left === 0);
+      const sweetScroll = getInstance({afterScroll: (toScroll) => {
+        assert(toScroll.top === 500);
+        assert(toScroll.left === 0);
         done();
       }});
       sweetScroll.to(500);
@@ -152,6 +152,46 @@ describe("SweetScroll", () => {
       const $container = getContainer();
       const sweetScroll = getInstance({cancelScroll: done});
       sweetScroll.to(1200);
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
+    });
+  });
+
+  describe("Callback Methods", () => {
+    it("Should be run beforeScroll", (done) => {
+      class MyScroll extends SweetScroll {
+        beforeScroll(toScroll, trigger) {
+          assert(toScroll.top === 100);
+          assert(toScroll.left === 0);
+          done();
+        }
+      }
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(100);
+    });
+
+    it("Should be run afterScroll", (done) => {
+      class MyScroll extends SweetScroll {
+        afterScroll(toScroll, trigger) {
+          assert(toScroll.top === 500);
+          assert(toScroll.left === 0);
+          done();
+        }
+      }
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(500);
+    });
+
+    it("Should be run cancelScroll", (done) => {
+      class MyScroll extends SweetScroll {
+        cancelScroll() {
+          done();
+        }
+      }
+      const $container = getContainer();
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(1200);
       setTimeout(() => {
         trigger($container, "touchstart");
       }, 500);
