@@ -49,7 +49,7 @@ export function isNumeric(obj) {
 }
 
 export function hasProp(obj, key) {
-  return obj && Object.prototype.hasOwnProperty.call(obj, key);
+  return obj && obj.hasOwnProperty(key);
 }
 
 export function keys(obj) {

@@ -16,7 +16,7 @@ export default class ScrollTween {
     this.props = {x, y};
     this.duration = duration;
     this.delay = delay;
-    this.easing = easing;
+    this.easing = easing.replace("ease", "");
     this.callback = callback;
     this.progress = true;
 
