@@ -1,7 +1,13 @@
 export function addEvent(el, event, listener) {
-  el.addEventListener(event, listener, false);
+  const events = event.split(",");
+  events.forEach((eventName) => {
+    el.addEventListener(eventName.trim(), listener, false);
+  });
 }
 
 export function removeEvent(el, event, listener) {
-  el.removeEventListener(event, listener, false);
+  const events = event.split(",");
+  events.forEach((eventName) => {
+    el.removeEventListener(eventName.trim(), listener, false);
+  });
 }

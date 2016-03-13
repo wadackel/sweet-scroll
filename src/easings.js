@@ -1,119 +1,120 @@
-const mathCos = Math.cos;
-const mathSin = Math.sin;
-const mathPow = Math.pow;
-const mathAbs = Math.abs;
-const mathSqrt = Math.sqrt;
-const mathAsin = Math.asin;
-const PI = Math.PI;
+const math = Math;
+const mathCos = math.cos;
+const mathSin = math.sin;
+const mathPow = math.pow;
+const mathAbs = math.abs;
+const mathSqrt = math.sqrt;
+const mathAsin = math.asin;
+const PI = math.PI;
 
 
 export function linear(p) {
   return p;
 }
 
-export function easeInQuad(x, t, b, c, d) {
+export function InQuad(x, t, b, c, d) {
   return c * (t /= d) * t + b;
 }
 
-export function easeOutQuad(x, t, b, c, d) {
+export function OutQuad(x, t, b, c, d) {
   return -c * (t /= d) * (t - 2) + b;
 }
 
-export function easeInOutQuad(x, t, b, c, d) {
+export function InOutQuad(x, t, b, c, d) {
   if ((t /= d / 2) < 1) {
     return c / 2 * t * t + b;
   }
   return -c / 2 * ((--t) * (t - 2) - 1) + b;
 }
 
-export function easeInCubic(x, t, b, c, d) {
+export function InCubic(x, t, b, c, d) {
   return c * (t /= d) * t * t + b;
 }
 
-export function easeOutCubic(x, t, b, c, d) {
+export function OutCubic(x, t, b, c, d) {
   return c * ((t=t / d - 1) * t * t + 1) + b;
 }
 
-export function easeInOutCubic(x, t, b, c, d) {
+export function InOutCubic(x, t, b, c, d) {
   if ((t /= d / 2) < 1) {
     return c / 2 * t * t * t + b;
   }
   return c / 2 * ((t -= 2) * t * t + 2) + b;
 }
 
-export function easeInQuart(x, t, b, c, d) {
+export function InQuart(x, t, b, c, d) {
   return c * (t /= d) * t * t * t + b;
 }
 
-export function easeOutQuart(x, t, b, c, d) {
+export function OutQuart(x, t, b, c, d) {
   return -c * ((t = t / d - 1) * t * t * t - 1) + b;
 }
 
-export function easeInOutQuart(x, t, b, c, d) {
+export function InOutQuart(x, t, b, c, d) {
   if ((t /= d / 2) < 1) {
     return c / 2 * t * t * t * t + b;
   }
   return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
 }
 
-export function easeInQuint(x, t, b, c, d) {
+export function InQuint(x, t, b, c, d) {
   return c * (t /= d) * t * t * t * t + b;
 }
 
-export function easeOutQuint(x, t, b, c, d) {
+export function OutQuint(x, t, b, c, d) {
   return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
 }
 
-export function easeInOutQuint(x, t, b, c, d) {
+export function InOutQuint(x, t, b, c, d) {
   if ((t /= d / 2) < 1) {
     return c / 2 * t * t * t * t * t + b;
   }
   return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
 }
 
-export function easeInSine(x, t, b, c, d) {
+export function InSine(x, t, b, c, d) {
   return -c * mathCos(t / d * (PI / 2)) + c + b;
 }
 
-export function easeOutSine(x, t, b, c, d) {
+export function OutSine(x, t, b, c, d) {
   return c * mathSin(t / d * (PI / 2)) + b;
 }
 
-export function easeInOutSine(x, t, b, c, d) {
+export function InOutSine(x, t, b, c, d) {
   return -c / 2 * (mathCos(PI * t / d) - 1) + b;
 }
 
-export function easeInExpo(x, t, b, c, d) {
+export function InExpo(x, t, b, c, d) {
   return (t === 0) ? b : c * mathPow(2, 10 * (t / d - 1)) + b;
 }
 
-export function easeOutExpo(x, t, b, c, d) {
+export function OutExpo(x, t, b, c, d) {
   return (t === d) ? b + c : c * (-mathPow(2, -10 * t / d) + 1) + b;
 }
 
-export function easeInOutExpo(x, t, b, c, d) {
+export function InOutExpo(x, t, b, c, d) {
   if (t === 0) return b;
   if (t === d) return b + c;
   if ((t /= d / 2) < 1) return c / 2 * mathPow(2, 10 * (t - 1)) + b;
   return c / 2 * (-mathPow(2, -10 * --t) + 2) + b;
 }
 
-export function easeInCirc(x, t, b, c, d) {
+export function InCirc(x, t, b, c, d) {
   return -c * (mathSqrt(1 - (t /= d) * t) - 1) + b;
 }
 
-export function easeOutCirc(x, t, b, c, d) {
+export function OutCirc(x, t, b, c, d) {
   return c * mathSqrt(1 - (t = t / d - 1) * t) + b;
 }
 
-export function easeInOutCirc(x, t, b, c, d) {
+export function InOutCirc(x, t, b, c, d) {
   if ((t /= d / 2) < 1) {
     return -c / 2 * (mathSqrt(1 - t * t) - 1) + b;
   }
   return c / 2 * (mathSqrt(1 - (t -= 2) * t) + 1) + b;
 }
 
-export function easeInElastic(x, t, b, c, d) {
+export function InElastic(x, t, b, c, d) {
   let s = 1.70158, p = 0, a = c;
   if (t === 0) return b;
   if ((t /= d) === 1) return b + c;
@@ -127,7 +128,7 @@ export function easeInElastic(x, t, b, c, d) {
   return -(a * mathPow(2, 10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p)) + b;
 }
 
-export function easeOutElastic(x, t, b, c, d) {
+export function OutElastic(x, t, b, c, d) {
   let s = 1.70158, p = 0, a = c;
   if (t === 0) return b;
   if ((t /= d) === 1) return b + c;
@@ -141,7 +142,7 @@ export function easeOutElastic(x, t, b, c, d) {
   return a * mathPow(2, -10 * t) * mathSin((t * d - s) * (2 * PI) / p) + c + b;
 }
 
-export function easeInOutElastic(x, t, b, c, d) {
+export function InOutElastic(x, t, b, c, d) {
   let s = 1.70158, p = 0, a = c;
   if (t === 0) return b;
   if ((t /= d / 2) === 2) return b + c;
@@ -158,26 +159,26 @@ export function easeInOutElastic(x, t, b, c, d) {
   return a * mathPow(2, -10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p) * .5 + c + b;
 }
 
-export function easeInBack(x, t, b, c, d, s = 1.70158) {
+export function InBack(x, t, b, c, d, s = 1.70158) {
   return c * (t /= d) * t * ((s + 1) * t - s) + b;
 }
 
-export function easeOutBack(x, t, b, c, d, s = 1.70158) {
+export function OutBack(x, t, b, c, d, s = 1.70158) {
   return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 }
 
-export function easeInOutBack(x, t, b, c, d, s = 1.70158) {
+export function InOutBack(x, t, b, c, d, s = 1.70158) {
   if ((t /= d / 2) < 1) {
     return c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b;
   }
   return c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b;
 }
 
-export function easeInBounce(x, t, b, c, d) {
-  return c - easeOutBounce(x, d - t, 0, c, d) + b;
+export function InBounce(x, t, b, c, d) {
+  return c - OutBounce(x, d - t, 0, c, d) + b;
 }
 
-export function easeOutBounce(x, t, b, c, d) {
+export function OutBounce(x, t, b, c, d) {
   if ((t /= d) < (1 / 2.75)) {
     return c * (7.5625 * t * t) + b;
   } else if (t < (2 / 2.75)) {
@@ -189,9 +190,9 @@ export function easeOutBounce(x, t, b, c, d) {
   }
 }
 
-export function easeInOutBounce(x, t, b, c, d) {
+export function InOutBounce(x, t, b, c, d) {
   if (t < d / 2) {
-    return easeInBounce(x, t * 2, 0, c, d) * .5 + b;
+    return InBounce(x, t * 2, 0, c, d) * .5 + b;
   }
-  return easeOutBounce(x, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+  return OutBounce(x, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
 }

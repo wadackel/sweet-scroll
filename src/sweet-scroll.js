@@ -7,6 +7,7 @@ import ScrollTween from "./scroll-tween"
 const win = window;
 const doc = document;
 const WHEEL_EVENT = ("onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll");
+const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
 
 class SweetScroll {
 
@@ -375,9 +376,7 @@ class SweetScroll {
     const {container} = this;
     if (!container) return;
     this._stopScrollListener = this.handleStopScroll.bind(this);
-    addEvent(container, WHEEL_EVENT, this._stopScrollListener);
-    addEvent(container, "touchstart", this._stopScrollListener);
-    addEvent(container, "touchmove", this._stopScrollListener);
+    addEvent(container, CONTAINER_STOP_EVENTS, this._stopScrollListener);
   }
 
   /**
@@ -388,9 +387,7 @@ class SweetScroll {
   unbindContainerStop() {
     const {container} = this;
     if (!container || !this._stopScrollListener) return;
-    removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
-    removeEvent(container, "touchstart", this._stopScrollListener);
-    removeEvent(container, "touchmove", this._stopScrollListener);
+    removeEvent(container, CONTAINER_STOP_EVENTS, this._stopScrollListener);
     this._stopScrollListener = null;
   }
 

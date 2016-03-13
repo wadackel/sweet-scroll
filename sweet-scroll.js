@@ -91,7 +91,7 @@
   }
 
   function hasProp(obj, key) {
-    return obj && Object.prototype.hasOwnProperty.call(obj, key);
+    return obj && obj.hasOwnProperty(key);
   }
 
   function merge(obj) {
@@ -154,11 +154,17 @@
   }
 
   function addEvent(el, event, listener) {
-    el.addEventListener(event, listener, false);
+    var events = event.split(",");
+    events.forEach(function (eventName) {
+      el.addEventListener(eventName.trim(), listener, false);
+    });
   }
 
   function removeEvent(el, event, listener) {
-    el.removeEventListener(event, listener, false);
+    var events = event.split(",");
+    events.forEach(function (eventName) {
+      el.removeEventListener(eventName.trim(), listener, false);
+    });
   }
 
   var directionMethodMap = {
@@ -281,121 +287,122 @@
     return id;
   };
 
-  var mathCos = Math.cos;
-  var mathSin = Math.sin;
-  var mathPow = Math.pow;
-  var mathAbs = Math.abs;
-  var mathSqrt = Math.sqrt;
-  var mathAsin = Math.asin;
-  var PI = Math.PI;
+  var math = Math;
+  var mathCos = math.cos;
+  var mathSin = math.sin;
+  var mathPow = math.pow;
+  var mathAbs = math.abs;
+  var mathSqrt = math.sqrt;
+  var mathAsin = math.asin;
+  var PI = math.PI;
 
   function linear(p) {
     return p;
   }
 
-  function easeInQuad(x, t, b, c, d) {
+  function InQuad(x, t, b, c, d) {
     return c * (t /= d) * t + b;
   }
 
-  function easeOutQuad(x, t, b, c, d) {
+  function OutQuad(x, t, b, c, d) {
     return -c * (t /= d) * (t - 2) + b;
   }
 
-  function easeInOutQuad(x, t, b, c, d) {
+  function InOutQuad(x, t, b, c, d) {
     if ((t /= d / 2) < 1) {
       return c / 2 * t * t + b;
     }
     return -c / 2 * (--t * (t - 2) - 1) + b;
   }
 
-  function easeInCubic(x, t, b, c, d) {
+  function InCubic(x, t, b, c, d) {
     return c * (t /= d) * t * t + b;
   }
 
-  function easeOutCubic(x, t, b, c, d) {
+  function OutCubic(x, t, b, c, d) {
     return c * ((t = t / d - 1) * t * t + 1) + b;
   }
 
-  function easeInOutCubic(x, t, b, c, d) {
+  function InOutCubic(x, t, b, c, d) {
     if ((t /= d / 2) < 1) {
       return c / 2 * t * t * t + b;
     }
     return c / 2 * ((t -= 2) * t * t + 2) + b;
   }
 
-  function easeInQuart(x, t, b, c, d) {
+  function InQuart(x, t, b, c, d) {
     return c * (t /= d) * t * t * t + b;
   }
 
-  function easeOutQuart(x, t, b, c, d) {
+  function OutQuart(x, t, b, c, d) {
     return -c * ((t = t / d - 1) * t * t * t - 1) + b;
   }
 
-  function easeInOutQuart(x, t, b, c, d) {
+  function InOutQuart(x, t, b, c, d) {
     if ((t /= d / 2) < 1) {
       return c / 2 * t * t * t * t + b;
     }
     return -c / 2 * ((t -= 2) * t * t * t - 2) + b;
   }
 
-  function easeInQuint(x, t, b, c, d) {
+  function InQuint(x, t, b, c, d) {
     return c * (t /= d) * t * t * t * t + b;
   }
 
-  function easeOutQuint(x, t, b, c, d) {
+  function OutQuint(x, t, b, c, d) {
     return c * ((t = t / d - 1) * t * t * t * t + 1) + b;
   }
 
-  function easeInOutQuint(x, t, b, c, d) {
+  function InOutQuint(x, t, b, c, d) {
     if ((t /= d / 2) < 1) {
       return c / 2 * t * t * t * t * t + b;
     }
     return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
   }
 
-  function easeInSine(x, t, b, c, d) {
+  function InSine(x, t, b, c, d) {
     return -c * mathCos(t / d * (PI / 2)) + c + b;
   }
 
-  function easeOutSine(x, t, b, c, d) {
+  function OutSine(x, t, b, c, d) {
     return c * mathSin(t / d * (PI / 2)) + b;
   }
 
-  function easeInOutSine(x, t, b, c, d) {
+  function InOutSine(x, t, b, c, d) {
     return -c / 2 * (mathCos(PI * t / d) - 1) + b;
   }
 
-  function easeInExpo(x, t, b, c, d) {
+  function InExpo(x, t, b, c, d) {
     return t === 0 ? b : c * mathPow(2, 10 * (t / d - 1)) + b;
   }
 
-  function easeOutExpo(x, t, b, c, d) {
+  function OutExpo(x, t, b, c, d) {
     return t === d ? b + c : c * (-mathPow(2, -10 * t / d) + 1) + b;
   }
 
-  function easeInOutExpo(x, t, b, c, d) {
+  function InOutExpo(x, t, b, c, d) {
     if (t === 0) return b;
     if (t === d) return b + c;
     if ((t /= d / 2) < 1) return c / 2 * mathPow(2, 10 * (t - 1)) + b;
     return c / 2 * (-mathPow(2, -10 * --t) + 2) + b;
   }
 
-  function easeInCirc(x, t, b, c, d) {
+  function InCirc(x, t, b, c, d) {
     return -c * (mathSqrt(1 - (t /= d) * t) - 1) + b;
   }
 
-  function easeOutCirc(x, t, b, c, d) {
+  function OutCirc(x, t, b, c, d) {
     return c * mathSqrt(1 - (t = t / d - 1) * t) + b;
   }
 
-  function easeInOutCirc(x, t, b, c, d) {
+  function InOutCirc(x, t, b, c, d) {
     if ((t /= d / 2) < 1) {
       return -c / 2 * (mathSqrt(1 - t * t) - 1) + b;
     }
     return c / 2 * (mathSqrt(1 - (t -= 2) * t) + 1) + b;
   }
 
-  function easeInElastic(x, t, b, c, d) {
+  function InElastic(x, t, b, c, d) {
     var s = 1.70158,
         p = 0,
         a = c;
@@ -411,7 +418,7 @@
     return -(a * mathPow(2, 10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p)) + b;
   }
 
-  function easeOutElastic(x, t, b, c, d) {
+  function OutElastic(x, t, b, c, d) {
     var s = 1.70158,
         p = 0,
         a = c;
@@ -427,7 +434,7 @@
     return a * mathPow(2, -10 * t) * mathSin((t * d - s) * (2 * PI) / p) + c + b;
   }
 
-  function easeInOutElastic(x, t, b, c, d) {
+  function InOutElastic(x, t, b, c, d) {
     var s = 1.70158,
         p = 0,
         a = c;
@@ -446,19 +453,19 @@
     return a * mathPow(2, -10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p) * .5 + c + b;
   }
 
-  function easeInBack(x, t, b, c, d) {
+  function InBack(x, t, b, c, d) {
     var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
 
     return c * (t /= d) * t * ((s + 1) * t - s) + b;
   }
 
-  function easeOutBack(x, t, b, c, d) {
+  function OutBack(x, t, b, c, d) {
     var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
 
     return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
   }
 
-  function easeInOutBack(x, t, b, c, d) {
+  function InOutBack(x, t, b, c, d) {
     var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
 
     if ((t /= d / 2) < 1) {
@@ -467,11 +474,11 @@
     return c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
   }
 
-  function easeInBounce(x, t, b, c, d) {
-    return c - easeOutBounce(x, d - t, 0, c, d) + b;
+  function InBounce(x, t, b, c, d) {
+    return c - OutBounce(x, d - t, 0, c, d) + b;
   }
 
-  function easeOutBounce(x, t, b, c, d) {
+  function OutBounce(x, t, b, c, d) {
     if ((t /= d) < 1 / 2.75) {
       return c * (7.5625 * t * t) + b;
     } else if (t < 2 / 2.75) {
@@ -483,45 +490,45 @@
     }
   }
 
-  function easeInOutBounce(x, t, b, c, d) {
+  function InOutBounce(x, t, b, c, d) {
     if (t < d / 2) {
-      return easeInBounce(x, t * 2, 0, c, d) * .5 + b;
+      return InBounce(x, t * 2, 0, c, d) * .5 + b;
     }
-    return easeOutBounce(x, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+    return OutBounce(x, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
   }
 
   var Easing = Object.freeze({
     linear: linear,
-    easeInQuad: easeInQuad,
-    easeOutQuad: easeOutQuad,
-    easeInOutQuad: easeInOutQuad,
-    easeInCubic: easeInCubic,
-    easeOutCubic: easeOutCubic,
-    easeInOutCubic: easeInOutCubic,
-    easeInQuart: easeInQuart,
-    easeOutQuart: easeOutQuart,
-    easeInOutQuart: easeInOutQuart,
-    easeInQuint: easeInQuint,
-    easeOutQuint: easeOutQuint,
-    easeInOutQuint: easeInOutQuint,
-    easeInSine: easeInSine,
-    easeOutSine: easeOutSine,
-    easeInOutSine: easeInOutSine,
-    easeInExpo: easeInExpo,
-    easeOutExpo: easeOutExpo,
-    easeInOutExpo: easeInOutExpo,
-    easeInCirc: easeInCirc,
-    easeOutCirc: easeOutCirc,
-    easeInOutCirc: easeInOutCirc,
-    easeInElastic: easeInElastic,
-    easeOutElastic: easeOutElastic,
-    easeInOutElastic: easeInOutElastic,
-    easeInBack: easeInBack,
-    easeOutBack: easeOutBack,
-    easeInOutBack: easeInOutBack,
-    easeInBounce: easeInBounce,
-    easeOutBounce: easeOutBounce,
-    easeInOutBounce: easeInOutBounce
+    InQuad: InQuad,
+    OutQuad: OutQuad,
+    InOutQuad: InOutQuad,
+    InCubic: InCubic,
+    OutCubic: OutCubic,
+    InOutCubic: InOutCubic,
+    InQuart: InQuart,
+    OutQuart: OutQuart,
+    InOutQuart: InOutQuart,
+    InQuint: InQuint,
+    OutQuint: OutQuint,
+    InOutQuint: InOutQuint,
+    InSine: InSine,
+    OutSine: OutSine,
+    InOutSine: InOutSine,
+    InExpo: InExpo,
+    OutExpo: OutExpo,
+    InOutExpo: InOutExpo,
+    InCirc: InCirc,
+    OutCirc: OutCirc,
+    InOutCirc: InOutCirc,
+    InElastic: InElastic,
+    OutElastic: OutElastic,
+    InOutElastic: InOutElastic,
+    InBack: InBack,
+    OutBack: OutBack,
+    InOutBack: InOutBack,
+    InBounce: InBounce,
+    OutBounce: OutBounce,
+    InOutBounce: InOutBounce
   });
 
   var ScrollTween = function () {
@@ -545,7 +552,7 @@
         this.props = { x: x, y: y };
         this.duration = duration;
         this.delay = delay;
-        this.easing = easing;
+        this.easing = easing.replace("ease", "");
         this.callback = callback;
         this.progress = true;
 
@@ -626,6 +633,7 @@
   var win = window;
   var doc = document;
   var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
+  var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
 
   var SweetScroll = function () {
 
@@ -1044,9 +1052,7 @@
 
         if (!container) return;
         this._stopScrollListener = this.handleStopScroll.bind(this);
-        addEvent(container, WHEEL_EVENT, this._stopScrollListener);
-        addEvent(container, "touchstart", this._stopScrollListener);
-        addEvent(container, "touchmove", this._stopScrollListener);
+        addEvent(container, CONTAINER_STOP_EVENTS, this._stopScrollListener);
       }
 
       /**
@@ -1061,9 +1067,7 @@
         var container = this.container;
 
         if (!container || !this._stopScrollListener) return;
-        removeEvent(container, WHEEL_EVENT, this._stopScrollListener);
-        removeEvent(container, "touchstart", this._stopScrollListener);
-        removeEvent(container, "touchmove", this._stopScrollListener);
+        removeEvent(container, CONTAINER_STOP_EVENTS, this._stopScrollListener);
         this._stopScrollListener = null;
       }
 
