@@ -634,6 +634,7 @@
   var doc = document;
   var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
   var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
+  var isDomContentLoaded = false;
 
   var SweetScroll = function () {
 
@@ -644,17 +645,24 @@
      */
 
     function SweetScroll() {
+      var _this = this;
+
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
       var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
       babelHelpers.classCallCheck(this, SweetScroll);
 
-      this.options = merge({}, SweetScroll.defaults, options);
-      this.container = this.getContainer(container);
-      this.header = $(this.options.header);
-      this.tween = new ScrollTween(this.container);
-      this._trigger = null;
-      this._shouldCallCancelScroll = false;
-      this.bindContainerClick();
+      var params = merge({}, SweetScroll.defaults, options);
+      this.options = params;
+      this.getContainer(container, function (target) {
+        _this.container = target;
+        _this.header = $(params.header);
+        _this.tween = new ScrollTween(target);
+        _this._trigger = null;
+        _this._shouldCallCancelScroll = false;
+        _this.bindContainerClick();
+        _this.initialized();
+        _this.hook(params.initialized);
+      });
     }
 
     /**
@@ -669,7 +677,7 @@
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
-        var _this = this;
+        var _this2 = this;
 
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
         var container = this.container;
@@ -752,13 +760,13 @@
         // Run the animation!!
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
           // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
-          _this.unbindContainerStop();
-          if (_this._shouldCallCancelScroll) {
-            _this.hook(params.cancelScroll);
-            _this.cancelScroll();
+          _this2.unbindContainerStop();
+          if (_this2._shouldCallCancelScroll) {
+            _this2.hook(params.cancelScroll);
+            _this2.cancelScroll();
           } else {
-            _this.hook(params.afterScroll, scroll, trigger);
-            _this.afterScroll(scroll, trigger);
+            _this2.hook(params.afterScroll, scroll, trigger);
+            _this2.afterScroll(scroll, trigger);
           }
         });
 
@@ -874,6 +882,15 @@
       }
 
       /**
+       * Called at after of the initialize.
+       * @return {Void}
+       */
+
+    }, {
+      key: "initialized",
+      value: function initialized() {}
+
+      /**
        * Called at before of the scroll.
        * @param {Object}
        * @param {HTMLElement}
@@ -983,13 +1000,16 @@
       /**
        * Get the container for the scroll, depending on the options.
        * @param {String} | {HTMLElement}
-       * @return {HTMLElement}
+       * @param {Function}
+       * @return {Void}
        * @private
        */
 
     }, {
       key: "getContainer",
-      value: function getContainer(selector) {
+      value: function getContainer(selector, callback) {
+        var _this3 = this;
+
         var _options = this.options;
         var verticalScroll = _options.verticalScroll;
         var horizontalScroll = _options.horizontalScroll;
@@ -1004,7 +1024,14 @@
           container = scrollableFind(selector, "x");
         }
 
-        return container;
+        if (!container && !isDomContentLoaded) {
+          addEvent(doc, "DOMContentLoaded", function () {
+            isDomContentLoaded = true;
+            _this3.getContainer(selector, callback);
+          });
+        } else {
+          callback.call(this, container);
+        }
       }
 
       /**
@@ -1178,6 +1205,7 @@
     stopScroll: true, // When fired wheel or touchstart events to stop scrolling
 
     // Callbacks
+    initialized: null,
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null
