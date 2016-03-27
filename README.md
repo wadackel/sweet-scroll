@@ -88,6 +88,7 @@ The following options are applied by default. It can be customized as needed.
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
 
   // Callbacks
+  initialized: null,
   beforeScroll: null,
   afterScroll: null,
   cancelScroll: null
@@ -215,6 +216,7 @@ Will use the data-scroll attribute instead of href.
 * `stop(gotoEnd = false)`
 * `destroy()`
 * **Callbacks**
+    - `initialized: function(){}`
     - `beforeScroll: function(toScroll, trigger){}`
     - `cancelScroll: function(){}`
     - `after: function(toScroll, trigger){}`
@@ -372,6 +374,11 @@ In addition, you can stop the scrolling by return a `beforeScroll` in `false`.
 ```javascript
 const sweetScroll = new SweetScroll({
 
+  // Initialized the instance.
+  initialized() {
+    console.log("Initialized");
+  },
+
   // Stop scrolling case of trigger element that contains the `is-disabled` class.
   beforeScroll(toScroll, trigger) {
     console.log("Before!!");
@@ -398,6 +405,10 @@ The following is a pattern to override a method in the inheritance destination c
 
 ```javascript
 class MyScroll extends SweetScroll {
+  initialized() {
+    console.log("Initialized");
+  }
+
   beforeScroll(toScroll, trigger) {
     // Stop scrolling case of trigger element that contains the `is-disabled` class.
     if (trigger.classList.contains("is-disabled")) {
