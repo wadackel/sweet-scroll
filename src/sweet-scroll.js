@@ -8,6 +8,7 @@ const win = window;
 const doc = document;
 const WHEEL_EVENT = ("onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll");
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
+let isDomContentLoaded = false;
 
 class SweetScroll {
 
@@ -24,6 +25,7 @@ class SweetScroll {
     stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
 
     // Callbacks
+    initialized: null,
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null
@@ -35,13 +37,18 @@ class SweetScroll {
    * @param {String} | {HTMLElement}
    */
   constructor(options = {}, container = "body, html") {
-    this.options = Util.merge({}, SweetScroll.defaults, options);
-    this.container = this.getContainer(container);
-    this.header = $(this.options.header);
-    this.tween = new ScrollTween(this.container);
-    this._trigger = null;
-    this._shouldCallCancelScroll = false;
-    this.bindContainerClick();
+    const params = Util.merge({}, SweetScroll.defaults, options);
+    this.options = params;
+    this.getContainer(container, (target) => {
+      this.container = target;
+      this.header = $(params.header);
+      this.tween = new ScrollTween(target);
+      this._trigger = null;
+      this._shouldCallCancelScroll = false;
+      this.bindContainerClick();
+      this.initialized();
+      this.hook(params.initialized);
+    });
   }
 
   /**
@@ -224,6 +231,13 @@ class SweetScroll {
   }
 
   /**
+   * Called at after of the initialize.
+   * @return {Void}
+   */
+  initialized() {
+  }
+
+  /**
    * Called at before of the scroll.
    * @param {Object}
    * @param {HTMLElement}
@@ -325,10 +339,11 @@ class SweetScroll {
   /**
    * Get the container for the scroll, depending on the options.
    * @param {String} | {HTMLElement}
-   * @return {HTMLElement}
+   * @param {Function}
+   * @return {Void}
    * @private
    */
-  getContainer(selector) {
+  getContainer(selector, callback) {
     const {verticalScroll, horizontalScroll} = this.options;
     let container;
 
@@ -340,7 +355,14 @@ class SweetScroll {
       container = Dom.scrollableFind(selector, "x");
     }
 
-    return container;
+    if (!container && !isDomContentLoaded) {
+      addEvent(doc, "DOMContentLoaded", () => {
+        isDomContentLoaded = true;
+        this.getContainer(selector, callback);
+      });
+    } else {
+      callback.call(this, container);
+    }
   }
 
   /**
