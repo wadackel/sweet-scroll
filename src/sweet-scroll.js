@@ -8,7 +8,12 @@ const win = window;
 const doc = document;
 const WHEEL_EVENT = ("onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll");
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
+const DOM_CONTENT_LOADED = "DOMContentLoaded";
 let isDomContentLoaded = false;
+
+addEvent(doc, DOM_CONTENT_LOADED, () => {
+  isDomContentLoaded = true;
+});
 
 class SweetScroll {
 
@@ -356,8 +361,7 @@ class SweetScroll {
     }
 
     if (!container && !isDomContentLoaded) {
-      addEvent(doc, "DOMContentLoaded", () => {
-        isDomContentLoaded = true;
+      addEvent(doc, DOM_CONTENT_LOADED, () => {
         this.getContainer(selector, callback);
       });
     } else {

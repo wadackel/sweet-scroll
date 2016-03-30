@@ -10,7 +10,7 @@
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  global.SweetScroll = factory();
+  (global.SweetScroll = factory());
 }(this, function () { 'use strict';
 
   var babelHelpers = {};
@@ -118,7 +118,7 @@
         if (iterate.call(context, obj[key], key) === false) break;
       }
     } else if (isArrayLike(obj)) {
-      var i = undefined,
+      var i = void 0,
           length = obj.length;
       for (i = 0; i < length; i++) {
         if (iterate.call(context, obj[i], i) === false) break;
@@ -151,20 +151,6 @@
     var i = matches.length;
     while (--i >= 0 && matches.item(i) !== el) {}
     return i > -1;
-  }
-
-  function addEvent(el, event, listener) {
-    var events = event.split(",");
-    events.forEach(function (eventName) {
-      el.addEventListener(eventName.trim(), listener, false);
-    });
-  }
-
-  function removeEvent(el, event, listener) {
-    var events = event.split(",");
-    events.forEach(function (eventName) {
-      el.removeEventListener(eventName.trim(), listener, false);
-    });
   }
 
   var directionMethodMap = {
@@ -256,7 +242,7 @@
     var rect = el.getBoundingClientRect();
     if (rect.width || rect.height) {
       var scroll = {};
-      var ctx = undefined;
+      var ctx = void 0;
       if (context == null || isRootContainer(context)) {
         ctx = el.ownerDocument.documentElement;
         scroll.top = window.pageYOffset;
@@ -275,17 +261,19 @@
     return rect;
   }
 
-  var lastTime = 0;
+  function addEvent(el, event, listener) {
+    var events = event.split(",");
+    events.forEach(function (eventName) {
+      el.addEventListener(eventName.trim(), listener, false);
+    });
+  }
 
-  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
-    var currentTime = Date.now();
-    var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
-    var id = window.setTimeout(function () {
-      callback(currentTime + timeToCall);
-    }, timeToCall);
-    lastTime = currentTime + timeToCall;
-    return id;
-  };
+  function removeEvent(el, event, listener) {
+    var events = event.split(",");
+    events.forEach(function (eventName) {
+      el.removeEventListener(eventName.trim(), listener, false);
+    });
+  }
 
   var math = Math;
   var mathCos = math.cos;
@@ -497,7 +485,7 @@
     return OutBounce(x, t * 2 - d, 0, c, d) * .5 + c * .5 + b;
   }
 
-  var Easing = Object.freeze({
+var Easing = Object.freeze({
     linear: linear,
     InQuad: InQuad,
     OutQuad: OutQuad,
@@ -530,6 +518,18 @@
     OutBounce: OutBounce,
     InOutBounce: InOutBounce
   });
+
+  var lastTime = 0;
+
+  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
+    var currentTime = Date.now();
+    var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
+    var id = window.setTimeout(function () {
+      callback(currentTime + timeToCall);
+    }, timeToCall);
+    lastTime = currentTime + timeToCall;
+    return id;
+  };
 
   var ScrollTween = function () {
     function ScrollTween(el) {
@@ -634,7 +634,12 @@
   var doc = document;
   var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
   var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
+  var DOM_CONTENT_LOADED = "DOMContentLoaded";
   var isDomContentLoaded = false;
+
+  addEvent(doc, DOM_CONTENT_LOADED, function () {
+    isDomContentLoaded = true;
+  });
 
   var SweetScroll = function () {
 
@@ -672,7 +677,9 @@
      * @return {Void}
      */
 
+
     // Default options
+
 
     babelHelpers.createClass(SweetScroll, [{
       key: "to",
@@ -726,8 +733,8 @@
         }
 
         // Determine the final scroll coordinates
-        var frameSize = undefined;
-        var size = undefined;
+        var frameSize = void 0;
+        var size = void 0;
         if (isRootContainer(container)) {
           frameSize = { width: win.innerWidth, height: win.innerHeight };
           size = { width: doc.body.scrollWidth, height: doc.body.scrollHeight };
@@ -1014,7 +1021,7 @@
         var verticalScroll = _options.verticalScroll;
         var horizontalScroll = _options.horizontalScroll;
 
-        var container = undefined;
+        var container = void 0;
 
         if (verticalScroll) {
           container = scrollableFind(selector, "y");
@@ -1025,8 +1032,7 @@
         }
 
         if (!container && !isDomContentLoaded) {
-          addEvent(doc, "DOMContentLoaded", function () {
-            isDomContentLoaded = true;
+          addEvent(doc, DOM_CONTENT_LOADED, function () {
             _this3.getContainer(selector, callback);
           });
         } else {
@@ -1192,6 +1198,7 @@
   }();
 
   // Export SweetScroll class
+
 
   SweetScroll.defaults = {
     trigger: "[data-scroll]", // Selector for trigger (must be a valid css selector)
