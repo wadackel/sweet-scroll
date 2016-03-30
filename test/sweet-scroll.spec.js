@@ -28,20 +28,33 @@ describe("SweetScroll", () => {
   });
 
   describe("Initialize", () => {
-    it("Should not find container", () => {
+    it("Should not find container", (done) => {
       document.body.innerHTML = "";
-      const sweetScroll = getInstance();
-      assert(sweetScroll.container === undefined);
+      getInstance({
+        initialized: function() {
+          assert(this.container === undefined);
+          done();
+        }
+      });
     });
 
-    it("Should be initialize module", () => {
-      const sweetScroll = getInstance({trigger: "a[href^='#']"});
-      assert(sweetScroll.container === getContainer());
+    it("Should be initialize module", (done) => {
+      getInstance({
+        trigger: "a[href^='#']",
+        initialized: function() {
+          assert(this.container === getContainer());
+          done();
+        }
+      });
     });
 
-    it("Should be match specified container", () => {
-      const sweetScroll = new SweetScroll({}, getContainer());
-      assert(sweetScroll.container === getContainer());
+    it("Should be match specified container", (done) => {
+      getInstance({
+        initialized: function() {
+          assert(this.container === getContainer());
+          done();
+        }
+      }, getContainer());
     });
 
     it("Should be parse the coodinate", () => {
