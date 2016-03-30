@@ -634,7 +634,12 @@ var Easing = Object.freeze({
   var doc = document;
   var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
   var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
+  var DOM_CONTENT_LOADED = "DOMContentLoaded";
   var isDomContentLoaded = false;
+
+  addEvent(doc, DOM_CONTENT_LOADED, function () {
+    isDomContentLoaded = true;
+  });
 
   var SweetScroll = function () {
 
@@ -1027,8 +1032,7 @@ var Easing = Object.freeze({
         }
 
         if (!container && !isDomContentLoaded) {
-          addEvent(doc, "DOMContentLoaded", function () {
-            isDomContentLoaded = true;
+          addEvent(doc, DOM_CONTENT_LOADED, function () {
             _this3.getContainer(selector, callback);
           });
         } else {
