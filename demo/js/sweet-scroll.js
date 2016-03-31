@@ -641,6 +641,15 @@ var Easing = Object.freeze({
     isDomContentLoaded = true;
   });
 
+  // @link https://github.com/Modernizr/Modernizr
+  var enablePushState = function () {
+    var ua = navigator.userAgent;
+    if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
+      return false;
+    }
+    return window.history && "pushState" in window.history;
+  }();
+
   var SweetScroll = function () {
 
     /**
@@ -694,6 +703,7 @@ var Easing = Object.freeze({
         var offset = this.parseCoodinate(params.offset);
         var trigger = this._trigger;
         var scroll = this.parseCoodinate(distance);
+        var hash = null;
 
         // Remove the triggering elements which has been temporarily retained
         this._trigger = null;
@@ -709,9 +719,11 @@ var Easing = Object.freeze({
 
         // Using the coordinates in the case of CSS Selector
         if (!scroll && isString(distance)) {
+          hash = /^#/.test(distance) ? distance : null;
+
           if (distance === "#") {
             scroll = { top: 0, left: 0 };
-          } else if (!/[:,]/.test(distance)) {
+          } else {
             var target = $(distance);
             var targetOffset = getOffset(target, container);
             if (!targetOffset) return;
@@ -720,6 +732,11 @@ var Easing = Object.freeze({
         }
 
         if (!scroll) return;
+
+        // Update URL
+        if (hash != null && hash !== window.location.hash && params.updateURL) {
+          this.updateURLHash(hash);
+        }
 
         // Apply `offset` value
         if (offset) {
@@ -1005,6 +1022,20 @@ var Easing = Object.freeze({
       }
 
       /**
+       * Update the Hash of the URL.
+       * @param {String}
+       * @return {Void}
+       */
+
+    }, {
+      key: "updateURLHash",
+      value: function updateURLHash(hash) {
+        if (enablePushState) {
+          window.history.pushState(null, null, hash);
+        }
+      }
+
+      /**
        * Get the container for the scroll, depending on the options.
        * @param {String} | {HTMLElement}
        * @param {Function}
@@ -1210,6 +1241,7 @@ var Easing = Object.freeze({
     verticalScroll: true, // Enable the vertical scroll
     horizontalScroll: false, // Enable the horizontal scroll
     stopScroll: true, // When fired wheel or touchstart events to stop scrolling
+    updateURL: true, // Update the URL hash on before scroll
 
     // Callbacks
     initialized: null,

@@ -15,6 +15,21 @@ addEvent(doc, DOM_CONTENT_LOADED, () => {
   isDomContentLoaded = true;
 });
 
+// @link https://github.com/Modernizr/Modernizr
+const enablePushState = (() => {
+  const ua = navigator.userAgent;
+  if (
+    (ua.indexOf("Android 2.") !== -1 ||
+    (ua.indexOf("Android 4.0") !== -1)) &&
+    ua.indexOf("Mobile Safari") !== -1 &&
+    ua.indexOf("Chrome") === -1 &&
+    ua.indexOf("Windows Phone") === -1
+  ) {
+    return false;
+  }
+  return (window.history && "pushState" in window.history);
+})();
+
 class SweetScroll {
 
   // Default options
@@ -28,6 +43,7 @@ class SweetScroll {
     verticalScroll: true,           // Enable the vertical scroll
     horizontalScroll: false,        // Enable the horizontal scroll
     stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
+    updateURL: true,               // Update the URL hash on before scroll
 
     // Callbacks
     initialized: null,
@@ -68,6 +84,7 @@ class SweetScroll {
     const offset = this.parseCoodinate(params.offset);
     const trigger = this._trigger;
     let scroll = this.parseCoodinate(distance);
+    let hash = null;
 
     // Remove the triggering elements which has been temporarily retained
     this._trigger = null;
@@ -83,10 +100,12 @@ class SweetScroll {
 
     // Using the coordinates in the case of CSS Selector
     if (!scroll && Util.isString(distance)) {
+      hash = /^#/.test(distance) ? distance : null;
+
       if (distance === "#") {
         scroll = {top: 0, left: 0};
 
-      } else if (!/[:,]/.test(distance)) {
+      } else {
         const target = $(distance);
         const targetOffset = Dom.getOffset(target, container);
         if (!targetOffset) return;
@@ -95,6 +114,11 @@ class SweetScroll {
     }
 
     if (!scroll) return;
+
+    // Update URL
+    if (hash != null && hash !== window.location.hash && params.updateURL) {
+      this.updateURLHash(hash);
+    }
 
     // Apply `offset` value
     if (offset) {
@@ -339,6 +363,17 @@ class SweetScroll {
     scroll.left = parseInt(scroll.left, 10);
 
     return scroll;
+  }
+
+  /**
+   * Update the Hash of the URL.
+   * @param {String}
+   * @return {Void}
+   */
+  updateURLHash(hash) {
+    if (enablePushState) {
+      window.history.pushState(null, null, hash);
+    }
   }
 
   /**
