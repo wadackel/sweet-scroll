@@ -1241,7 +1241,7 @@ var Easing = Object.freeze({
     verticalScroll: true, // Enable the vertical scroll
     horizontalScroll: false, // Enable the horizontal scroll
     stopScroll: true, // When fired wheel or touchstart events to stop scrolling
-    updateURL: true, // Update the URL hash on before scroll
+    updateURL: false, // Update the URL hash on before scroll
 
     // Callbacks
     initialized: null,
