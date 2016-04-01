@@ -733,11 +733,6 @@ var Easing = Object.freeze({
 
         if (!scroll) return;
 
-        // // Update URL
-        // if (hash != null && hash !== window.location.hash && params.updateURL) {
-        //   this.updateURLHash(hash);
-        // }
-
         // Apply `offset` value
         if (offset) {
           scroll.top += offset.top;
@@ -783,12 +778,13 @@ var Easing = Object.freeze({
 
         // Run the animation!!
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
-          // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
-          _this2.unbindContainerStop();
-
+          // Update URL
           if (hash != null && hash !== window.location.hash && params.updateURL) {
             _this2.updateURLHash(hash);
           }
+
+          // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
+          _this2.unbindContainerStop();
 
           if (_this2._shouldCallCancelScroll) {
             _this2.hook(params.cancelScroll);
@@ -797,6 +793,10 @@ var Easing = Object.freeze({
             _this2.hook(params.afterScroll, scroll, trigger);
             _this2.afterScroll(scroll, trigger);
           }
+
+          // Call `completeScroll`
+          _this2.hook(params.completeScroll, _this2._shouldCallCancelScroll);
+          _this2.completeScroll(_this2._shouldCallCancelScroll);
         });
 
         // Bind the scroll stop events
@@ -951,6 +951,16 @@ var Easing = Object.freeze({
     }, {
       key: "afterScroll",
       value: function afterScroll(toScroll, trigger) {}
+
+      /**
+       * Called at complete of the scroll.
+       * @param {Boolean}
+       * @return {Void}
+       */
+
+    }, {
+      key: "completeScroll",
+      value: function completeScroll(isCancel) {}
 
       /**
        * Parse the value of coordinate
@@ -1246,13 +1256,14 @@ var Easing = Object.freeze({
     verticalScroll: true, // Enable the vertical scroll
     horizontalScroll: false, // Enable the horizontal scroll
     stopScroll: true, // When fired wheel or touchstart events to stop scrolling
-    updateURL: false, // Update the URL hash on before scroll
+    updateURL: false, // Update the URL hash on after scroll
 
     // Callbacks
     initialized: null,
     beforeScroll: null,
     afterScroll: null,
-    cancelScroll: null
+    cancelScroll: null,
+    completeScroll: null
   };
 
   return SweetScroll;

@@ -49,7 +49,8 @@ class SweetScroll {
     initialized: null,
     beforeScroll: null,
     afterScroll: null,
-    cancelScroll: null
+    cancelScroll: null,
+    completeScroll: null
   };
 
   /**
@@ -167,6 +168,7 @@ class SweetScroll {
 
       // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
       this.unbindContainerStop();
+
       if (this._shouldCallCancelScroll) {
         this.hook(params.cancelScroll);
         this.cancelScroll();
@@ -174,6 +176,10 @@ class SweetScroll {
         this.hook(params.afterScroll, scroll, trigger);
         this.afterScroll(scroll, trigger);
       }
+
+      // Call `completeScroll`
+      this.hook(params.completeScroll, this._shouldCallCancelScroll);
+      this.completeScroll(this._shouldCallCancelScroll);
     });
 
     // Bind the scroll stop events
@@ -290,6 +296,14 @@ class SweetScroll {
    * @return {Void}
    */
   afterScroll(toScroll, trigger) {
+  }
+
+  /**
+   * Called at complete of the scroll.
+   * @param {Boolean}
+   * @return {Void}
+   */
+  completeScroll(isCancel) {
   }
 
   /**
