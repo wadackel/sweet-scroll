@@ -173,7 +173,7 @@
     var all = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
     var method = directionMethodMap[direction];
-    var elements = selectors instanceof HTMLElement ? [selectors] : $$(selectors);
+    var elements = selectors instanceof Element ? [selectors] : $$(selectors);
     var scrollables = [];
     var $div = document.createElement("div");
 
@@ -655,7 +655,7 @@ var Easing = Object.freeze({
     /**
      * SweetScroll constructor
      * @param {Object}
-     * @param {String} | {HTMLElement}
+     * @param {String} | {Element}
      */
 
     function SweetScroll() {
@@ -841,7 +841,7 @@ var Easing = Object.freeze({
 
       /**
        * Scroll animation to the specified element
-       * @param {HTMLElement}
+       * @param {Element}
        * @param {Object}
        * @return {Void}
        */
@@ -851,7 +851,7 @@ var Easing = Object.freeze({
       value: function toElement($el) {
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-        if ($el instanceof HTMLElement) {
+        if ($el instanceof Element) {
           var offset = getOffset($el, this.container);
           this.to(offset, merge({}, options));
         }
@@ -922,7 +922,7 @@ var Easing = Object.freeze({
       /**
        * Called at before of the scroll.
        * @param {Object}
-       * @param {HTMLElement}
+       * @param {Element}
        * @return {Boolean}
        */
 
@@ -944,7 +944,7 @@ var Easing = Object.freeze({
       /**
        * Called at after of the scroll.
        * @param {Object}
-       * @param {HTMLElement}
+       * @param {Element}
        * @return {Void}
        */
 
@@ -1052,7 +1052,7 @@ var Easing = Object.freeze({
 
       /**
        * Get the container for the scroll, depending on the options.
-       * @param {String} | {HTMLElement}
+       * @param {String} | {Element}
        * @param {Function}
        * @return {Void}
        * @private
@@ -1228,7 +1228,7 @@ var Easing = Object.freeze({
 
       /**
        * Parse the data-scroll-options attribute
-       * @param {HTMLElement}
+       * @param {Element}
        * @return {Object}
        * @private
        */

@@ -56,7 +56,7 @@ class SweetScroll {
   /**
    * SweetScroll constructor
    * @param {Object}
-   * @param {String} | {HTMLElement}
+   * @param {String} | {Element}
    */
   constructor(options = {}, container = "body, html") {
     const params = Util.merge({}, SweetScroll.defaults, options);
@@ -214,12 +214,12 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified element
-   * @param {HTMLElement}
+   * @param {Element}
    * @param {Object}
    * @return {Void}
    */
   toElement($el, options = {}) {
-    if ($el instanceof HTMLElement) {
+    if ($el instanceof Element) {
       const offset = Dom.getOffset($el, this.container);
       this.to(offset, Util.merge({}, options));
     }
@@ -275,7 +275,7 @@ class SweetScroll {
   /**
    * Called at before of the scroll.
    * @param {Object}
-   * @param {HTMLElement}
+   * @param {Element}
    * @return {Boolean}
    */
   beforeScroll(toScroll, trigger) {
@@ -292,7 +292,7 @@ class SweetScroll {
   /**
    * Called at after of the scroll.
    * @param {Object}
-   * @param {HTMLElement}
+   * @param {Element}
    * @return {Void}
    */
   afterScroll(toScroll, trigger) {
@@ -392,7 +392,7 @@ class SweetScroll {
 
   /**
    * Get the container for the scroll, depending on the options.
-   * @param {String} | {HTMLElement}
+   * @param {String} | {Element}
    * @param {Function}
    * @return {Void}
    * @private
@@ -532,7 +532,7 @@ class SweetScroll {
 
   /**
    * Parse the data-scroll-options attribute
-   * @param {HTMLElement}
+   * @param {Element}
    * @return {Object}
    * @private
    */
