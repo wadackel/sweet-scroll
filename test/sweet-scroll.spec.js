@@ -169,6 +169,31 @@ describe("SweetScroll", () => {
         trigger($container, "touchstart");
       }, 500);
     });
+
+    it("Should be run completeScroll (isCancel=false)", (done) => {
+      const $container = getContainer();
+      const sweetScroll = getInstance({
+        completeScroll(isCancel) {
+          assert(isCancel === false);
+          done();
+        }
+      });
+      sweetScroll.to(1200);
+    });
+
+    it("Should be run completeScroll (isCancel=true)", (done) => {
+      const $container = getContainer();
+      const sweetScroll = getInstance({
+        completeScroll(isCancel) {
+          assert(isCancel === true);
+          done();
+        }
+      });
+      sweetScroll.to(1200);
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
+    });
   });
 
   describe("Callback Methods", () => {
@@ -209,6 +234,33 @@ describe("SweetScroll", () => {
         trigger($container, "touchstart");
       }, 500);
     });
+
+    it("Should be run completeScroll(isCancel=false)", (done) => {
+      class MyScroll extends SweetScroll {
+        completeScroll(isCancel) {
+          assert(isCancel === false);
+          done();
+        }
+      }
+      const $container = getContainer();
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(1200);
+    });
+
+    it("Should be run completeScroll(isCancel=true)", (done) => {
+      class MyScroll extends SweetScroll {
+        completeScroll(isCancel) {
+          assert(isCancel === true);
+          done();
+        }
+      }
+      const $container = getContainer();
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(1200);
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
+    });
   });
 
   describe("Click of Anchor", () => {
@@ -235,6 +287,12 @@ describe("SweetScroll", () => {
       setTimeout(() => {
         trigger($container, "touchstart");
       }, 500);
+    });
+
+    it("Should be run completeScroll", (done) => {
+      const $container = getContainer();
+      getInstance({trigger: triggerAnchorSelector, completeScroll: () => done()});
+      trigger(getAnchor(), "click");
     });
   });
 });
