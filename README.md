@@ -168,7 +168,7 @@ In the following example we have specified in the container for scrolling the `#
 // Specified in the CSS Selector
 const sweetScroll = new SweetScroll({/* some options */}, "#container");
 
-// Specified in the HTMLElement
+// Specified in the Element
 const sweetScroll = new SweetScroll({/* some options */}, document.getElementById("container"));
 ```
 
@@ -285,7 +285,7 @@ sweetScroll.to("-=200");
 ### new SweetScroll(options = {}, container = "body, html")
 
 **options: {Object}**  
-**container: {String | HTMLElement}**  
+**container: {String | Element}**  
 
 Will generate a SweetScroll instance.
 
@@ -343,10 +343,10 @@ sweetScroll.toLeft(1500);
 
 ### toElement($el, options = {})
 
-**$el: {HTMLElement}**  
+**$el: {Element}**  
 **options: {Object}**
 
-Scroll animation to the specified `HTMLElement`.
+Scroll animation to the specified `Element`.
 
 **Example:**
 
