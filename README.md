@@ -87,13 +87,14 @@ The following options are applied by default. It can be customized as needed.
   verticalScroll: true,           // Enable the vertical scroll
   horizontalScroll: false,        // Enable the horizontal scroll
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-  updateURL: false,               // Update the URL hash on before scroll
+  updateURL: false,               // Update the URL hash on after scroll
 
   // Callbacks
   initialized: null,
   beforeScroll: null,
   afterScroll: null,
-  cancelScroll: null
+  cancelScroll: null,
+  completeScroll: null
 }
 ```
 
@@ -167,7 +168,7 @@ In the following example we have specified in the container for scrolling the `#
 // Specified in the CSS Selector
 const sweetScroll = new SweetScroll({/* some options */}, "#container");
 
-// Specified in the HTMLElement
+// Specified in the Element
 const sweetScroll = new SweetScroll({/* some options */}, document.getElementById("container"));
 ```
 
@@ -212,14 +213,13 @@ Will use the data-scroll attribute instead of href.
 The following, Introduce one of the mounting method.
 
 ```javascript
-let hash;
-let needsInitialScroll = false;
 const sweetScroll = new SweetScroll();
+const hash = window.location.hash;
+let needsInitialScroll = false;
 
 document.addEventListener("DOMContentLoaded", function() {
-  hash = window.location.hash;
-  if (document.getElementById(hash.substr(1)) != null) {
-    needsInitialScroll = true;
+  needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+  if (needsInitialScroll) {
     window.location.hash = "";
   }
 }, false);
@@ -251,7 +251,8 @@ You can also achieve the same thing in other ways by using the provided API.
     - `initialized: function(){}`
     - `beforeScroll: function(toScroll, trigger){}`
     - `cancelScroll: function(){}`
-    - `after: function(toScroll, trigger){}`
+    - `afterScroll: function(toScroll, trigger){}`
+    - `completeScroll: function(isCancel){}`
 
 `distance` to can specify the CSS Selector or scroll position.
 
@@ -284,7 +285,7 @@ sweetScroll.to("-=200");
 ### new SweetScroll(options = {}, container = "body, html")
 
 **options: {Object}**  
-**container: {String | HTMLElement}**  
+**container: {String | Element}**  
 
 Will generate a SweetScroll instance.
 
@@ -342,10 +343,10 @@ sweetScroll.toLeft(1500);
 
 ### toElement($el, options = {})
 
-**$el: {HTMLElement}**  
+**$el: {Element}**  
 **options: {Object}**
 
-Scroll animation to the specified `HTMLElement`.
+Scroll animation to the specified `Element`.
 
 **Example:**
 
@@ -427,6 +428,11 @@ const sweetScroll = new SweetScroll({
   // Scroll animation is complete
   afterScroll(toScroll, trigger) {
     console.log("After!!");
+  },
+
+  // Scroll animation is complete (`after` or `cancel`)
+  completeScroll(isCancel) {
+    console.log("Complete!!", isCancel);
   }
 });
 ```
@@ -454,6 +460,10 @@ class MyScroll extends SweetScroll {
 
   afterScroll(toScroll, trigger) {
     console.log("After!!");
+  }
+
+  completeScroll(isCancel) {
+    console.log("Complete!!", isCancel);
   }
 }
 ```

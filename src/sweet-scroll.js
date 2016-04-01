@@ -27,7 +27,7 @@ const enablePushState = (() => {
   ) {
     return false;
   }
-  return (window.history && "pushState" in window.history);
+  return (window.history && "pushState" in window.history && window.location.protocol !== "file:");
 })();
 
 class SweetScroll {
@@ -43,19 +43,20 @@ class SweetScroll {
     verticalScroll: true,           // Enable the vertical scroll
     horizontalScroll: false,        // Enable the horizontal scroll
     stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-    updateURL: false,               // Update the URL hash on before scroll
+    updateURL: false,               // Update the URL hash on after scroll
 
     // Callbacks
     initialized: null,
     beforeScroll: null,
     afterScroll: null,
-    cancelScroll: null
+    cancelScroll: null,
+    completeScroll: null
   };
 
   /**
    * SweetScroll constructor
    * @param {Object}
-   * @param {String} | {HTMLElement}
+   * @param {String} | {Element}
    */
   constructor(options = {}, container = "body, html") {
     const params = Util.merge({}, SweetScroll.defaults, options);
@@ -115,11 +116,6 @@ class SweetScroll {
 
     if (!scroll) return;
 
-    // Update URL
-    if (hash != null && hash !== window.location.hash && params.updateURL) {
-      this.updateURLHash(hash);
-    }
-
     // Apply `offset` value
     if (offset) {
       scroll.top += offset.top;
@@ -165,8 +161,14 @@ class SweetScroll {
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
+      // Update URL
+      if (hash != null && hash !== window.location.hash && params.updateURL) {
+        this.updateURLHash(hash);
+      }
+
       // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
       this.unbindContainerStop();
+
       if (this._shouldCallCancelScroll) {
         this.hook(params.cancelScroll);
         this.cancelScroll();
@@ -174,6 +176,10 @@ class SweetScroll {
         this.hook(params.afterScroll, scroll, trigger);
         this.afterScroll(scroll, trigger);
       }
+
+      // Call `completeScroll`
+      this.hook(params.completeScroll, this._shouldCallCancelScroll);
+      this.completeScroll(this._shouldCallCancelScroll);
     });
 
     // Bind the scroll stop events
@@ -208,12 +214,12 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified element
-   * @param {HTMLElement}
+   * @param {Element}
    * @param {Object}
    * @return {Void}
    */
   toElement($el, options = {}) {
-    if ($el instanceof HTMLElement) {
+    if ($el instanceof Element) {
       const offset = Dom.getOffset($el, this.container);
       this.to(offset, Util.merge({}, options));
     }
@@ -269,7 +275,7 @@ class SweetScroll {
   /**
    * Called at before of the scroll.
    * @param {Object}
-   * @param {HTMLElement}
+   * @param {Element}
    * @return {Boolean}
    */
   beforeScroll(toScroll, trigger) {
@@ -286,10 +292,18 @@ class SweetScroll {
   /**
    * Called at after of the scroll.
    * @param {Object}
-   * @param {HTMLElement}
+   * @param {Element}
    * @return {Void}
    */
   afterScroll(toScroll, trigger) {
+  }
+
+  /**
+   * Called at complete of the scroll.
+   * @param {Boolean}
+   * @return {Void}
+   */
+  completeScroll(isCancel) {
   }
 
   /**
@@ -378,7 +392,7 @@ class SweetScroll {
 
   /**
    * Get the container for the scroll, depending on the options.
-   * @param {String} | {HTMLElement}
+   * @param {String} | {Element}
    * @param {Function}
    * @return {Void}
    * @private
@@ -518,7 +532,7 @@ class SweetScroll {
 
   /**
    * Parse the data-scroll-options attribute
-   * @param {HTMLElement}
+   * @param {Element}
    * @return {Object}
    * @private
    */

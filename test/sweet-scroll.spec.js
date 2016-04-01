@@ -31,7 +31,7 @@ describe("SweetScroll", () => {
     it("Should not find container", (done) => {
       document.body.innerHTML = "";
       getInstance({
-        initialized: function() {
+        initialized() {
           assert(this.container === undefined);
           done();
         }
@@ -41,7 +41,7 @@ describe("SweetScroll", () => {
     it("Should be initialize module", (done) => {
       getInstance({
         trigger: "a[href^='#']",
-        initialized: function() {
+        initialized() {
           assert(this.container === getContainer());
           done();
         }
@@ -50,7 +50,7 @@ describe("SweetScroll", () => {
 
     it("Should be match specified container", (done) => {
       getInstance({
-        initialized: function() {
+        initialized() {
           assert(this.container === getContainer());
           done();
         }
@@ -144,7 +144,7 @@ describe("SweetScroll", () => {
 
   describe("Callbacks", () => {
     it("Should be run beforeScroll", (done) => {
-      const sweetScroll = getInstance({beforeScroll: (toScroll) => {
+      const sweetScroll = getInstance({beforeScroll(toScroll) {
         assert(toScroll.top === 100);
         assert(toScroll.left === 0);
         done();
@@ -153,7 +153,7 @@ describe("SweetScroll", () => {
     });
 
     it("Should be run afterScroll", (done) => {
-      const sweetScroll = getInstance({afterScroll: (toScroll) => {
+      const sweetScroll = getInstance({afterScroll(toScroll) {
         assert(toScroll.top === 500);
         assert(toScroll.left === 0);
         done();
@@ -164,6 +164,31 @@ describe("SweetScroll", () => {
     it("Should be run cancelScroll", (done) => {
       const $container = getContainer();
       const sweetScroll = getInstance({cancelScroll: done});
+      sweetScroll.to(1200);
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
+    });
+
+    it("Should be run completeScroll (isCancel=false)", (done) => {
+      const $container = getContainer();
+      const sweetScroll = getInstance({
+        completeScroll(isCancel) {
+          assert(isCancel === false);
+          done();
+        }
+      });
+      sweetScroll.to(1200);
+    });
+
+    it("Should be run completeScroll (isCancel=true)", (done) => {
+      const $container = getContainer();
+      const sweetScroll = getInstance({
+        completeScroll(isCancel) {
+          assert(isCancel === true);
+          done();
+        }
+      });
       sweetScroll.to(1200);
       setTimeout(() => {
         trigger($container, "touchstart");
@@ -209,6 +234,33 @@ describe("SweetScroll", () => {
         trigger($container, "touchstart");
       }, 500);
     });
+
+    it("Should be run completeScroll(isCancel=false)", (done) => {
+      class MyScroll extends SweetScroll {
+        completeScroll(isCancel) {
+          assert(isCancel === false);
+          done();
+        }
+      }
+      const $container = getContainer();
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(1200);
+    });
+
+    it("Should be run completeScroll(isCancel=true)", (done) => {
+      class MyScroll extends SweetScroll {
+        completeScroll(isCancel) {
+          assert(isCancel === true);
+          done();
+        }
+      }
+      const $container = getContainer();
+      const myScroll = new MyScroll({}, "#container");
+      myScroll.to(1200);
+      setTimeout(() => {
+        trigger($container, "touchstart");
+      }, 500);
+    });
   });
 
   describe("Click of Anchor", () => {
@@ -235,6 +287,12 @@ describe("SweetScroll", () => {
       setTimeout(() => {
         trigger($container, "touchstart");
       }, 500);
+    });
+
+    it("Should be run completeScroll", (done) => {
+      const $container = getContainer();
+      getInstance({trigger: triggerAnchorSelector, completeScroll: () => done()});
+      trigger(getAnchor(), "click");
     });
   });
 });

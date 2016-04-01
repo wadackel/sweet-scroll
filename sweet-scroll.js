@@ -173,7 +173,7 @@
     var all = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
 
     var method = directionMethodMap[direction];
-    var elements = selectors instanceof HTMLElement ? [selectors] : $$(selectors);
+    var elements = selectors instanceof Element ? [selectors] : $$(selectors);
     var scrollables = [];
     var $div = document.createElement("div");
 
@@ -647,7 +647,7 @@ var Easing = Object.freeze({
     if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
       return false;
     }
-    return window.history && "pushState" in window.history;
+    return window.history && "pushState" in window.history && window.location.protocol !== "file:";
   }();
 
   var SweetScroll = function () {
@@ -655,7 +655,7 @@ var Easing = Object.freeze({
     /**
      * SweetScroll constructor
      * @param {Object}
-     * @param {String} | {HTMLElement}
+     * @param {String} | {Element}
      */
 
     function SweetScroll() {
@@ -733,11 +733,6 @@ var Easing = Object.freeze({
 
         if (!scroll) return;
 
-        // Update URL
-        if (hash != null && hash !== window.location.hash && params.updateURL) {
-          this.updateURLHash(hash);
-        }
-
         // Apply `offset` value
         if (offset) {
           scroll.top += offset.top;
@@ -783,8 +778,14 @@ var Easing = Object.freeze({
 
         // Run the animation!!
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
+          // Update URL
+          if (hash != null && hash !== window.location.hash && params.updateURL) {
+            _this2.updateURLHash(hash);
+          }
+
           // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
           _this2.unbindContainerStop();
+
           if (_this2._shouldCallCancelScroll) {
             _this2.hook(params.cancelScroll);
             _this2.cancelScroll();
@@ -792,6 +793,10 @@ var Easing = Object.freeze({
             _this2.hook(params.afterScroll, scroll, trigger);
             _this2.afterScroll(scroll, trigger);
           }
+
+          // Call `completeScroll`
+          _this2.hook(params.completeScroll, _this2._shouldCallCancelScroll);
+          _this2.completeScroll(_this2._shouldCallCancelScroll);
         });
 
         // Bind the scroll stop events
@@ -836,7 +841,7 @@ var Easing = Object.freeze({
 
       /**
        * Scroll animation to the specified element
-       * @param {HTMLElement}
+       * @param {Element}
        * @param {Object}
        * @return {Void}
        */
@@ -846,7 +851,7 @@ var Easing = Object.freeze({
       value: function toElement($el) {
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-        if ($el instanceof HTMLElement) {
+        if ($el instanceof Element) {
           var offset = getOffset($el, this.container);
           this.to(offset, merge({}, options));
         }
@@ -917,7 +922,7 @@ var Easing = Object.freeze({
       /**
        * Called at before of the scroll.
        * @param {Object}
-       * @param {HTMLElement}
+       * @param {Element}
        * @return {Boolean}
        */
 
@@ -939,13 +944,23 @@ var Easing = Object.freeze({
       /**
        * Called at after of the scroll.
        * @param {Object}
-       * @param {HTMLElement}
+       * @param {Element}
        * @return {Void}
        */
 
     }, {
       key: "afterScroll",
       value: function afterScroll(toScroll, trigger) {}
+
+      /**
+       * Called at complete of the scroll.
+       * @param {Boolean}
+       * @return {Void}
+       */
+
+    }, {
+      key: "completeScroll",
+      value: function completeScroll(isCancel) {}
 
       /**
        * Parse the value of coordinate
@@ -1037,7 +1052,7 @@ var Easing = Object.freeze({
 
       /**
        * Get the container for the scroll, depending on the options.
-       * @param {String} | {HTMLElement}
+       * @param {String} | {Element}
        * @param {Function}
        * @return {Void}
        * @private
@@ -1213,7 +1228,7 @@ var Easing = Object.freeze({
 
       /**
        * Parse the data-scroll-options attribute
-       * @param {HTMLElement}
+       * @param {Element}
        * @return {Object}
        * @private
        */
@@ -1241,13 +1256,14 @@ var Easing = Object.freeze({
     verticalScroll: true, // Enable the vertical scroll
     horizontalScroll: false, // Enable the horizontal scroll
     stopScroll: true, // When fired wheel or touchstart events to stop scrolling
-    updateURL: false, // Update the URL hash on before scroll
+    updateURL: false, // Update the URL hash on after scroll
 
     // Callbacks
     initialized: null,
     beforeScroll: null,
     afterScroll: null,
-    cancelScroll: null
+    cancelScroll: null,
+    completeScroll: null
   };
 
   return SweetScroll;
