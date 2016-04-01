@@ -87,7 +87,7 @@ The following options are applied by default. It can be customized as needed.
   verticalScroll: true,           // Enable the vertical scroll
   horizontalScroll: false,        // Enable the horizontal scroll
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-  updateURL: false,               // Update the URL hash on before scroll
+  updateURL: false,               // Update the URL hash on after scroll
 
   // Callbacks
   initialized: null,

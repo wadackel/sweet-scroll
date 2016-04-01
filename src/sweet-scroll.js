@@ -43,7 +43,7 @@ class SweetScroll {
     verticalScroll: true,           // Enable the vertical scroll
     horizontalScroll: false,        // Enable the horizontal scroll
     stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-    updateURL: false,               // Update the URL hash on before scroll
+    updateURL: false,               // Update the URL hash on after scroll
 
     // Callbacks
     initialized: null,
@@ -115,11 +115,6 @@ class SweetScroll {
 
     if (!scroll) return;
 
-    // Update URL
-    if (hash != null && hash !== window.location.hash && params.updateURL) {
-      this.updateURLHash(hash);
-    }
-
     // Apply `offset` value
     if (offset) {
       scroll.top += offset.top;
@@ -165,6 +160,11 @@ class SweetScroll {
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
+      // Update URL
+      if (hash != null && hash !== window.location.hash && params.updateURL) {
+        this.updateURLHash(hash);
+      }
+
       // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
       this.unbindContainerStop();
       if (this._shouldCallCancelScroll) {

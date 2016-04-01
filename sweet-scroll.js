@@ -733,10 +733,10 @@ var Easing = Object.freeze({
 
         if (!scroll) return;
 
-        // Update URL
-        if (hash != null && hash !== window.location.hash && params.updateURL) {
-          this.updateURLHash(hash);
-        }
+        // // Update URL
+        // if (hash != null && hash !== window.location.hash && params.updateURL) {
+        //   this.updateURLHash(hash);
+        // }
 
         // Apply `offset` value
         if (offset) {
@@ -785,6 +785,11 @@ var Easing = Object.freeze({
         this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
           // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
           _this2.unbindContainerStop();
+
+          if (hash != null && hash !== window.location.hash && params.updateURL) {
+            _this2.updateURLHash(hash);
+          }
+
           if (_this2._shouldCallCancelScroll) {
             _this2.hook(params.cancelScroll);
             _this2.cancelScroll();
