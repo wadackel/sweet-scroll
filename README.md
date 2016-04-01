@@ -212,14 +212,13 @@ Will use the data-scroll attribute instead of href.
 The following, Introduce one of the mounting method.
 
 ```javascript
-let hash;
-let needsInitialScroll = false;
 const sweetScroll = new SweetScroll();
+const hash = window.location.hash;
+let needsInitialScroll = false;
 
 document.addEventListener("DOMContentLoaded", function() {
-  hash = window.location.hash;
-  if (document.getElementById(hash.substr(1)) != null) {
-    needsInitialScroll = true;
+  needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+  if (needsInitialScroll) {
     window.location.hash = "";
   }
 }, false);

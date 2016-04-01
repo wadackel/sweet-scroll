@@ -41,14 +41,13 @@
   </footer>
   <script src="./js/sweet-scroll.js"></script>
   <script>
-    var hash;
-    var needsInitialScroll = false;
     var sweetScroll = new SweetScroll();
+    var hash = window.location.hash;
+    var needsInitialScroll = false;
 
     document.addEventListener("DOMContentLoaded", function() {
-      hash = window.location.hash;
-      if (document.getElementById(hash.substr(1)) != null) {
-        needsInitialScroll = true;
+      needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+      if (needsInitialScroll) {
         window.location.hash = "";
       }
     }, false);
