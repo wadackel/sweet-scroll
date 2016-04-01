@@ -27,7 +27,7 @@ const enablePushState = (() => {
   ) {
     return false;
   }
-  return (window.history && "pushState" in window.history);
+  return (window.history && "pushState" in window.history && window.location.protocol !== "file:");
 })();
 
 class SweetScroll {
