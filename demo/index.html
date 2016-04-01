@@ -110,6 +110,12 @@ const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
           <img src="./images/relative.gif" alt="Relative">
         </a>
       </li>
+      <li>
+        <a href="./initial-scroll.html#footer">
+          <h3><i class="fa fa-code"></i> Initial Scroll</h3>
+          <img src="./images/initial-scroll.gif" alt="Initial Scroll">
+        </a>
+      </li>
     </ul>
     <a class="page-top" href="#header"><i class="fa fa-angle-up"></i> Page top</a>
   </section>
@@ -131,6 +137,24 @@ const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
     var sweetScroll = new SweetScroll({
       trigger: "a[href^='#']"
     });
+
+    // Initial Scroll
+    var hash;
+    var needsInitialScroll = false;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      hash = window.location.hash;
+      if (document.getElementById(hash.substr(1)) != null) {
+        needsInitialScroll = true;
+        window.location.hash = "";
+      }
+    }, false);
+
+    window.addEventListener("load", function() {
+      if (needsInitialScroll) {
+        sweetScroll.to(hash, {updateURL: true});
+      }
+    }, false);
   </script>
 </body>
 </html>
