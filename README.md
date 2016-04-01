@@ -81,12 +81,13 @@ The following options are applied by default. It can be customized as needed.
   trigger: "[data-scroll]",       // Selector for trigger (must be a valid css selector)
   header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
   duration: 1000,                 // Specifies animation duration in integer
-  delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds.
+  delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds
   easing: "easeOutQuint",         // Specifies the pattern of easing
   offset: 0,                      // Specifies the value to offset the scroll position in pixels
   verticalScroll: true,           // Enable the vertical scroll
   horizontalScroll: false,        // Enable the horizontal scroll
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
+  updateURL: false,               // Update the URL hash on before scroll
 
   // Callbacks
   initialized: null,
@@ -204,6 +205,36 @@ Will use the data-scroll attribute instead of href.
 ```html
 <button type="button" data-scroll="+=500">Scroll under 500px</button>
 ```
+
+
+#### Scroll animation in a other page
+
+The following, Introduce one of the mounting method.
+
+```javascript
+let hash;
+let needsInitialScroll = false;
+const sweetScroll = new SweetScroll();
+
+document.addEventListener("DOMContentLoaded", function() {
+  hash = window.location.hash;
+  if (document.getElementById(hash.substr(1)) != null) {
+    needsInitialScroll = true;
+    window.location.hash = "";
+  }
+}, false);
+
+window.addEventListener("load", function() {
+  if (needsInitialScroll) {
+    sweetScroll.to(hash, {updateURL: true});
+  }
+}, false);
+```
+
+[Live demo](http://tsuyoshiwada.github.io/sweet-scroll/initial-scroll.html#footer)
+
+You can also achieve the same thing in other ways by using the provided API.
+
 
 
 ## API
