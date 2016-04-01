@@ -60,12 +60,13 @@ const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
   trigger: "[data-scroll]",       // Selector for trigger (must be a valid css selector)
   header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
   duration: 1000,                 // Specifies animation duration in integer
-  delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds.
+  delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds
   easing: "easeOutQuint",         // Specifies the pattern of easing
   offset: 0,                      // Specifies the value to offset the scroll position in pixels
   verticalScroll: true,           // Enable the vertical scroll
   horizontalScroll: false,        // Enable the horizontal scroll
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
+  updateURL: false,               // Update the URL hash on before scroll
 
   // Callbacks
   initialized: null,
@@ -109,6 +110,12 @@ const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
           <img src="./images/relative.gif" alt="Relative">
         </a>
       </li>
+      <li>
+        <a href="./initial-scroll.html#footer">
+          <h3><i class="fa fa-code"></i> Initial Scroll</h3>
+          <img src="./images/initial-scroll.gif" alt="Initial Scroll">
+        </a>
+      </li>
     </ul>
     <a class="page-top" href="#header"><i class="fa fa-angle-up"></i> Page top</a>
   </section>
@@ -123,7 +130,6 @@ const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
   <script src="./highlight/highlight.pack.js"></script>
   <script src="./js/sweet-scroll.js"></script>
   <script>
-  document.addEventListener("DOMContentLoaded", function() {
     // Highlight
     hljs.initHighlightingOnLoad();
 
@@ -131,7 +137,24 @@ const sweetScroll = new SweetScroll({/* some options*/});</code></pre>
     var sweetScroll = new SweetScroll({
       trigger: "a[href^='#']"
     });
-  }, false);
+
+    // Initial Scroll
+    var hash;
+    var needsInitialScroll = false;
+
+    document.addEventListener("DOMContentLoaded", function() {
+      hash = window.location.hash;
+      if (document.getElementById(hash.substr(1)) != null) {
+        needsInitialScroll = true;
+        window.location.hash = "";
+      }
+    }, false);
+
+    window.addEventListener("load", function() {
+      if (needsInitialScroll) {
+        sweetScroll.to(hash, {updateURL: true});
+      }
+    }, false);
   </script>
 </body>
 </html>

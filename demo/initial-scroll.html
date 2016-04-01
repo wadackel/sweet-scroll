@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Initial Scroll | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./images/favicon.ico">
+  <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+  <link rel="stylesheet" href="./css/style.css">
+  <style type="text/css">
+    section h1 {
+      margin: 0;
+    }
+
+    #first {
+      margin-top: 50px;
+    }
+
+    #footer {
+      margin-top: 2000px;
+      background: #eee;
+    }
+  </style>
+</head>
+<body>
+  <header id="demo-header" data-scroll-header>
+    <a href="./#example"><i class="fa fa-chevron-left"></i> Back front</a>
+    <ul>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/initial-scroll.html"><i class="fa fa-code"></i><span>Source</span></a></li>
+      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> <span>Document on GitHub</span></a></li>
+    </ul>
+  </header>
+  <section id="first">
+    <h1>Initial Scroll</h1>
+    <p><a href="#footer" data-scroll>Go to Footer</a></p>
+  </section>
+  <footer id="footer">
+    <h2>Footer</h2>
+    <p><a href="#" data-scroll>Page top</a></p>
+  </footer>
+  <script src="./js/sweet-scroll.js"></script>
+  <script>
+    var hash;
+    var needsInitialScroll = false;
+    var sweetScroll = new SweetScroll();
+
+    document.addEventListener("DOMContentLoaded", function() {
+      hash = window.location.hash;
+      if (document.getElementById(hash.substr(1)) != null) {
+        needsInitialScroll = true;
+        window.location.hash = "";
+      }
+    }, false);
+
+    window.addEventListener("load", function() {
+      if (needsInitialScroll) {
+        sweetScroll.to(hash, {updateURL: true});
+      }
+    }, false);
+  </script>
+</body>
+</html>
