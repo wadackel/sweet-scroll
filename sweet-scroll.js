@@ -5,7 +5,7 @@
  * @author tsuyoshiwada
  * @homepage https://github.com/tsuyoshiwada/sweet-scroll
  * @license MIT
- * @version 0.4.0
+ * @version 0.5.0
  */
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
