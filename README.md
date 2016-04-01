@@ -93,7 +93,8 @@ The following options are applied by default. It can be customized as needed.
   initialized: null,
   beforeScroll: null,
   afterScroll: null,
-  cancelScroll: null
+  cancelScroll: null,
+  completeScroll: null
 }
 ```
 
@@ -250,7 +251,8 @@ You can also achieve the same thing in other ways by using the provided API.
     - `initialized: function(){}`
     - `beforeScroll: function(toScroll, trigger){}`
     - `cancelScroll: function(){}`
-    - `after: function(toScroll, trigger){}`
+    - `afterScroll: function(toScroll, trigger){}`
+    - `completeScroll: function(isCancel){}`
 
 `distance` to can specify the CSS Selector or scroll position.
 
@@ -426,6 +428,11 @@ const sweetScroll = new SweetScroll({
   // Scroll animation is complete
   afterScroll(toScroll, trigger) {
     console.log("After!!");
+  },
+
+  // Scroll animation is complete (`after` or `cancel`)
+  completeScroll(isCancel) {
+    console.log("Complete!!", isCancel);
   }
 });
 ```
@@ -453,6 +460,10 @@ class MyScroll extends SweetScroll {
 
   afterScroll(toScroll, trigger) {
     console.log("After!!");
+  }
+
+  completeScroll(isCancel) {
+    console.log("Complete!!", isCancel);
   }
 }
 ```
