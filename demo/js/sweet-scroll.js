@@ -1210,8 +1210,8 @@ var Easing = Object.freeze({
 
           options = merge({}, options, dataOptions);
 
-          e.preventDefault();
-          e.stopPropagation();
+          if (options.preventDefault) e.preventDefault();
+          if (options.stopPropagation) e.stopPropagation();
 
           // Passes the trigger elements to callback
           this._trigger = el;
@@ -1257,6 +1257,8 @@ var Easing = Object.freeze({
     horizontalScroll: false, // Enable the horizontal scroll
     stopScroll: true, // When fired wheel or touchstart events to stop scrolling
     updateURL: false, // Update the URL hash on after scroll
+    preventDefault: true, // Cancels the container element click event
+    stopPropagation: true, // Prevents further propagation of the container element click event in the bubbling phase
 
     // Callbacks
     initialized: null,

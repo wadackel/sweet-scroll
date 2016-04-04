@@ -88,6 +88,8 @@ The following options are applied by default. It can be customized as needed.
   horizontalScroll: false,        // Enable the horizontal scroll
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
   updateURL: false,               // Update the URL hash on after scroll
+  preventDefault: true,           // Cancels the container element click event
+  stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
 
   // Callbacks
   initialized: null,
