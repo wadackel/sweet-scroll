@@ -39,7 +39,8 @@ class SweetScroll {
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null,
-    completeScroll: null
+    completeScroll: null,
+    step: null
   };
 
   /**
@@ -278,6 +279,15 @@ class SweetScroll {
    * @return {Void}
    */
   completeScroll(isCancel) {
+  }
+
+  /**
+   * Called at each animation frame of the scroll.
+   * @param {Boolean}
+   * @return {Void}
+   */
+  step() {
+    // TODO
   }
 
   /**
