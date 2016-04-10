@@ -56,6 +56,28 @@ function getWindow(el) {
   return (el != null && el === el.window) ? el : el.nodeType === 9 && el.defaultView;
 }
 
+function getHeight(el) {
+  return Math.max(el.scrollHeight, el.clientHeight, el.offsetHeight);
+}
+
+function getWidth(el) {
+  return Math.max(el.scrollWidth, el.clientWidth, el.offsetWidth);
+}
+
+export function getSize(el) {
+  return {
+    width: getWidth(el),
+    height: getHeight(el)
+  };
+}
+
+export function getDocumentSize() {
+  return {
+    width: Math.max(getWidth(document.body), getWidth(document.documentElement)),
+    height: Math.max(getHeight(document.body), getHeight(document.documentElement))
+  };
+}
+
 export function getScroll(el, direction = "y") {
   const method = directionMethodMap[direction];
   const prop = directionPropMap[direction];
