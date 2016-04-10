@@ -84,6 +84,10 @@ class SweetScroll {
   to(distance, options = {}) {
     const {container, header} = this;
     const params = Util.merge({}, this.options, options);
+
+    // Temporary options
+    this._options = params;
+
     const offset = this.parseCoodinate(params.offset);
     const trigger = this._trigger;
     let scroll = this.parseCoodinate(distance);
@@ -152,6 +156,10 @@ class SweetScroll {
       // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
       this.unbindContainerStop();
 
+      // Remove the temporary options
+      this._options = null;
+
+      // Call `cancelScroll` or `afterScroll`
       if (this._shouldCallCancelScroll) {
         this.hook(params, "cancelScroll");
       } else {
@@ -292,7 +300,7 @@ class SweetScroll {
    * @return {Object}
    */
   parseCoodinate(coodinate) {
-    const enableTop = this.options.verticalScroll;
+    const enableTop = this._options ? this._options.verticalScroll : this.options.verticalScroll;
     let scroll = {top: 0, left: 0};
 
     // Object
@@ -484,7 +492,8 @@ class SweetScroll {
    * @private
    */
   handleStopScroll(e) {
-    if (this.options.stopScroll) {
+    const stopScroll = this._options ? this._options.stopScroll : this.options.stopScroll;
+    if (stopScroll) {
       this.stop();
     } else {
       e.preventDefault();
