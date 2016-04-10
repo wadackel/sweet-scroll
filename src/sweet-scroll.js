@@ -71,7 +71,7 @@ class SweetScroll {
       this._shouldCallCancelScroll = false;
       this.bindContainerClick();
       this.initialized();
-      this.hook(params.initialized);
+      this.hook(params, "initialized");
     });
   }
 
@@ -134,7 +134,7 @@ class SweetScroll {
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
-    if (this.hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
+    if (this.hook(params, "beforeScroll", scroll, trigger) === false) {
       return;
     }
 
@@ -153,16 +153,13 @@ class SweetScroll {
       this.unbindContainerStop();
 
       if (this._shouldCallCancelScroll) {
-        this.hook(params.cancelScroll);
-        this.cancelScroll();
+        this.hook(params, "cancelScroll");
       } else {
-        this.hook(params.afterScroll, scroll, trigger);
-        this.afterScroll(scroll, trigger);
+        this.hook(params, "afterScroll", scroll, trigger);
       }
 
       // Call `completeScroll`
-      this.hook(params.completeScroll, this._shouldCallCancelScroll);
-      this.completeScroll(this._shouldCallCancelScroll);
+      this.hook(params, "completeScroll", this._shouldCallCancelScroll);
     });
 
     // Bind the scroll stop events
@@ -451,15 +448,23 @@ class SweetScroll {
 
   /**
    * Call the specified callback
-   * @param {Function}
+   * @param {Object}
+   * @param {String}
    * @param {...Any}
    * @return {Void}
    * @private
    */
-  hook(callback, ...args) {
+  hook(options, type, ...args) {
+    const callback = options[type];
+
+    // callback
     if (Util.isFunction(callback)) {
-      return callback.apply(this, args);
+      let result = callback.apply(this, args);
+      if (result !== undefined) return result;
     }
+
+    // method
+    return this[type].apply(this, args);
   }
 
   /**
