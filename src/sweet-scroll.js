@@ -71,7 +71,7 @@ class SweetScroll {
       this._shouldCallCancelScroll = false;
       this.bindContainerClick();
       this.initialized();
-      this.hook(params.initialized);
+      this.hook(params, "initialized");
     });
   }
 
@@ -84,6 +84,10 @@ class SweetScroll {
   to(distance, options = {}) {
     const {container, header} = this;
     const params = Util.merge({}, this.options, options);
+
+    // Temporary options
+    this._options = params;
+
     const offset = this.parseCoodinate(params.offset);
     const trigger = this._trigger;
     let scroll = this.parseCoodinate(distance);
@@ -126,40 +130,21 @@ class SweetScroll {
 
     // If the header is present apply the height
     if (header) {
-      scroll.top = Math.max(0, scroll.top - this.header.clientHeight);
+      scroll.top = Math.max(0, scroll.top - Dom.getSize(header).height);
     }
 
     // Determine the final scroll coordinates
-    let frameSize;
-    let size;
-    if (Dom.isRootContainer(container)) {
-      frameSize = {width: win.innerWidth, height: win.innerHeight};
-      size = {width: doc.body.scrollWidth, height: doc.body.scrollHeight};
-    } else {
-      frameSize = {width: container.clientWidth, height: container.clientHeight};
-      size = {width: container.scrollWidth, height: container.scrollHeight};
-    }
+    const {viewport, size} = Dom.getViewportAndElementSizes(container);
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
-    if (this.hook(params.beforeScroll, scroll, trigger) === false || this.beforeScroll(scroll, trigger) === false) {
+    if (this.hook(params, "beforeScroll", scroll, trigger) === false) {
       return;
     }
 
     // Adjustment of the maximum value
-    // vertical
-    if (params.verticalScroll) {
-      scroll.top = Math.max(0, Math.min(size.height - frameSize.height, scroll.top));
-    } else {
-      scroll.top = Dom.getScroll(container, "y");
-    }
-
-    // horizontal
-    if (params.horizontalScroll) {
-      scroll.left = Math.max(0, Math.min(size.width - frameSize.width, scroll.left));
-    } else {
-      scroll.left = Dom.getScroll(container, "x");
-    }
+    scroll.top = params.verticalScroll ? Math.max(0, Math.min(size.height - viewport.height, scroll.top)) : Dom.getScroll(container, "y");
+    scroll.left = params.horizontalScroll ? Math.max(0, Math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
@@ -171,17 +156,18 @@ class SweetScroll {
       // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
       this.unbindContainerStop();
 
+      // Remove the temporary options
+      this._options = null;
+
+      // Call `cancelScroll` or `afterScroll`
       if (this._shouldCallCancelScroll) {
-        this.hook(params.cancelScroll);
-        this.cancelScroll();
+        this.hook(params, "cancelScroll");
       } else {
-        this.hook(params.afterScroll, scroll, trigger);
-        this.afterScroll(scroll, trigger);
+        this.hook(params, "afterScroll", scroll, trigger);
       }
 
       // Call `completeScroll`
-      this.hook(params.completeScroll, this._shouldCallCancelScroll);
-      this.completeScroll(this._shouldCallCancelScroll);
+      this.hook(params, "completeScroll", this._shouldCallCancelScroll);
     });
 
     // Bind the scroll stop events
@@ -314,7 +300,7 @@ class SweetScroll {
    * @return {Object}
    */
   parseCoodinate(coodinate) {
-    const enableTop = this.options.verticalScroll;
+    const enableTop = this._options ? this._options.verticalScroll : this.options.verticalScroll;
     let scroll = {top: 0, left: 0};
 
     // Object
@@ -412,8 +398,18 @@ class SweetScroll {
     }
 
     if (!container && !isDomContentLoaded) {
+      let isCompleted = false;
+
       addEvent(doc, DOM_CONTENT_LOADED, () => {
+        isCompleted = true;
         this.getContainer(selector, callback);
+      });
+
+      // Fallback for DOMContentLoaded
+      addEvent(win, "load", () => {
+        if (!isCompleted) {
+          this.getContainer(selector, callback);
+        }
       });
     } else {
       callback.call(this, container);
@@ -470,15 +466,23 @@ class SweetScroll {
 
   /**
    * Call the specified callback
-   * @param {Function}
+   * @param {Object}
+   * @param {String}
    * @param {...Any}
    * @return {Void}
    * @private
    */
-  hook(callback, ...args) {
+  hook(options, type, ...args) {
+    const callback = options[type];
+
+    // callback
     if (Util.isFunction(callback)) {
-      return callback.apply(this, args);
+      let result = callback.apply(this, args);
+      if (result !== undefined) return result;
     }
+
+    // method
+    return this[type].apply(this, args);
   }
 
   /**
@@ -488,7 +492,8 @@ class SweetScroll {
    * @private
    */
   handleStopScroll(e) {
-    if (this.options.stopScroll) {
+    const stopScroll = this._options ? this._options.stopScroll : this.options.stopScroll;
+    if (stopScroll) {
       this.stop();
     } else {
       e.preventDefault();
