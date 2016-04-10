@@ -126,18 +126,21 @@ class SweetScroll {
 
     // If the header is present apply the height
     if (header) {
-      scroll.top = Math.max(0, scroll.top - this.header.clientHeight);
+      scroll.top = Math.max(0, scroll.top - Dom.getSize(header).height);
     }
 
     // Determine the final scroll coordinates
     let frameSize;
     let size;
     if (Dom.isRootContainer(container)) {
-      frameSize = {width: win.innerWidth, height: win.innerHeight};
-      size = {width: doc.body.scrollWidth, height: doc.body.scrollHeight};
+      frameSize = {
+        width: Math.min(win.innerWidth, doc.documentElement.clientWidth),
+        height: win.innerHeight
+      };
+      size = Dom.getDocumentSize();
     } else {
       frameSize = {width: container.clientWidth, height: container.clientHeight};
-      size = {width: container.scrollWidth, height: container.scrollHeight};
+      size = Dom.getSize(container);
     }
 
     // Call `beforeScroll`
