@@ -78,24 +78,38 @@ export function getDocumentSize() {
   };
 }
 
+export function getViewportAndElementSizes(el) {
+  if (isRootContainer(el)) {
+    return {
+      viewport: {
+        width: Math.min(window.innerWidth, document.documentElement.clientWidth),
+        height: window.innerHeight
+      },
+      size: getDocumentSize()
+    };
+  }
+
+  return {
+    viewport: {width: el.clientWidth, height: el.clientHeight},
+    size: getSize(el)
+  };
+}
+
 export function getScroll(el, direction = "y") {
-  const method = directionMethodMap[direction];
-  const prop = directionPropMap[direction];
   const win = getWindow(el);
-  return win ? win[prop] : el[method];
+  return win ? win[directionPropMap[direction]] : el[directionMethodMap[direction]];
 }
 
 export function setScroll(el, offset, direction = "y") {
-  const method = directionMethodMap[direction];
   const win = getWindow(el);
   const top = direction === "y";
   if (win) {
     win.scrollTo(
-      !top ? offset : win.pageXOffset,
-      top ? offset : win.pageYOffset
+      !top ? offset : win[directionPropMap.x],
+      top  ? offset : win[directionPropMap.y]
     );
   } else {
-    el[method] = offset;
+    el[directionMethodMap[direction]] = offset;
   }
 }
 

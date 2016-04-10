@@ -130,18 +130,7 @@ class SweetScroll {
     }
 
     // Determine the final scroll coordinates
-    let frameSize;
-    let size;
-    if (Dom.isRootContainer(container)) {
-      frameSize = {
-        width: Math.min(win.innerWidth, doc.documentElement.clientWidth),
-        height: win.innerHeight
-      };
-      size = Dom.getDocumentSize();
-    } else {
-      frameSize = {width: container.clientWidth, height: container.clientHeight};
-      size = Dom.getSize(container);
-    }
+    const {viewport, size} = Dom.getViewportAndElementSizes(container);
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
@@ -150,19 +139,8 @@ class SweetScroll {
     }
 
     // Adjustment of the maximum value
-    // vertical
-    if (params.verticalScroll) {
-      scroll.top = Math.max(0, Math.min(size.height - frameSize.height, scroll.top));
-    } else {
-      scroll.top = Dom.getScroll(container, "y");
-    }
-
-    // horizontal
-    if (params.horizontalScroll) {
-      scroll.left = Math.max(0, Math.min(size.width - frameSize.width, scroll.left));
-    } else {
-      scroll.left = Dom.getScroll(container, "x");
-    }
+    scroll.top = params.verticalScroll ? Math.max(0, Math.min(size.height - viewport.height, scroll.top)) : Dom.getScroll(container, "y");
+    scroll.left = params.horizontalScroll ? Math.max(0, Math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
