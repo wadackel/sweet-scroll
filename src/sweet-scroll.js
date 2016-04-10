@@ -390,8 +390,18 @@ class SweetScroll {
     }
 
     if (!container && !isDomContentLoaded) {
+      let isCompleted = false;
+
       addEvent(doc, DOM_CONTENT_LOADED, () => {
+        isCompleted = true;
         this.getContainer(selector, callback);
+      });
+
+      // Fallback for DOMContentLoaded
+      addEvent(win, "load", () => {
+        if (!isCompleted) {
+          this.getContainer(selector, callback);
+        }
       });
     } else {
       callback.call(this, container);
