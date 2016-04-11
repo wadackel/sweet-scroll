@@ -1,5 +1,6 @@
 import * as Util from "./utils"
 import * as Dom from "./dom"
+import * as Supports from "./supports"
 import {$, matches} from "./selectors"
 import {addEvent, removeEvent} from "./events"
 import ScrollTween from "./scroll-tween"
@@ -15,20 +16,6 @@ addEvent(doc, DOM_CONTENT_LOADED, () => {
   isDomContentLoaded = true;
 });
 
-// @link https://github.com/Modernizr/Modernizr
-const enablePushState = (() => {
-  const ua = navigator.userAgent;
-  if (
-    (ua.indexOf("Android 2.") !== -1 ||
-    (ua.indexOf("Android 4.0") !== -1)) &&
-    ua.indexOf("Mobile Safari") !== -1 &&
-    ua.indexOf("Chrome") === -1 &&
-    ua.indexOf("Windows Phone") === -1
-  ) {
-    return false;
-  }
-  return (window.history && "pushState" in window.history && window.location.protocol !== "file:");
-})();
 
 class SweetScroll {
 
@@ -70,7 +57,6 @@ class SweetScroll {
       this._trigger = null;
       this._shouldCallCancelScroll = false;
       this.bindContainerClick();
-      this.initialized();
       this.hook(params, "initialized");
     });
   }
@@ -373,7 +359,7 @@ class SweetScroll {
    * @return {Void}
    */
   updateURLHash(hash) {
-    if (enablePushState) {
+    if (Supports.pushState) {
       window.history.pushState(null, null, hash);
     }
   }
