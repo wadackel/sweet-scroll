@@ -297,6 +297,15 @@
     return rect;
   }
 
+  // @link https://github.com/Modernizr/Modernizr
+  var pushState = function () {
+    var ua = navigator.userAgent;
+    if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
+      return false;
+    }
+    return window.history && "pushState" in window.history && window.location.protocol !== "file:";
+  }();
+
   function addEvent(el, event, listener) {
     var events = event.split(",");
     events.forEach(function (eventName) {
@@ -677,15 +686,6 @@ var Easing = Object.freeze({
     isDomContentLoaded = true;
   });
 
-  // @link https://github.com/Modernizr/Modernizr
-  var enablePushState = function () {
-    var ua = navigator.userAgent;
-    if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
-      return false;
-    }
-    return window.history && "pushState" in window.history && window.location.protocol !== "file:";
-  }();
-
   var SweetScroll = function () {
 
     /**
@@ -710,7 +710,6 @@ var Easing = Object.freeze({
         _this._trigger = null;
         _this._shouldCallCancelScroll = false;
         _this.bindContainerClick();
-        _this.initialized();
         _this.hook(params, "initialized");
       });
     }
@@ -1072,7 +1071,7 @@ var Easing = Object.freeze({
     }, {
       key: "updateURLHash",
       value: function updateURLHash(hash) {
-        if (enablePushState) {
+        if (pushState) {
           window.history.pushState(null, null, hash);
         }
       }
