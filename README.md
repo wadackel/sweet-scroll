@@ -451,7 +451,8 @@ class MyScroll extends SweetScroll {
 
   beforeScroll(toScroll, trigger) {
     // Stop scrolling case of trigger element that contains the `is-disabled` class.
-    if (trigger.classList.contains("is-disabled")) {
+    console.log("Before!!");
+    if (trigger && trigger.classList.contains("is-disabled")) {
       return false;
     }
   }
