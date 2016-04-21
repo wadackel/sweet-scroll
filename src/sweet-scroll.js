@@ -40,7 +40,7 @@ class SweetScroll {
     afterScroll: null,
     cancelScroll: null,
     completeScroll: null,
-    step: null
+    stepScroll: null
   };
 
   /**
@@ -134,27 +134,35 @@ class SweetScroll {
     scroll.left = params.horizontalScroll ? Math.max(0, Math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
 
     // Run the animation!!
-    this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, () => {
-      // Update URL
-      if (hash != null && hash !== window.location.hash && params.updateURL) {
-        this.updateURLHash(hash);
+    this.tween.run(scroll.left, scroll.top, {
+      duration: params.duration,
+      delay: params.delay,
+      easing: params.easing,
+      complete: () => {
+        // Update URL
+        if (hash != null && hash !== window.location.hash && params.updateURL) {
+          this.updateURLHash(hash);
+        }
+
+        // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
+        this.unbindContainerStop();
+
+        // Remove the temporary options
+        this._options = null;
+
+        // Call `cancelScroll` or `afterScroll`
+        if (this._shouldCallCancelScroll) {
+          this.hook(params, "cancelScroll");
+        } else {
+          this.hook(params, "afterScroll", scroll, trigger);
+        }
+
+        // Call `completeScroll`
+        this.hook(params, "completeScroll", this._shouldCallCancelScroll);
+      },
+      step: (currentTime, props) => {
+        this.hook(params, "stepScroll", currentTime, props);
       }
-
-      // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
-      this.unbindContainerStop();
-
-      // Remove the temporary options
-      this._options = null;
-
-      // Call `cancelScroll` or `afterScroll`
-      if (this._shouldCallCancelScroll) {
-        this.hook(params, "cancelScroll");
-      } else {
-        this.hook(params, "afterScroll", scroll, trigger);
-      }
-
-      // Call `completeScroll`
-      this.hook(params, "completeScroll", this._shouldCallCancelScroll);
     });
 
     // Bind the scroll stop events
@@ -283,11 +291,11 @@ class SweetScroll {
 
   /**
    * Called at each animation frame of the scroll.
-   * @param {Boolean}
+   * @param {Float}
+   * @param {Object}
    * @return {Void}
    */
-  step() {
-    // TODO
+  stepScroll(currentTime, props) {
   }
 
   /**
