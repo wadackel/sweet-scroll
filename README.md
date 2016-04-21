@@ -97,7 +97,7 @@ The following options are applied by default. It can be customized as needed.
   afterScroll: null,
   cancelScroll: null,
   completeScroll: null,
-  step: null,
+  stepScroll: null,
 }
 ```
 
@@ -256,7 +256,7 @@ You can also achieve the same thing in other ways by using the provided API.
     - `cancelScroll: function(){}`
     - `afterScroll: function(toScroll, trigger){}`
     - `completeScroll: function(isCancel){}`
-    - `step: function(){}`
+    - `stepScroll: function(currentTime, props){}`
 
 `distance` to can specify the CSS Selector or scroll position.
 
@@ -440,8 +440,8 @@ const sweetScroll = new SweetScroll({
   },
 
   // Each animation frame
-  step() {
-    console.log("step");
+  stepScroll(currentTime, props) {
+    console.log("step", currentTime, props);
   }
 });
 ```
@@ -476,8 +476,8 @@ class MyScroll extends SweetScroll {
     console.log("Complete!!", isCancel);
   }
 
-  step() {
-    console.log("step");
+  stepScroll(currentTime, props) {
+    console.log("step", currentTime, props);
   }
 }
 ```
