@@ -582,23 +582,20 @@ var Easing = Object.freeze({
 
       this.el = el;
       this.props = {};
+      this.options = {};
       this.progress = false;
       this.startTime = null;
     }
 
     babelHelpers.createClass(ScrollTween, [{
       key: "run",
-      value: function run(x, y, duration, delay, easing) {
+      value: function run(x, y, options) {
         var _this = this;
-
-        var callback = arguments.length <= 5 || arguments[5] === undefined ? function () {} : arguments[5];
 
         if (this.progress) return;
         this.props = { x: x, y: y };
-        this.duration = duration;
-        this.delay = delay;
-        this.easing = easing.replace("ease", "");
-        this.callback = callback;
+        this.options = options;
+        this.options.easing = options.easing.replace("ease", "");
         this.progress = true;
 
         setTimeout(function () {
@@ -609,12 +606,13 @@ var Easing = Object.freeze({
           raf(function (time) {
             return _this._loop(time);
           });
-        }, delay);
+        }, this.options.delay);
       }
     }, {
       key: "stop",
       value: function stop() {
         var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+        var complete = this.options.complete;
 
         this.startTime = null;
         this.progress = false;
@@ -624,9 +622,9 @@ var Easing = Object.freeze({
           setScroll(this.el, this.props.y, "y");
         }
 
-        if (isFunction(this.callback)) {
-          this.callback();
-          this.callback = null;
+        if (isFunction(complete)) {
+          complete.call(this);
+          this.options.complete = null;
         }
       }
     }, {
@@ -645,12 +643,14 @@ var Easing = Object.freeze({
 
         var el = this.el;
         var props = this.props;
-        var duration = this.duration;
+        var options = this.options;
         var startTime = this.startTime;
         var startProps = this.startProps;
+        var duration = options.duration;
+        var step = options.step;
 
         var toProps = {};
-        var easing = Easing[this.easing];
+        var easing = Easing[this.options.easing];
         var timeElapsed = time - startTime;
         var t = Math.min(1, Math.max(timeElapsed / duration, 0));
 
@@ -667,9 +667,14 @@ var Easing = Object.freeze({
           setScroll(el, value, key);
         });
 
-        timeElapsed <= duration ? raf(function (time) {
-          return _this2._loop(time);
-        }) : this.stop(true);
+        if (timeElapsed <= duration) {
+          step.call(this, t, toProps);
+          raf(function (time) {
+            return _this2._loop(time);
+          });
+        } else {
+          this.stop(true);
+        }
       }
     }]);
     return ScrollTween;
@@ -802,27 +807,35 @@ var Easing = Object.freeze({
         scroll.left = params.horizontalScroll ? Math.max(0, Math.min(size.width - viewport.width, scroll.left)) : getScroll(container, "x");
 
         // Run the animation!!
-        this.tween.run(scroll.left, scroll.top, params.duration, params.delay, params.easing, function () {
-          // Update URL
-          if (hash != null && hash !== window.location.hash && params.updateURL) {
-            _this2.updateURLHash(hash);
+        this.tween.run(scroll.left, scroll.top, {
+          duration: params.duration,
+          delay: params.delay,
+          easing: params.easing,
+          complete: function complete() {
+            // Update URL
+            if (hash != null && hash !== window.location.hash && params.updateURL) {
+              _this2.updateURLHash(hash);
+            }
+
+            // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
+            _this2.unbindContainerStop();
+
+            // Remove the temporary options
+            _this2._options = null;
+
+            // Call `cancelScroll` or `afterScroll`
+            if (_this2._shouldCallCancelScroll) {
+              _this2.hook(params, "cancelScroll");
+            } else {
+              _this2.hook(params, "afterScroll", scroll, trigger);
+            }
+
+            // Call `completeScroll`
+            _this2.hook(params, "completeScroll", _this2._shouldCallCancelScroll);
+          },
+          step: function step(currentTime, props) {
+            _this2.hook(params, "stepScroll", currentTime, props);
           }
-
-          // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
-          _this2.unbindContainerStop();
-
-          // Remove the temporary options
-          _this2._options = null;
-
-          // Call `cancelScroll` or `afterScroll`
-          if (_this2._shouldCallCancelScroll) {
-            _this2.hook(params, "cancelScroll");
-          } else {
-            _this2.hook(params, "afterScroll", scroll, trigger);
-          }
-
-          // Call `completeScroll`
-          _this2.hook(params, "completeScroll", _this2._shouldCallCancelScroll);
         });
 
         // Bind the scroll stop events
@@ -987,6 +1000,17 @@ var Easing = Object.freeze({
     }, {
       key: "completeScroll",
       value: function completeScroll(isCancel) {}
+
+      /**
+       * Called at each animation frame of the scroll.
+       * @param {Float}
+       * @param {Object}
+       * @return {Void}
+       */
+
+    }, {
+      key: "stepScroll",
+      value: function stepScroll(currentTime, props) {}
 
       /**
        * Parse the value of coordinate
@@ -1313,7 +1337,8 @@ var Easing = Object.freeze({
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null,
-    completeScroll: null
+    completeScroll: null,
+    stepScroll: null
   };
 
   return SweetScroll;
