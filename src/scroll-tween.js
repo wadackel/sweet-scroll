@@ -7,17 +7,16 @@ export default class ScrollTween {
   constructor(el) {
     this.el = el;
     this.props = {};
+    this.options = {};
     this.progress = false;
     this.startTime = null;
   }
 
-  run(x, y, duration, delay, easing, callback = function() {}) {
+  run(x, y, options) {
     if (this.progress) return;
     this.props = {x, y};
-    this.duration = duration;
-    this.delay = delay;
-    this.easing = easing.replace("ease", "");
-    this.callback = callback;
+    this.options = options;
+    this.options.easing = options.easing.replace("ease", "");
     this.progress = true;
 
     setTimeout(() => {
@@ -26,10 +25,11 @@ export default class ScrollTween {
         y: Dom.getScroll(this.el, "y")
       };
       raf((time) => this._loop(time));
-    }, delay);
+    }, this.options.delay);
   }
 
   stop(gotoEnd = true) {
+    const {complete} = this.options;
     this.startTime = null;
     this.progress = false;
 
@@ -38,9 +38,9 @@ export default class ScrollTween {
       Dom.setScroll(this.el, this.props.y, "y");
     }
 
-    if (Util.isFunction(this.callback)) {
-      this.callback();
-      this.callback = null;
+    if (Util.isFunction(complete)) {
+      complete.call(this);
+      this.options.complete = null;
     }
   }
 
@@ -54,9 +54,10 @@ export default class ScrollTween {
       return;
     }
 
-    const {el, props, duration, startTime, startProps} = this;
+    const {el, props, options, startTime, startProps} = this;
+    const {duration, step} = options;
     const toProps = {};
-    const easing = Easing[this.easing];
+    const easing = Easing[this.options.easing];
     const timeElapsed = time - startTime;
     const t = Math.min(1, Math.max(timeElapsed / duration, 0));
 
@@ -73,6 +74,12 @@ export default class ScrollTween {
       Dom.setScroll(el, value, key);
     });
 
-    timeElapsed <= duration ? raf((time) => this._loop(time)) : this.stop(true);
+    if (timeElapsed <= duration) {
+      step.call(this, t, toProps);
+      raf((time) => this._loop(time));
+
+    } else {
+      this.stop(true);
+    }
   }
 }
