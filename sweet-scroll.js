@@ -298,7 +298,7 @@
   }
 
   // @link https://github.com/Modernizr/Modernizr
-  var pushState = function () {
+  var history = function () {
     var ua = navigator.userAgent;
     if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
       return false;
@@ -813,8 +813,8 @@ var Easing = Object.freeze({
           easing: params.easing,
           complete: function complete() {
             // Update URL
-            if (hash != null && hash !== window.location.hash && params.updateURL) {
-              _this2.updateURLHash(hash);
+            if (hash != null && hash !== window.location.hash) {
+              _this2.updateURLHash(hash, params.updateURL);
             }
 
             // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
@@ -1089,15 +1089,15 @@ var Easing = Object.freeze({
       /**
        * Update the Hash of the URL.
        * @param {String}
+       * @param {Boolean} | {String}
        * @return {Void}
        */
 
     }, {
       key: "updateURLHash",
-      value: function updateURLHash(hash) {
-        if (pushState) {
-          window.history.pushState(null, null, hash);
-        }
+      value: function updateURLHash(hash, historyType) {
+        if (!history || !historyType) return;
+        window.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
       }
 
       /**
@@ -1328,7 +1328,7 @@ var Easing = Object.freeze({
     verticalScroll: true, // Enable the vertical scroll
     horizontalScroll: false, // Enable the horizontal scroll
     stopScroll: true, // When fired wheel or touchstart events to stop scrolling
-    updateURL: false, // Update the URL hash on after scroll
+    updateURL: false, // Update the URL hash on after scroll (true | false | "push" | "replace")
     preventDefault: true, // Cancels the container element click event
     stopPropagation: true, // Prevents further propagation of the container element click event in the bubbling phase
 

@@ -87,7 +87,7 @@ The following options are applied by default. It can be customized as needed.
   verticalScroll: true,           // Enable the vertical scroll
   horizontalScroll: false,        // Enable the horizontal scroll
   stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-  updateURL: false,               // Update the URL hash on after scroll
+  updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
   preventDefault: true,           // Cancels the container element click event
   stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
 
@@ -229,7 +229,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
 window.addEventListener("load", function() {
   if (needsInitialScroll) {
-    sweetScroll.to(hash, {updateURL: true});
+    // In initial scroll will update the hash without leaving a history.
+    sweetScroll.to(hash, {updateURL: "replace"});
   }
 }, false);
 ```

@@ -30,7 +30,7 @@ class SweetScroll {
     verticalScroll: true,           // Enable the vertical scroll
     horizontalScroll: false,        // Enable the horizontal scroll
     stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-    updateURL: false,               // Update the URL hash on after scroll
+    updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
     preventDefault: true,           // Cancels the container element click event
     stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
 
@@ -140,8 +140,8 @@ class SweetScroll {
       easing: params.easing,
       complete: () => {
         // Update URL
-        if (hash != null && hash !== window.location.hash && params.updateURL) {
-          this.updateURLHash(hash);
+        if (hash != null && hash !== window.location.hash) {
+          this.updateURLHash(hash, params.updateURL);
         }
 
         // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
@@ -374,12 +374,12 @@ class SweetScroll {
   /**
    * Update the Hash of the URL.
    * @param {String}
+   * @param {Boolean} | {String}
    * @return {Void}
    */
-  updateURLHash(hash) {
-    if (Supports.pushState) {
-      window.history.pushState(null, null, hash);
-    }
+  updateURLHash(hash, historyType) {
+    if (!Supports.history || !historyType) return;
+    window.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
   }
 
   /**

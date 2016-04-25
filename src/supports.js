@@ -1,5 +1,5 @@
 // @link https://github.com/Modernizr/Modernizr
-export const pushState = (() => {
+export const history = (() => {
   const ua = navigator.userAgent;
   if (
     (ua.indexOf("Android 2.") !== -1 ||
