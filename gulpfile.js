@@ -1,28 +1,26 @@
-var fs = require("fs");
-var path = require("path");
-var gulp = require("gulp");
-var $ = require("gulp-load-plugins")();
-var runSequence = require("run-sequence");
-var server = require("browser-sync").create();
-var KarmaServer = require("karma").Server;
-var rollup = require("rollup");
-var babel = require("rollup-plugin-babel");
-var pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
+const fs = require("fs");
+const path = require("path");
+const gulp = require("gulp");
+const $ = require("gulp-load-plugins")();
+const runSequence = require("run-sequence");
+const server = require("browser-sync").create();
+const KarmaServer = require("karma").Server;
+const rollup = require("rollup");
+const babel = require("rollup-plugin-babel");
+const pkg = JSON.parse(fs.readFileSync("package.json", "utf8"));
 
-var banner = [
-  "/*!",
-  " * " + pkg.name,
-  " * " + pkg.description,
-  " * ",
-  " * @author " + pkg.author,
-  " * @homepage " + pkg.homepage,
-  " * @license " + pkg.license,
-  " * @version " + pkg.version,
-  " */"
-].join("\n");
+const banner = `
+/*!
+ * ${pkg.name}
+ * ${pkg.description}
+ * @author ${pkg.author}
+ * @license ${pkg.license}
+ * @version ${pkg.version}
+ */
+`;
 
 
-gulp.task("server", function(cb) {
+gulp.task("server", (cb) => {
   server.init({
     notify: false,
     open: false,
@@ -35,13 +33,13 @@ gulp.task("server", function(cb) {
 });
 
 
-gulp.task("server:reload", function(cb) {
+gulp.task("server:reload", (cb) => {
   server.reload();
   cb();
 });
 
 
-gulp.task("demo:sass", function() {
+gulp.task("demo:sass", () => {
   return gulp.src("./demo/sass/**/*.scss")
     .pipe($.plumber())
     .pipe($.sass({outputStyle: "compressed"}).on("error", $.sass.logError))
@@ -54,12 +52,12 @@ gulp.task("demo:sass", function() {
 gulp.task("demo", ["demo:sass"]);
 
 
-gulp.task("rollup", function(cb) {
+gulp.task("rollup", (cb) => {
   process.env.NODE_ENV = "production";
   rollup.rollup({
     entry: "src/sweet-scroll.js",
     plugins: [babel()]
-  }).then(function(bundle) {
+  }).then((bundle) => {
     var result = bundle.generate({
       format: "umd",
       moduleName: "SweetScroll",
@@ -69,14 +67,14 @@ gulp.task("rollup", function(cb) {
     fs.writeFileSync("demo/js/sweet-scroll.js", result.code);
     server.reload();
     cb();
-  }).catch(function(err) {
+  }).catch((err) => {
     console.log(err);
     cb();
   });
 });
 
 
-gulp.task("uglify", function() {
+gulp.task("uglify", () => {
   return gulp.src("sweet-scroll.js")
     .pipe($.plumber())
     .pipe($.uglify({preserveComments: "license"}))
@@ -95,7 +93,7 @@ gulp.task("karma", function(cb) {
 });
 
 
-gulp.task("lint", function() {
+gulp.task("lint", () => {
   return gulp.src(["./src/**/*.js", "./test/**/*.js"])
     .pipe($.plumber())
     .pipe($.eslint())
@@ -107,7 +105,7 @@ gulp.task("lint", function() {
 gulp.task("test", ["lint", "karma"]);
 
 
-gulp.task("build", function(cb) {
+gulp.task("build", (cb) => {
   runSequence(
     "rollup",
     "uglify",
@@ -116,7 +114,7 @@ gulp.task("build", function(cb) {
 });
 
 
-gulp.task("watch", function(cb) {
+gulp.task("watch", (cb) => {
   gulp.watch("./src/**/*", ["rollup"]);
   gulp.watch("./test/**/*", ["test"]);
   gulp.watch("./demo/**/*.html", ["server:reload"]);
