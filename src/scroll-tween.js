@@ -9,6 +9,7 @@ export default class ScrollTween {
     this.props = {};
     this.options = {};
     this.progress = false;
+    this.easing = null;
     this.startTime = null;
   }
 
@@ -16,7 +17,7 @@ export default class ScrollTween {
     if (this.progress) return;
     this.props = {x, y};
     this.options = options;
-    this.options.easing = options.easing.replace("ease", "");
+    this.easing = Util.isFunction(options.easing) ? options.easing : Easing[options.easing.replace("ease", "")];
     this.progress = true;
 
     setTimeout(() => {
@@ -54,10 +55,9 @@ export default class ScrollTween {
       return;
     }
 
-    const {el, props, options, startTime, startProps} = this;
+    const {el, props, options, startTime, startProps, easing} = this;
     const {duration, step} = options;
     const toProps = {};
-    const easing = Easing[this.options.easing];
     const timeElapsed = time - startTime;
     const t = Math.min(1, Math.max(timeElapsed / duration, 0));
 

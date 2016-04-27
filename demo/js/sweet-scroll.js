@@ -584,6 +584,7 @@ var Easing = Object.freeze({
       this.props = {};
       this.options = {};
       this.progress = false;
+      this.easing = null;
       this.startTime = null;
     }
 
@@ -595,7 +596,7 @@ var Easing = Object.freeze({
         if (this.progress) return;
         this.props = { x: x, y: y };
         this.options = options;
-        this.options.easing = options.easing.replace("ease", "");
+        this.easing = isFunction(options.easing) ? options.easing : Easing[options.easing.replace("ease", "")];
         this.progress = true;
 
         setTimeout(function () {
@@ -646,11 +647,11 @@ var Easing = Object.freeze({
         var options = this.options;
         var startTime = this.startTime;
         var startProps = this.startProps;
+        var easing = this.easing;
         var duration = options.duration;
         var step = options.step;
 
         var toProps = {};
-        var easing = Easing[this.options.easing];
         var timeElapsed = time - startTime;
         var t = Math.min(1, Math.max(timeElapsed / duration, 0));
 
