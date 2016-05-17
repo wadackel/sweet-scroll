@@ -1,5 +1,10 @@
 {
   "parser": "babel-eslint",
+  "parserOptions": {
+    "ecmaVersion": 6,
+    "sourceType": "module"
+  },
+  "extends": "eslint:recommended",
   "rules": {
     "indent": [2, 2],
     "quotes": [2, "double"],
@@ -15,9 +20,5 @@
     "browser": true,
     "node": true,
     "mocha": true
-  },
-  "ecmaFeatures": {
-    "modules": true
-  },
-  "extends": "eslint:recommended"
+  }
 }
