@@ -5,9 +5,12 @@
   "main": "sweet-scroll.js",
   "scripts": {
     "start": "gulp start",
-    "test": "gulp test",
-    "build": "gulp build",
-    "lint": "gulp lint"
+    "test": "npm run lint && npm run karma",
+    "build": "npm run build:js",
+    "build:js": "NODE_ENV=production rollup -i src/sweet-scroll.js -o sweet-scroll.js -c && uglifyjs --compress --mangle -o sweet-scroll.min.js --comments -- sweet-scroll.js",
+    "lint": "npm run eslint",
+    "karma": "NODE_ENV=test karma start karma.conf.js --single-run",
+    "eslint": "eslint src/**/*.js test/**/*.js"
   },
   "files": [
     "sweet-scroll.js",
@@ -37,17 +40,10 @@
     "babelify": "^7.3.0",
     "browser-sync": "^2.12.8",
     "browserify": "^13.0.1",
-    "gulp": "^3.9.1",
-    "gulp-autoprefixer": "^3.1.0",
-    "gulp-eslint": "^2.0.0",
-    "gulp-load-plugins": "^1.2.2",
-    "gulp-plumber": "^1.1.0",
-    "gulp-rename": "^1.2.2",
-    "gulp-rollup": "^1.9.0",
-    "gulp-sass": "^2.3.1",
-    "gulp-uglify": "^1.5.3",
+    "eslint": "^2.10.2",
     "karma": "^0.13.22",
     "karma-browserify": "^5.0.5",
+    "karma-cli": "^1.0.0",
     "karma-fixture": "^0.2.6",
     "karma-html2js-preprocessor": "^1.0.0",
     "karma-mocha": "^1.0.1",
@@ -58,7 +54,7 @@
     "power-assert": "^1.4.1",
     "rollup": "^0.26.3",
     "rollup-plugin-babel": "^2.4.0",
-    "run-sequence": "^1.1.5",
+    "uglify-js": "^2.6.2",
     "watchify": "^3.7.0"
   }
 }
