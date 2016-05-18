@@ -13,7 +13,7 @@
     "watch:test": "onchange 'test/**/*.js' -- npm run karma",
     "lint": "npm run eslint",
     "karma": "NODE_ENV=test karma start karma.conf.js --single-run",
-    "eslint": "eslint src/**/*.js test/**/*.js",
+    "eslint": "eslint src/**/*.js test/**/*.js .eslintrc.js",
     "demo": "npm run demo:server & npm run demo:watch:js & npm run demo:watch:sass",
     "demo:server": "browser-sync start -s 'demo/' -f 'demo/**/*' --no-notify --no-open --no-ghost-mode",
     "demo:build": "npm run demo:build:js && npm run demo:build:sass",
