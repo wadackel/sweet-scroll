@@ -1,4 +1,3 @@
-
 /*!
  * sweet-scroll
  * Modern and the sweet smooth scroll library.
