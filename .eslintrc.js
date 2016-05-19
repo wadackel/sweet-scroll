@@ -95,7 +95,6 @@ module.exports = {
     "newline-after-var": "error",
     "newline-before-return": "error",
     "no-array-constructor": "error",
-    "no-inline-comments": "error",
     "no-lonely-if": "error",
     "no-mixed-spaces-and-tabs": "error",
     "no-multiple-empty-lines": ["error", {max: 2}],
@@ -109,7 +108,7 @@ module.exports = {
     "no-whitespace-before-property": "error",
     "object-curly-spacing": ["error", "always"],
     "object-property-newline": "error",
-    "one-var": "error",
+    "one-var": ["error", "never"],
     "operator-assignment": "error",
     "operator-linebreak": "error",
     "padded-blocks": ["error", "never"],
@@ -118,7 +117,7 @@ module.exports = {
     "semi": "error",
     "semi-spacing": "error",
     "space-before-blocks": "error",
-    "space-before-function-paren": "error",
+    "space-before-function-paren": ["error", "never"],
     "space-in-parens": "error",
     "space-infix-ops": "error",
     "space-unary-ops": "error",
@@ -148,7 +147,6 @@ module.exports = {
     "prefer-rest-params": "error",
     "prefer-spread": "error",
     "prefer-template": "error",
-    "sort-imports": "error",
     "template-curly-spacing": "error"
   },
   "env": {

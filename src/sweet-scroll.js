@@ -1,13 +1,23 @@
-import * as Util from "./utils"
-import * as Dom from "./dom"
-import * as Supports from "./supports"
-import {$, matches} from "./selectors"
-import {addEvent, removeEvent} from "./events"
-import ScrollTween from "./scroll-tween"
+import * as Util from "./utils";
+import * as Dom from "./dom";
+import * as Supports from "./supports";
+import { $, matches } from "./selectors";
+import { addEvent, removeEvent } from "./events";
+import ScrollTween from "./scroll-tween";
 
 const win = window;
 const doc = document;
-const WHEEL_EVENT = ("onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll");
+
+const WHEEL_EVENT = (() => {
+  if ("onwheel" in doc) {
+    return "wheel";
+  } else if ("onmousewheel" in doc) {
+    return "mousewheel";
+  } else {
+    return "DOMMouseScroll";
+  }
+})();
+
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
 let isDomContentLoaded = false;
@@ -21,18 +31,41 @@ class SweetScroll {
 
   // Default options
   static defaults = {
-    trigger: "[data-scroll]",       // Selector for trigger (must be a valid css selector)
-    header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
-    duration: 1000,                 // Specifies animation duration in integer
-    delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds
-    easing: "easeOutQuint",         // Specifies the pattern of easing
-    offset: 0,                      // Specifies the value to offset the scroll position in pixels
-    verticalScroll: true,           // Enable the vertical scroll
-    horizontalScroll: false,        // Enable the horizontal scroll
-    stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-    updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
-    preventDefault: true,           // Cancels the container element click event
-    stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
+    // Selector for trigger (must be a valid css selector)
+    trigger: "[data-scroll]",
+
+    // Selector for fixed header (must be a valid css selector)
+    header: "[data-scroll-header]",
+
+    // Specifies animation duration in integer
+    duration: 1000,
+
+    // Specifies timer for delaying the execution of the scroll in milliseconds
+    delay: 0,
+
+    // Specifies the pattern of easing
+    easing: "easeOutQuint",
+
+    // Specifies the value to offset the scroll position in pixels
+    offset: 0,
+
+    // Enable the vertical scroll
+    verticalScroll: true,
+
+    // Enable the horizontal scroll
+    horizontalScroll: false,
+
+    // When fired wheel or touchstart events to stop scrolling
+    stopScroll: true,
+
+    // Update the URL hash on after scroll (true | false | "push" | "replace")
+    updateURL: false,
+
+    // Cancels the container element click event
+    preventDefault: true,
+
+    // Prevents further propagation of the container element click event in the bubbling phase
+    stopPropagation: true,
 
     // Callbacks
     initialized: null,
@@ -45,13 +78,15 @@ class SweetScroll {
 
   /**
    * SweetScroll constructor
-   * @param {Object}
-   * @param {String} | {Element}
+   * @constructor
+   * @param {Object} options comment.
+   * @param {String | Element} container comment.
    */
   constructor(options = {}, container = "body, html") {
     const params = Util.merge({}, SweetScroll.defaults, options);
+
     this.options = params;
-    this.getContainer(container, (target) => {
+    this.getContainer(container, target => {
       this.container = target;
       this.header = $(params.header);
       this.tween = new ScrollTween(target);
