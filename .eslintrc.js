@@ -1,3 +1,4 @@
+/* eslint-disable quote-props */
 module.exports = {
   "parser": "babel-eslint",
   "parserOptions": {
@@ -28,7 +29,7 @@ module.exports = {
     "no-unreachable": "error",
     "use-isnan": "error",
     "valid-jsdoc": ["error", {
-      "prefer": {"return": "return"},
+      "prefer": { "return": "return" },
       "requireParamDescription": false,
       "requireReturnDescription": false
     }],
@@ -92,23 +93,22 @@ module.exports = {
     "max-nested-callbacks": ["error", 3],
     "max-params": ["error", 5],
     "max-statements": ["off"],
-    "max-statements-per-line": ["error", {max: 1}],
+    "max-statements-per-line": ["error", { max: 1 }],
     "new-cap": "error",
     "new-parens": "error",
     "newline-before-return": "error",
     "no-array-constructor": "error",
     "no-lonely-if": "error",
     "no-mixed-spaces-and-tabs": "error",
-    "no-multiple-empty-lines": ["error", {max: 2}],
+    "no-multiple-empty-lines": ["error", { max: 2 }],
     "no-nested-ternary": "error",
     "no-new-object": "error",
     "no-spaced-func": "error",
     "no-trailing-spaces": "error",
-    "no-underscore-dangle": ["error", {"allowAfterThis": true}],
+    "no-underscore-dangle": ["error", { "allowAfterThis": true }],
     "no-unneeded-ternary": "error",
     "no-whitespace-before-property": "error",
     "object-curly-spacing": ["error", "always"],
-    "object-property-newline": "error",
     "one-var": ["error", "never"],
     "operator-assignment": "error",
     "operator-linebreak": "error",

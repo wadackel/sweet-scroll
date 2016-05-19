@@ -15,10 +15,7 @@ export default class ScrollTween {
 
   run(x, y, options) {
     if (this.progress) return;
-    this.props = {
-      x,
-      y
-    };
+    this.props = { x, y };
     this.options = options;
     this.easing = Util.isFunction(options.easing)
       ? options.easing

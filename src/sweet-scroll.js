@@ -324,10 +324,7 @@ class SweetScroll {
    */
   parseCoodinate(coodinate) {
     const enableTop = this._options ? this._options.verticalScroll : this.options.verticalScroll;
-    let scroll = {
-      top: 0,
-      left: 0
-    };
+    let scroll = { top: 0, left: 0 };
 
     // Object
     if (Util.hasProp(coodinate, "top") || Util.hasProp(coodinate, "left")) {

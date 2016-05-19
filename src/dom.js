@@ -120,11 +120,9 @@ export function setScroll(el, offset, direction = "y") {
 
 export function getOffset(el, context = null) {
   if (!el || (el && !el.getClientRects().length)) {
-    return {
-      top: 0,
-      left: 0
-    };
+    return { top: 0, left: 0 };
   }
+
   const rect = el.getBoundingClientRect();
   if (rect.width || rect.height) {
     const scroll = {};

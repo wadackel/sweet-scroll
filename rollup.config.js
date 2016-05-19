@@ -1,6 +1,6 @@
 "use strict";
 
-import babel from "rollup-plugin-babel"
+import babel from "rollup-plugin-babel";
 
 const pkg = require("./package.json");
 const banner = `/*!
@@ -19,4 +19,4 @@ export default {
   plugins: [
     babel()
   ]
-}
+};
