@@ -1,7 +1,8 @@
 import * as Util from "./utils";
 import * as Dom from "./dom";
 import * as Easing from "./easings";
-import raf from "./request-animation-frame";
+import { raf, caf } from "./request-animation-frame";
+
 
 export default class ScrollTween {
   constructor(el) {
@@ -11,6 +12,7 @@ export default class ScrollTween {
     this.progress = false;
     this.easing = null;
     this.startTime = null;
+    this.rafId = null;
   }
 
   run(x, y, options) {
@@ -27,7 +29,7 @@ export default class ScrollTween {
         x: Dom.getScroll(this.el, "x"),
         y: Dom.getScroll(this.el, "y")
       };
-      raf(time => this._loop(time));
+      this.rafId = raf(time => this._loop(time));
     }, this.options.delay);
   }
 
@@ -35,6 +37,7 @@ export default class ScrollTween {
     const { complete } = this.options;
     this.startTime = null;
     this.progress = false;
+    caf(this.rafId);
 
     if (gotoEnd) {
       Dom.setScroll(this.el, this.props.x, "x");
@@ -79,7 +82,7 @@ export default class ScrollTween {
 
     if (timeElapsed <= duration) {
       step.call(this, t, toProps);
-      raf(currentTime => this._loop(currentTime));
+      this.rafId = raf(currentTime => this._loop(currentTime));
     } else {
       this.stop(true);
     }

@@ -578,18 +578,36 @@ var Easing = Object.freeze({
     InOutBounce: InOutBounce
   });
 
+  var vendors = ["ms", "moz", "webkit"];
   var lastTime = 0;
 
-  var raf = window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || function (callback) {
-    var currentTime = Date.now();
-    var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
-    var id = window.setTimeout(function () {
-      callback(currentTime + timeToCall);
-    }, timeToCall);
-    lastTime = currentTime + timeToCall;
+  var raf = window.requestAnimationFrame;
+  var caf = window.cancelAnimationFrame;
 
-    return id;
-  };
+  for (var x = 0; x < vendors.length && !raf; ++x) {
+    raf = window[vendors[x] + "RequestAnimationFrame"];
+    caf = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
+  }
+
+  if (!raf) {
+    raf = function raf(callback) {
+      var currentTime = Date.now();
+      var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
+      var id = window.setTimeout(function () {
+        callback(currentTime + timeToCall);
+      }, timeToCall);
+
+      lastTime = currentTime + timeToCall;
+
+      return id;
+    };
+  }
+
+  if (!caf) {
+    caf = function caf(id) {
+      clearTimeout(id);
+    };
+  }
 
   var ScrollTween = function () {
     function ScrollTween(el) {
@@ -601,6 +619,7 @@ var Easing = Object.freeze({
       this.progress = false;
       this.easing = null;
       this.startTime = null;
+      this.rafId = null;
     }
 
     babelHelpers.createClass(ScrollTween, [{
@@ -619,7 +638,7 @@ var Easing = Object.freeze({
             x: getScroll(_this.el, "x"),
             y: getScroll(_this.el, "y")
           };
-          raf(function (time) {
+          _this.rafId = raf(function (time) {
             return _this._loop(time);
           });
         }, this.options.delay);
@@ -632,6 +651,7 @@ var Easing = Object.freeze({
 
         this.startTime = null;
         this.progress = false;
+        caf(this.rafId);
 
         if (gotoEnd) {
           setScroll(this.el, this.props.x, "x");
@@ -686,7 +706,7 @@ var Easing = Object.freeze({
 
         if (timeElapsed <= duration) {
           step.call(this, t, toProps);
-          raf(function (currentTime) {
+          this.rafId = raf(function (currentTime) {
             return _this2._loop(currentTime);
           });
         } else {
