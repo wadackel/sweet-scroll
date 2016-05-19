@@ -14,7 +14,7 @@ module.exports = function(config) {
     browserify: {
       debug: true,
       transform: [
-        ["babelify", {plugins: ["babel-plugin-espower"]}]
+        ["babelify", { plugins: ["babel-plugin-espower"] }]
       ]
     },
     reporters: ["progress"],
@@ -25,5 +25,5 @@ module.exports = function(config) {
     browsers: ["PhantomJS"],
     singleRun: false,
     concurrency: Infinity
-  })
-}
+  });
+};

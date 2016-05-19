@@ -1,4 +1,4 @@
-import {$$} from "./selectors";
+import { $$ } from "./selectors";
 
 const directionMethodMap = {
   y: "scrollTop",
@@ -12,6 +12,7 @@ const directionPropMap = {
 
 export function isRootContainer(el) {
   const doc = document;
+
   return el === doc.documentElement || el === doc.body;
 }
 
@@ -21,19 +22,18 @@ function getScrollable(selectors, direction = "y", all = true) {
   const scrollables = [];
   const $div = document.createElement("div");
 
-  for ( let i = 0; i < elements.length; i++ ) {
-    let el = elements[i];
+  for (let i = 0; i < elements.length; i++) {
+    const el = elements[i];
 
-    if( el[method] > 0 ) {
+    if (el[method] > 0) {
       scrollables.push(el);
-
     } else {
       $div.style.width = `${el.clientWidth + 1}px`;
       $div.style.height = `${el.clientHeight + 1}px`;
       el.appendChild($div);
 
       el[method] = 1;
-      if( el[method] > 0 ) {
+      if (el[method] > 0) {
         scrollables.push(el);
       }
       el[method] = 0;
@@ -41,7 +41,7 @@ function getScrollable(selectors, direction = "y", all = true) {
       el.removeChild($div);
     }
 
-    if ( !all && scrollables.length > 0 ) break;
+    if (!all && scrollables.length > 0) break;
   }
 
   return scrollables;
@@ -49,7 +49,8 @@ function getScrollable(selectors, direction = "y", all = true) {
 
 export function scrollableFind(selectors, direction) {
   const scrollables = getScrollable(selectors, direction, false);
-  return scrollables.length >= 1 ? scrollables[0] : undefined;
+
+  return scrollables.length >= 1 ? scrollables[0] : null;
 }
 
 function getWindow(el) {
@@ -90,13 +91,17 @@ export function getViewportAndElementSizes(el) {
   }
 
   return {
-    viewport: {width: el.clientWidth, height: el.clientHeight},
+    viewport: {
+      width: el.clientWidth,
+      height: el.clientHeight
+    },
     size: getSize(el)
   };
 }
 
 export function getScroll(el, direction = "y") {
   const win = getWindow(el);
+
   return win ? win[directionPropMap[direction]] : el[directionMethodMap[direction]];
 }
 
@@ -115,12 +120,13 @@ export function setScroll(el, offset, direction = "y") {
 
 export function getOffset(el, context = null) {
   if (!el || (el && !el.getClientRects().length)) {
-    return {top: 0, left: 0};
+    return { top: 0, left: 0 };
   }
+
   const rect = el.getBoundingClientRect();
   if (rect.width || rect.height) {
     const scroll = {};
-    let ctx;
+    let ctx = null;
     if (context == null || isRootContainer(context)) {
       ctx = el.ownerDocument.documentElement;
       scroll.top = window.pageYOffset;
@@ -131,10 +137,12 @@ export function getOffset(el, context = null) {
       scroll.top = ctxRect.top * -1 + ctx.scrollTop;
       scroll.left = ctxRect.left * -1 + ctx.scrollLeft;
     }
+
     return {
       top: rect.top + scroll.top - ctx.clientTop,
       left: rect.left + scroll.left - ctx.clientLeft
     };
   }
+
   return rect;
 }
