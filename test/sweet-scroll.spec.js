@@ -33,7 +33,7 @@ describe("SweetScroll", () => {
       document.body.innerHTML = "";
       getInstance({
         initialized() {
-          assert(this.container === undefined);
+          assert(this.container == null);
           done();
         }
       });
