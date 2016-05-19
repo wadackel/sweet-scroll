@@ -1,7 +1,7 @@
-import * as Util from "./utils"
-import * as Dom from "./dom"
-import * as Easing from "./easings"
-import raf from "./request-animation-frame"
+import * as Util from "./utils";
+import * as Dom from "./dom";
+import * as Easing from "./easings";
+import raf from "./request-animation-frame";
 
 export default class ScrollTween {
   constructor(el) {
@@ -15,9 +15,14 @@ export default class ScrollTween {
 
   run(x, y, options) {
     if (this.progress) return;
-    this.props = {x, y};
+    this.props = {
+      x,
+      y
+    };
     this.options = options;
-    this.easing = Util.isFunction(options.easing) ? options.easing : Easing[options.easing.replace("ease", "")];
+    this.easing = Util.isFunction(options.easing)
+      ? options.easing
+      : Easing[options.easing.replace("ease", "")];
     this.progress = true;
 
     setTimeout(() => {
@@ -25,12 +30,12 @@ export default class ScrollTween {
         x: Dom.getScroll(this.el, "x"),
         y: Dom.getScroll(this.el, "y")
       };
-      raf((time) => this._loop(time));
+      raf(time => this._loop(time));
     }, this.options.delay);
   }
 
   stop(gotoEnd = true) {
-    const {complete} = this.options;
+    const { complete } = this.options;
     this.startTime = null;
     this.progress = false;
 
@@ -52,11 +57,12 @@ export default class ScrollTween {
 
     if (!this.progress) {
       this.stop(false);
+
       return;
     }
 
-    const {el, props, options, startTime, startProps, easing} = this;
-    const {duration, step} = options;
+    const { el, props, options, startTime, startProps, easing } = this;
+    const { duration, step } = options;
     const toProps = {};
     const timeElapsed = time - startTime;
     const t = Math.min(1, Math.max(timeElapsed / duration, 0));
@@ -76,8 +82,7 @@ export default class ScrollTween {
 
     if (timeElapsed <= duration) {
       step.call(this, t, toProps);
-      raf((time) => this._loop(time));
-
+      raf(currentTime => this._loop(currentTime));
     } else {
       this.stop(true);
     }
