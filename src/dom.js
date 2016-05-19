@@ -1,4 +1,6 @@
 import { $$ } from "./selectors";
+import { win, doc } from "./elements";
+import * as math from "./math";
 
 const directionMethodMap = {
   y: "scrollTop",
@@ -11,8 +13,6 @@ const directionPropMap = {
 };
 
 export function isRootContainer(el) {
-  const doc = document;
-
   return el === doc.documentElement || el === doc.body;
 }
 
@@ -20,7 +20,7 @@ function getScrollable(selectors, direction = "y", all = true) {
   const method = directionMethodMap[direction];
   const elements = selectors instanceof Element ? [selectors] : $$(selectors);
   const scrollables = [];
-  const $div = document.createElement("div");
+  const $div = doc.createElement("div");
 
   for (let i = 0; i < elements.length; i++) {
     const el = elements[i];
@@ -58,11 +58,11 @@ function getWindow(el) {
 }
 
 function getHeight(el) {
-  return Math.max(el.scrollHeight, el.clientHeight, el.offsetHeight);
+  return math.max(el.scrollHeight, el.clientHeight, el.offsetHeight);
 }
 
 function getWidth(el) {
-  return Math.max(el.scrollWidth, el.clientWidth, el.offsetWidth);
+  return math.max(el.scrollWidth, el.clientWidth, el.offsetWidth);
 }
 
 export function getSize(el) {
@@ -74,8 +74,8 @@ export function getSize(el) {
 
 export function getDocumentSize() {
   return {
-    width: Math.max(getWidth(document.body), getWidth(document.documentElement)),
-    height: Math.max(getHeight(document.body), getHeight(document.documentElement))
+    width: math.max(getWidth(doc.body), getWidth(doc.documentElement)),
+    height: math.max(getHeight(doc.body), getHeight(doc.documentElement))
   };
 }
 
@@ -83,8 +83,8 @@ export function getViewportAndElementSizes(el) {
   if (isRootContainer(el)) {
     return {
       viewport: {
-        width: Math.min(window.innerWidth, document.documentElement.clientWidth),
-        height: window.innerHeight
+        width: math.min(win.innerWidth, doc.documentElement.clientWidth),
+        height: win.innerHeight
       },
       size: getDocumentSize()
     };
@@ -100,18 +100,20 @@ export function getViewportAndElementSizes(el) {
 }
 
 export function getScroll(el, direction = "y") {
-  const win = getWindow(el);
+  const currentWindow = getWindow(el);
 
-  return win ? win[directionPropMap[direction]] : el[directionMethodMap[direction]];
+  return currentWindow
+    ? currentWindow[directionPropMap[direction]]
+    : el[directionMethodMap[direction]];
 }
 
 export function setScroll(el, offset, direction = "y") {
-  const win = getWindow(el);
+  const currentWindow = getWindow(el);
   const top = direction === "y";
-  if (win) {
-    win.scrollTo(
-      !top ? offset : win[directionPropMap.x],
-      top  ? offset : win[directionPropMap.y]
+  if (currentWindow) {
+    currentWindow.scrollTo(
+      !top ? offset : currentWindow[directionPropMap.x],
+      top  ? offset : currentWindow[directionPropMap.y]
     );
   } else {
     el[directionMethodMap[direction]] = offset;
@@ -124,13 +126,14 @@ export function getOffset(el, context = null) {
   }
 
   const rect = el.getBoundingClientRect();
+
   if (rect.width || rect.height) {
     const scroll = {};
     let ctx = null;
     if (context == null || isRootContainer(context)) {
       ctx = el.ownerDocument.documentElement;
-      scroll.top = window.pageYOffset;
-      scroll.left = window.pageXOffset;
+      scroll.top = win.pageYOffset;
+      scroll.left = win.pageXOffset;
     } else {
       ctx = context;
       const ctxRect = ctx.getBoundingClientRect();

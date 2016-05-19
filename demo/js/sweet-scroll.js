@@ -45,7 +45,18 @@
 
   babelHelpers;
 
-  var MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+  var cos = Math.cos;
+  var sin = Math.sin;
+  var pow = Math.pow;
+  var abs = Math.abs;
+  var sqrt = Math.sqrt;
+  var asin = Math.asin;
+  var PI = Math.PI;
+  var max = Math.max;
+  var min = Math.min;
+  var round = Math.round;
+
+  var MAX_ARRAY_INDEX = pow(2, 53) - 1;
   var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Object"];
   var classTypes = {};
 
@@ -132,12 +143,15 @@
     return str.replace(/\s*/g, "") || "";
   }
 
+  var win = window;
+  var doc = document;
+
   function $(selector) {
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
     if (!selector) return;
 
-    return (context == null ? document : context).querySelector(selector);
+    return (context == null ? doc : context).querySelector(selector);
   }
 
   function $$(selector) {
@@ -145,7 +159,7 @@
 
     if (!selector) return;
 
-    return (context == null ? document : context).querySelectorAll(selector);
+    return (context == null ? doc : context).querySelectorAll(selector);
   }
 
   function matches(el, selector) {
@@ -167,8 +181,6 @@
   };
 
   function isRootContainer(el) {
-    var doc = document;
-
     return el === doc.documentElement || el === doc.body;
   }
 
@@ -179,7 +191,7 @@
     var method = directionMethodMap[direction];
     var elements = selectors instanceof Element ? [selectors] : $$(selectors);
     var scrollables = [];
-    var $div = document.createElement("div");
+    var $div = doc.createElement("div");
 
     for (var i = 0; i < elements.length; i++) {
       var el = elements[i];
@@ -217,11 +229,11 @@
   }
 
   function getHeight(el) {
-    return Math.max(el.scrollHeight, el.clientHeight, el.offsetHeight);
+    return max(el.scrollHeight, el.clientHeight, el.offsetHeight);
   }
 
   function getWidth(el) {
-    return Math.max(el.scrollWidth, el.clientWidth, el.offsetWidth);
+    return max(el.scrollWidth, el.clientWidth, el.offsetWidth);
   }
 
   function getSize(el) {
@@ -233,8 +245,8 @@
 
   function getDocumentSize() {
     return {
-      width: Math.max(getWidth(document.body), getWidth(document.documentElement)),
-      height: Math.max(getHeight(document.body), getHeight(document.documentElement))
+      width: max(getWidth(doc.body), getWidth(doc.documentElement)),
+      height: max(getHeight(doc.body), getHeight(doc.documentElement))
     };
   }
 
@@ -242,8 +254,8 @@
     if (isRootContainer(el)) {
       return {
         viewport: {
-          width: Math.min(window.innerWidth, document.documentElement.clientWidth),
-          height: window.innerHeight
+          width: min(win.innerWidth, doc.documentElement.clientWidth),
+          height: win.innerHeight
         },
         size: getDocumentSize()
       };
@@ -261,18 +273,18 @@
   function getScroll(el) {
     var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
 
-    var win = getWindow(el);
+    var currentWindow = getWindow(el);
 
-    return win ? win[directionPropMap[direction]] : el[directionMethodMap[direction]];
+    return currentWindow ? currentWindow[directionPropMap[direction]] : el[directionMethodMap[direction]];
   }
 
   function setScroll(el, offset) {
     var direction = arguments.length <= 2 || arguments[2] === undefined ? "y" : arguments[2];
 
-    var win = getWindow(el);
+    var currentWindow = getWindow(el);
     var top = direction === "y";
-    if (win) {
-      win.scrollTo(!top ? offset : win[directionPropMap.x], top ? offset : win[directionPropMap.y]);
+    if (currentWindow) {
+      currentWindow.scrollTo(!top ? offset : currentWindow[directionPropMap.x], top ? offset : currentWindow[directionPropMap.y]);
     } else {
       el[directionMethodMap[direction]] = offset;
     }
@@ -286,13 +298,14 @@
     }
 
     var rect = el.getBoundingClientRect();
+
     if (rect.width || rect.height) {
       var scroll = {};
       var ctx = null;
       if (context == null || isRootContainer(context)) {
         ctx = el.ownerDocument.documentElement;
-        scroll.top = window.pageYOffset;
-        scroll.left = window.pageXOffset;
+        scroll.top = win.pageYOffset;
+        scroll.left = win.pageXOffset;
       } else {
         ctx = context;
         var ctxRect = ctx.getBoundingClientRect();
@@ -332,16 +345,6 @@
       el.removeEventListener(eventName.trim(), listener, false);
     });
   }
-
-  /* eslint-disable no-param-reassign, newline-before-return, max-params, new-cap */
-  var cos = Math.cos;
-  var sin = Math.sin;
-  var pow = Math.pow;
-  var abs = Math.abs;
-  var sqrt = Math.sqrt;
-  var asin = Math.asin;
-  var PI = Math.PI;
-
 
   function linear(p) {
     return p;
@@ -581,19 +584,19 @@ var Easing = Object.freeze({
   var vendors = ["ms", "moz", "webkit"];
   var lastTime = 0;
 
-  var raf = window.requestAnimationFrame;
-  var caf = window.cancelAnimationFrame;
+  var raf = win.requestAnimationFrame;
+  var caf = win.cancelAnimationFrame;
 
   for (var x = 0; x < vendors.length && !raf; ++x) {
-    raf = window[vendors[x] + "RequestAnimationFrame"];
-    caf = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
+    raf = win[vendors[x] + "RequestAnimationFrame"];
+    caf = win[vendors[x] + "CancelAnimationFrame"] || win[vendors[x] + "CancelRequestAnimationFrame"];
   }
 
   if (!raf) {
     raf = function raf(callback) {
       var currentTime = Date.now();
-      var timeToCall = Math.max(0, 16 - (currentTime - lastTime));
-      var id = window.setTimeout(function () {
+      var timeToCall = max(0, 16 - (currentTime - lastTime));
+      var id = setTimeout(function () {
         callback(currentTime + timeToCall);
       }, timeToCall);
 
@@ -689,7 +692,7 @@ var Easing = Object.freeze({
 
         var toProps = {};
         var timeElapsed = time - startTime;
-        var t = Math.min(1, Math.max(timeElapsed / duration, 0));
+        var t = min(1, max(timeElapsed / duration, 0));
 
         each(props, function (value, key) {
           var initialValue = startProps[key];
@@ -697,7 +700,7 @@ var Easing = Object.freeze({
           if (delta === 0) return true;
 
           var val = easing(t, duration * t, 0, 1, duration);
-          toProps[key] = Math.round(initialValue + delta * val);
+          toProps[key] = round(initialValue + delta * val);
         });
 
         each(toProps, function (value, key) {
@@ -716,9 +719,6 @@ var Easing = Object.freeze({
     }]);
     return ScrollTween;
   }();
-
-  var win = window;
-  var doc = document;
 
   var WHEEL_EVENT = function () {
     if ("onwheel" in doc) {
@@ -840,7 +840,7 @@ var Easing = Object.freeze({
 
         // If the header is present apply the height
         if (header) {
-          scroll.top = Math.max(0, scroll.top - getSize(header).height);
+          scroll.top = max(0, scroll.top - getSize(header).height);
         }
 
         // Determine the final scroll coordinates
@@ -858,8 +858,8 @@ var Easing = Object.freeze({
         }
 
         // Adjustment of the maximum value
-        scroll.top = params.verticalScroll ? Math.max(0, Math.min(size.height - viewport.height, scroll.top)) : getScroll(container, "y");
-        scroll.left = params.horizontalScroll ? Math.max(0, Math.min(size.width - viewport.width, scroll.left)) : getScroll(container, "x");
+        scroll.top = params.verticalScroll ? max(0, min(size.height - viewport.height, scroll.top)) : getScroll(container, "y");
+        scroll.left = params.horizontalScroll ? max(0, min(size.width - viewport.width, scroll.left)) : getScroll(container, "x");
 
         // Run the animation!!
         this.tween.run(scroll.left, scroll.top, {

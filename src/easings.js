@@ -1,5 +1,5 @@
 /* eslint-disable no-param-reassign, newline-before-return, max-params, new-cap */
-const { cos, sin, pow, abs, sqrt, asin, PI } = Math;
+import * as math from "./math";
 
 
 export function linear(p) {
@@ -67,45 +67,45 @@ export function InOutQuint(x, t, b, c, d) {
 }
 
 export function InSine(x, t, b, c, d) {
-  return -c * cos(t / d * (PI / 2)) + c + b;
+  return -c * math.cos(t / d * (math.PI / 2)) + c + b;
 }
 
 export function OutSine(x, t, b, c, d) {
-  return c * sin(t / d * (PI / 2)) + b;
+  return c * math.sin(t / d * (math.PI / 2)) + b;
 }
 
 export function InOutSine(x, t, b, c, d) {
-  return -c / 2 * (cos(PI * t / d) - 1) + b;
+  return -c / 2 * (math.cos(math.PI * t / d) - 1) + b;
 }
 
 export function InExpo(x, t, b, c, d) {
-  return (t === 0) ? b : c * pow(2, 10 * (t / d - 1)) + b;
+  return (t === 0) ? b : c * math.pow(2, 10 * (t / d - 1)) + b;
 }
 
 export function OutExpo(x, t, b, c, d) {
-  return (t === d) ? b + c : c * (-pow(2, -10 * t / d) + 1) + b;
+  return (t === d) ? b + c : c * (-math.pow(2, -10 * t / d) + 1) + b;
 }
 
 export function InOutExpo(x, t, b, c, d) {
   if (t === 0) return b;
   if (t === d) return b + c;
-  if ((t /= d / 2) < 1) return c / 2 * pow(2, 10 * (t - 1)) + b;
-  return c / 2 * (-pow(2, -10 * --t) + 2) + b;
+  if ((t /= d / 2) < 1) return c / 2 * math.pow(2, 10 * (t - 1)) + b;
+  return c / 2 * (-math.pow(2, -10 * --t) + 2) + b;
 }
 
 export function InCirc(x, t, b, c, d) {
-  return -c * (sqrt(1 - (t /= d) * t) - 1) + b;
+  return -c * (math.sqrt(1 - (t /= d) * t) - 1) + b;
 }
 
 export function OutCirc(x, t, b, c, d) {
-  return c * sqrt(1 - (t = t / d - 1) * t) + b;
+  return c * math.sqrt(1 - (t = t / d - 1) * t) + b;
 }
 
 export function InOutCirc(x, t, b, c, d) {
   if ((t /= d / 2) < 1) {
-    return -c / 2 * (sqrt(1 - t * t) - 1) + b;
+    return -c / 2 * (math.sqrt(1 - t * t) - 1) + b;
   }
-  return c / 2 * (sqrt(1 - (t -= 2) * t) + 1) + b;
+  return c / 2 * (math.sqrt(1 - (t -= 2) * t) + 1) + b;
 }
 
 export function InElastic(x, t, b, c, d) {
@@ -115,13 +115,13 @@ export function InElastic(x, t, b, c, d) {
   if (t === 0) return b;
   if ((t /= d) === 1) return b + c;
   if (!p) p = d * .3;
-  if (a < abs(c)) {
+  if (a < math.abs(c)) {
     a = c;
     s = p / 4;
   } else {
-    s = p / (2 * PI) * asin(c / a);
+    s = p / (2 * math.PI) * math.asin(c / a);
   }
-  return -(a * pow(2, 10 * (t -= 1)) * sin((t * d - s) * (2 * PI) / p)) + b;
+  return -(a * math.pow(2, 10 * (t -= 1)) * math.sin((t * d - s) * (2 * math.PI) / p)) + b;
 }
 
 export function OutElastic(x, t, b, c, d) {
@@ -131,13 +131,13 @@ export function OutElastic(x, t, b, c, d) {
   if (t === 0) return b;
   if ((t /= d) === 1) return b + c;
   if (!p) p = d * .3;
-  if (a < abs(c)) {
+  if (a < math.abs(c)) {
     a = c;
     s = p / 4;
   } else {
-    s = p / (2 * PI) * asin(c / a);
+    s = p / (2 * math.PI) * math.asin(c / a);
   }
-  return a * pow(2, -10 * t) * sin((t * d - s) * (2 * PI) / p) + c + b;
+  return a * math.pow(2, -10 * t) * math.sin((t * d - s) * (2 * math.PI) / p) + c + b;
 }
 
 export function InOutElastic(x, t, b, c, d) {
@@ -147,16 +147,16 @@ export function InOutElastic(x, t, b, c, d) {
   if (t === 0) return b;
   if ((t /= d / 2) === 2) return b + c;
   if (!p) p = d * (.3 * 1.5);
-  if (a < abs(c)) {
+  if (a < math.abs(c)) {
     a = c;
     s = p / 4;
   } else {
-    s = p / (2 * PI) * asin(c / a);
+    s = p / (2 * math.PI) * math.asin(c / a);
   }
   if (t < 1) {
-    return -.5 * (a * pow(2, 10 * (t -= 1)) * sin((t * d - s) * (2 * PI) / p)) + b;
+    return -.5 * (a * math.pow(2, 10 * (t -= 1)) * math.sin((t * d - s) * (2 * math.PI) / p)) + b;
   }
-  return a * pow(2, -10 * (t -= 1)) * sin((t * d - s) * (2 * PI) / p) * .5 + c + b;
+  return a * math.pow(2, -10 * (t -= 1)) * math.sin((t * d - s) * (2 * math.PI) / p) * .5 + c + b;
 }
 
 export function InBack(x, t, b, c, d, s = 1.70158) {

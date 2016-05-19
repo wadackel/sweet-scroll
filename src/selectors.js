@@ -1,13 +1,15 @@
+import { doc } from "./elements";
+
 export function $(selector, context = null) {
   if (!selector) return;
 
-  return (context == null ? document : context).querySelector(selector);
+  return (context == null ? doc : context).querySelector(selector);
 }
 
 export function $$(selector, context = null) {
   if (!selector) return;
 
-  return (context == null ? document : context).querySelectorAll(selector);
+  return (context == null ? doc : context).querySelectorAll(selector);
 }
 
 export function matches(el, selector) {

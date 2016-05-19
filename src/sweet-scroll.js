@@ -1,12 +1,12 @@
 import * as Util from "./utils";
 import * as Dom from "./dom";
 import * as Supports from "./supports";
+import * as math from "./math";
 import { $, matches } from "./selectors";
 import { addEvent, removeEvent } from "./events";
+import { win, doc } from "./elements";
 import ScrollTween from "./scroll-tween";
 
-const win = window;
-const doc = document;
 
 const WHEEL_EVENT = (() => {
   if ("onwheel" in doc) {
@@ -134,7 +134,7 @@ class SweetScroll {
 
     // If the header is present apply the height
     if (header) {
-      scroll.top = Math.max(0, scroll.top - Dom.getSize(header).height);
+      scroll.top = math.max(0, scroll.top - Dom.getSize(header).height);
     }
 
     // Determine the final scroll coordinates
@@ -147,8 +147,8 @@ class SweetScroll {
     }
 
     // Adjustment of the maximum value
-    scroll.top = params.verticalScroll ? Math.max(0, Math.min(size.height - viewport.height, scroll.top)) : Dom.getScroll(container, "y");
-    scroll.left = params.horizontalScroll ? Math.max(0, Math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
+    scroll.top = params.verticalScroll ? math.max(0, math.min(size.height - viewport.height, scroll.top)) : Dom.getScroll(container, "y");
+    scroll.left = params.horizontalScroll ? math.max(0, math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, {

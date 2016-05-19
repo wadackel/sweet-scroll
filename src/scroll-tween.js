@@ -1,6 +1,7 @@
 import * as Util from "./utils";
 import * as Dom from "./dom";
 import * as Easing from "./easings";
+import * as math from "./math";
 import { raf, caf } from "./request-animation-frame";
 
 
@@ -65,7 +66,7 @@ export default class ScrollTween {
     const { duration, step } = options;
     const toProps = {};
     const timeElapsed = time - startTime;
-    const t = Math.min(1, Math.max(timeElapsed / duration, 0));
+    const t = math.min(1, math.max(timeElapsed / duration, 0));
 
     Util.each(props, (value, key) => {
       const initialValue = startProps[key];
@@ -73,7 +74,7 @@ export default class ScrollTween {
       if (delta === 0) return true;
 
       const val = easing(t, duration * t, 0, 1, duration);
-      toProps[key] = Math.round(initialValue + delta * val);
+      toProps[key] = math.round(initialValue + delta * val);
     });
 
     Util.each(toProps, (value, key) => {

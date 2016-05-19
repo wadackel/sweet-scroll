@@ -1,4 +1,6 @@
-const MAX_ARRAY_INDEX = Math.pow(2, 53) - 1;
+import { pow } from "./math";
+
+const MAX_ARRAY_INDEX = pow(2, 53) - 1;
 const classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Object"];
 const classTypes = {};
 
