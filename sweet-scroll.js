@@ -55,22 +55,10 @@
 
   function getType(obj) {
     if (obj == null) {
-      return obj + "";
+      return "";
     }
+
     return (typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj);
-  }
-
-  function isArray(obj) {
-    return Array.isArray(obj);
-  }
-
-  function isArrayLike(obj) {
-    var length = obj == null ? null : obj.length;
-    return isNumber(length) && length >= 0 && length <= MAX_ARRAY_INDEX;
-  }
-
-  function isObject(obj) {
-    return !isArray(obj) && getType(obj) === "object";
   }
 
   function isNumber(obj) {
@@ -85,12 +73,45 @@
     return getType(obj) === "function";
   }
 
+  function isArray(obj) {
+    return Array.isArray(obj);
+  }
+
+  function isArrayLike(obj) {
+    var length = obj == null ? null : obj.length;
+
+    return isNumber(length) && length >= 0 && length <= MAX_ARRAY_INDEX;
+  }
+
   function isNumeric(obj) {
     return !isArray(obj) && obj - parseFloat(obj) + 1 >= 0;
   }
 
+  function isObject(obj) {
+    return !isArray(obj) && getType(obj) === "object";
+  }
+
   function hasProp(obj, key) {
     return obj && obj.hasOwnProperty(key);
+  }
+
+  function each(obj, iterate, context) {
+    if (obj == null) return obj;
+
+    var ctx = context || obj;
+
+    if (isObject(obj)) {
+      for (var key in obj) {
+        if (!hasProp(obj, key)) continue;
+        if (iterate.call(ctx, obj[key], key) === false) break;
+      }
+    } else if (isArrayLike(obj)) {
+      for (var i = 0; i < obj.length; i++) {
+        if (iterate.call(ctx, obj[i], i) === false) break;
+      }
+    }
+
+    return obj;
   }
 
   function merge(obj) {
@@ -103,26 +124,6 @@
         obj[key] = value;
       });
     });
-    return obj;
-  }
-
-  function each(obj, iterate, context) {
-    if (obj == null) return obj;
-
-    context = context || obj;
-
-    if (isObject(obj)) {
-      for (var key in obj) {
-        if (!hasProp(obj, key)) continue;
-        if (iterate.call(context, obj[key], key) === false) break;
-      }
-    } else if (isArrayLike(obj)) {
-      var i = void 0,
-          length = obj.length;
-      for (i = 0; i < length; i++) {
-        if (iterate.call(context, obj[i], i) === false) break;
-      }
-    }
 
     return obj;
   }
@@ -135,6 +136,7 @@
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
     if (!selector) return;
+
     return (context == null ? document : context).querySelector(selector);
   }
 
@@ -142,13 +144,15 @@
     var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
 
     if (!selector) return;
+
     return (context == null ? document : context).querySelectorAll(selector);
   }
 
   function matches(el, selector) {
-    var matches = (el.document || el.ownerDocument).querySelectorAll(selector);
-    var i = matches.length;
-    while (--i >= 0 && matches.item(i) !== el) {}
+    var results = (el.document || el.ownerDocument).querySelectorAll(selector);
+    var i = results.length;
+    while (--i >= 0 && results.item(i) !== el) {}
+
     return i > -1;
   }
 
@@ -164,6 +168,7 @@
 
   function isRootContainer(el) {
     var doc = document;
+
     return el === doc.documentElement || el === doc.body;
   }
 
@@ -203,7 +208,8 @@
 
   function scrollableFind(selectors, direction) {
     var scrollables = getScrollable(selectors, direction, false);
-    return scrollables.length >= 1 ? scrollables[0] : undefined;
+
+    return scrollables.length >= 1 ? scrollables[0] : null;
   }
 
   function getWindow(el) {
@@ -244,7 +250,10 @@
     }
 
     return {
-      viewport: { width: el.clientWidth, height: el.clientHeight },
+      viewport: {
+        width: el.clientWidth,
+        height: el.clientHeight
+      },
       size: getSize(el)
     };
   }
@@ -253,6 +262,7 @@
     var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
 
     var win = getWindow(el);
+
     return win ? win[directionPropMap[direction]] : el[directionMethodMap[direction]];
   }
 
@@ -274,10 +284,11 @@
     if (!el || el && !el.getClientRects().length) {
       return { top: 0, left: 0 };
     }
+
     var rect = el.getBoundingClientRect();
     if (rect.width || rect.height) {
       var scroll = {};
-      var ctx = void 0;
+      var ctx = null;
       if (context == null || isRootContainer(context)) {
         ctx = el.ownerDocument.documentElement;
         scroll.top = window.pageYOffset;
@@ -288,11 +299,13 @@
         scroll.top = ctxRect.top * -1 + ctx.scrollTop;
         scroll.left = ctxRect.left * -1 + ctx.scrollLeft;
       }
+
       return {
         top: rect.top + scroll.top - ctx.clientTop,
         left: rect.left + scroll.left - ctx.clientLeft
       };
     }
+
     return rect;
   }
 
@@ -302,6 +315,7 @@
     if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
       return false;
     }
+
     return window.history && "pushState" in window.history && window.location.protocol !== "file:";
   }();
 
@@ -319,14 +333,15 @@
     });
   }
 
-  var math = Math;
-  var mathCos = math.cos;
-  var mathSin = math.sin;
-  var mathPow = math.pow;
-  var mathAbs = math.abs;
-  var mathSqrt = math.sqrt;
-  var mathAsin = math.asin;
-  var PI = math.PI;
+  /* eslint-disable no-param-reassign, newline-before-return, max-params, new-cap */
+  var cos = Math.cos;
+  var sin = Math.sin;
+  var pow = Math.pow;
+  var abs = Math.abs;
+  var sqrt = Math.sqrt;
+  var asin = Math.asin;
+  var PI = Math.PI;
+
 
   function linear(p) {
     return p;
@@ -393,96 +408,96 @@
   }
 
   function InSine(x, t, b, c, d) {
-    return -c * mathCos(t / d * (PI / 2)) + c + b;
+    return -c * cos(t / d * (PI / 2)) + c + b;
   }
 
   function OutSine(x, t, b, c, d) {
-    return c * mathSin(t / d * (PI / 2)) + b;
+    return c * sin(t / d * (PI / 2)) + b;
   }
 
   function InOutSine(x, t, b, c, d) {
-    return -c / 2 * (mathCos(PI * t / d) - 1) + b;
+    return -c / 2 * (cos(PI * t / d) - 1) + b;
   }
 
   function InExpo(x, t, b, c, d) {
-    return t === 0 ? b : c * mathPow(2, 10 * (t / d - 1)) + b;
+    return t === 0 ? b : c * pow(2, 10 * (t / d - 1)) + b;
   }
 
   function OutExpo(x, t, b, c, d) {
-    return t === d ? b + c : c * (-mathPow(2, -10 * t / d) + 1) + b;
+    return t === d ? b + c : c * (-pow(2, -10 * t / d) + 1) + b;
   }
 
   function InOutExpo(x, t, b, c, d) {
     if (t === 0) return b;
     if (t === d) return b + c;
-    if ((t /= d / 2) < 1) return c / 2 * mathPow(2, 10 * (t - 1)) + b;
-    return c / 2 * (-mathPow(2, -10 * --t) + 2) + b;
+    if ((t /= d / 2) < 1) return c / 2 * pow(2, 10 * (t - 1)) + b;
+    return c / 2 * (-pow(2, -10 * --t) + 2) + b;
   }
 
   function InCirc(x, t, b, c, d) {
-    return -c * (mathSqrt(1 - (t /= d) * t) - 1) + b;
+    return -c * (sqrt(1 - (t /= d) * t) - 1) + b;
   }
 
   function OutCirc(x, t, b, c, d) {
-    return c * mathSqrt(1 - (t = t / d - 1) * t) + b;
+    return c * sqrt(1 - (t = t / d - 1) * t) + b;
   }
 
   function InOutCirc(x, t, b, c, d) {
     if ((t /= d / 2) < 1) {
-      return -c / 2 * (mathSqrt(1 - t * t) - 1) + b;
+      return -c / 2 * (sqrt(1 - t * t) - 1) + b;
     }
-    return c / 2 * (mathSqrt(1 - (t -= 2) * t) + 1) + b;
+    return c / 2 * (sqrt(1 - (t -= 2) * t) + 1) + b;
   }
 
   function InElastic(x, t, b, c, d) {
-    var s = 1.70158,
-        p = 0,
-        a = c;
+    var s = 1.70158;
+    var p = 0;
+    var a = c;
     if (t === 0) return b;
     if ((t /= d) === 1) return b + c;
     if (!p) p = d * .3;
-    if (a < mathAbs(c)) {
+    if (a < abs(c)) {
       a = c;
       s = p / 4;
     } else {
-      s = p / (2 * PI) * mathAsin(c / a);
+      s = p / (2 * PI) * asin(c / a);
     }
-    return -(a * mathPow(2, 10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p)) + b;
+    return -(a * pow(2, 10 * (t -= 1)) * sin((t * d - s) * (2 * PI) / p)) + b;
   }
 
   function OutElastic(x, t, b, c, d) {
-    var s = 1.70158,
-        p = 0,
-        a = c;
+    var s = 1.70158;
+    var p = 0;
+    var a = c;
     if (t === 0) return b;
     if ((t /= d) === 1) return b + c;
     if (!p) p = d * .3;
-    if (a < mathAbs(c)) {
+    if (a < abs(c)) {
       a = c;
       s = p / 4;
     } else {
-      s = p / (2 * PI) * mathAsin(c / a);
+      s = p / (2 * PI) * asin(c / a);
     }
-    return a * mathPow(2, -10 * t) * mathSin((t * d - s) * (2 * PI) / p) + c + b;
+    return a * pow(2, -10 * t) * sin((t * d - s) * (2 * PI) / p) + c + b;
   }
 
   function InOutElastic(x, t, b, c, d) {
-    var s = 1.70158,
-        p = 0,
-        a = c;
+    var s = 1.70158;
+    var p = 0;
+    var a = c;
     if (t === 0) return b;
     if ((t /= d / 2) === 2) return b + c;
     if (!p) p = d * (.3 * 1.5);
-    if (a < mathAbs(c)) {
+    if (a < abs(c)) {
       a = c;
       s = p / 4;
     } else {
-      s = p / (2 * PI) * mathAsin(c / a);
+      s = p / (2 * PI) * asin(c / a);
     }
     if (t < 1) {
-      return -.5 * (a * mathPow(2, 10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p)) + b;
+      return -.5 * (a * pow(2, 10 * (t -= 1)) * sin((t * d - s) * (2 * PI) / p)) + b;
     }
-    return a * mathPow(2, -10 * (t -= 1)) * mathSin((t * d - s) * (2 * PI) / p) * .5 + c + b;
+    return a * pow(2, -10 * (t -= 1)) * sin((t * d - s) * (2 * PI) / p) * .5 + c + b;
   }
 
   function InBack(x, t, b, c, d) {
@@ -506,10 +521,6 @@
     return c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
   }
 
-  function InBounce(x, t, b, c, d) {
-    return c - OutBounce(x, d - t, 0, c, d) + b;
-  }
-
   function OutBounce(x, t, b, c, d) {
     if ((t /= d) < 1 / 2.75) {
       return c * (7.5625 * t * t) + b;
@@ -520,6 +531,10 @@
     } else {
       return c * (7.5625 * (t -= 2.625 / 2.75) * t + .984375) + b;
     }
+  }
+
+  function InBounce(x, t, b, c, d) {
+    return c - OutBounce(x, d - t, 0, c, d) + b;
   }
 
   function InOutBounce(x, t, b, c, d) {
@@ -558,8 +573,8 @@ var Easing = Object.freeze({
     InBack: InBack,
     OutBack: OutBack,
     InOutBack: InOutBack,
-    InBounce: InBounce,
     OutBounce: OutBounce,
+    InBounce: InBounce,
     InOutBounce: InOutBounce
   });
 
@@ -572,6 +587,7 @@ var Easing = Object.freeze({
       callback(currentTime + timeToCall);
     }, timeToCall);
     lastTime = currentTime + timeToCall;
+
     return id;
   };
 
@@ -638,6 +654,7 @@ var Easing = Object.freeze({
 
         if (!this.progress) {
           this.stop(false);
+
           return;
         }
 
@@ -669,8 +686,8 @@ var Easing = Object.freeze({
 
         if (timeElapsed <= duration) {
           step.call(this, t, toProps);
-          raf(function (time) {
-            return _this2._loop(time);
+          raf(function (currentTime) {
+            return _this2._loop(currentTime);
           });
         } else {
           this.stop(true);
@@ -682,7 +699,17 @@ var Easing = Object.freeze({
 
   var win = window;
   var doc = document;
-  var WHEEL_EVENT = "onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll";
+
+  var WHEEL_EVENT = function () {
+    if ("onwheel" in doc) {
+      return "wheel";
+    } else if ("onmousewheel" in doc) {
+      return "mousewheel";
+    } else {
+      return "DOMMouseScroll";
+    }
+  }();
+
   var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
   var DOM_CONTENT_LOADED = "DOMContentLoaded";
   var isDomContentLoaded = false;
@@ -693,10 +720,13 @@ var Easing = Object.freeze({
 
   var SweetScroll = function () {
 
+    /* eslint-disable max-len */
+
     /**
      * SweetScroll constructor
-     * @param {Object}
-     * @param {String} | {Element}
+     * @constructor
+     * @param {Object} options
+     * @param {String | Element} container
      */
 
     function SweetScroll() {
@@ -707,6 +737,7 @@ var Easing = Object.freeze({
       babelHelpers.classCallCheck(this, SweetScroll);
 
       var params = merge({}, SweetScroll.defaults, options);
+
       this.options = params;
       this.getContainer(container, function (target) {
         _this.container = target;
@@ -721,13 +752,14 @@ var Easing = Object.freeze({
 
     /**
      * Scroll animation to the specified position
-     * @param {Any}
-     * @param {Object}
-     * @return {Void}
+     * @param {*} distance
+     * @param {Object} options
+     * @return {void}
      */
 
 
     // Default options
+    /* eslint-disable max-len */
 
 
     babelHelpers.createClass(SweetScroll, [{
@@ -766,7 +798,10 @@ var Easing = Object.freeze({
           hash = /^#/.test(distance) ? distance : null;
 
           if (distance === "#") {
-            scroll = { top: 0, left: 0 };
+            scroll = {
+              top: 0,
+              left: 0
+            };
           } else {
             var target = $(distance);
             var targetOffset = getOffset(target, container);
@@ -844,9 +879,9 @@ var Easing = Object.freeze({
 
       /**
        * Scroll animation to the specified top position
-       * @param {Any}
-       * @param {Object}
-       * @return {Void}
+       * @param {*} distance
+       * @param {Object} options
+       * @return {void}
        */
 
     }, {
@@ -862,9 +897,9 @@ var Easing = Object.freeze({
 
       /**
        * Scroll animation to the specified left position
-       * @param {Any}
-       * @param {Object}
-       * @return {Void}
+       * @param {*} distance
+       * @param {Object} options
+       * @return {void}
        */
 
     }, {
@@ -880,26 +915,26 @@ var Easing = Object.freeze({
 
       /**
        * Scroll animation to the specified element
-       * @param {Element}
-       * @param {Object}
-       * @return {Void}
+       * @param {Element} el
+       * @param {Object} options
+       * @return {void}
        */
 
     }, {
       key: "toElement",
-      value: function toElement($el) {
+      value: function toElement(el) {
         var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
-        if ($el instanceof Element) {
-          var offset = getOffset($el, this.container);
+        if (el instanceof Element) {
+          var offset = getOffset(el, this.container);
           this.to(offset, merge({}, options));
         }
       }
 
       /**
        * Stop the current animation
-       * @param {Boolean}
-       * @return {Void}
+       * @param {Boolean} gotoEnd
+       * @return {void}
        */
 
     }, {
@@ -915,8 +950,8 @@ var Easing = Object.freeze({
 
       /**
        * Update the instance
-       * @param {Object}
-       * @return {Void}
+       * @param {Object} options
+       * @return {void}
        */
 
     }, {
@@ -934,8 +969,7 @@ var Easing = Object.freeze({
 
       /**
        * Destroy SweetScroll instance
-       * @param {Boolean}
-       * @return {Void}
+       * @return {void}
        */
 
     }, {
@@ -951,7 +985,7 @@ var Easing = Object.freeze({
 
       /**
        * Called at after of the initialize.
-       * @return {Void}
+       * @return {void}
        */
 
     }, {
@@ -960,10 +994,11 @@ var Easing = Object.freeze({
 
       /**
        * Called at before of the scroll.
-       * @param {Object}
-       * @param {Element}
+       * @param {Object} toScroll
+       * @param {Element} trigger
        * @return {Boolean}
        */
+      /* eslint-disable no-unused-vars */
 
     }, {
       key: "beforeScroll",
@@ -971,9 +1006,11 @@ var Easing = Object.freeze({
         return true;
       }
 
+      /* eslint-disable no-unused-vars */
+
       /**
        * Called at cancel of the scroll.
-       * @return {Void}
+       * @return {void}
        */
 
     }, {
@@ -982,9 +1019,9 @@ var Easing = Object.freeze({
 
       /**
        * Called at after of the scroll.
-       * @param {Object}
-       * @param {Element}
-       * @return {Void}
+       * @param {Object} toScroll
+       * @param {Element} trigger
+       * @return {void}
        */
 
     }, {
@@ -993,8 +1030,8 @@ var Easing = Object.freeze({
 
       /**
        * Called at complete of the scroll.
-       * @param {Boolean}
-       * @return {Void}
+       * @param {Boolean} isCancel
+       * @return {void}
        */
 
     }, {
@@ -1003,9 +1040,9 @@ var Easing = Object.freeze({
 
       /**
        * Called at each animation frame of the scroll.
-       * @param {Float}
-       * @param {Object}
-       * @return {Void}
+       * @param {Float} currentTime
+       * @param {Object} props
+       * @return {void}
        */
 
     }, {
@@ -1014,7 +1051,7 @@ var Easing = Object.freeze({
 
       /**
        * Parse the value of coordinate
-       * @param {Any}
+       * @param {*} coodinate
        * @return {Object}
        */
 
@@ -1045,27 +1082,27 @@ var Easing = Object.freeze({
 
               // String
             } else if (isString(coodinate)) {
-                coodinate = removeSpaces(coodinate);
+                var trimedCoodinate = removeSpaces(coodinate);
 
                 // "{n},{n}" (Array like syntax)
-                if (/^\d+,\d+$/.test(coodinate)) {
-                  coodinate = coodinate.split(",");
-                  scroll.top = coodinate[0];
-                  scroll.left = coodinate[1];
+                if (/^\d+,\d+$/.test(trimedCoodinate)) {
+                  trimedCoodinate = trimedCoodinate.split(",");
+                  scroll.top = trimedCoodinate[0];
+                  scroll.left = trimedCoodinate[1];
 
                   // "top:{n}, left:{n}" (Object like syntax)
-                } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(coodinate)) {
-                    var top = coodinate.match(/top:(\d+)/);
-                    var left = coodinate.match(/left:(\d+)/);
+                } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(trimedCoodinate)) {
+                    var top = trimedCoodinate.match(/top:(\d+)/);
+                    var left = trimedCoodinate.match(/left:(\d+)/);
                     scroll.top = top ? top[1] : 0;
                     scroll.left = left ? left[1] : 0;
 
                     // "+={n}", "-={n}" (Relative position)
-                  } else if (this.container && /^(\+|-)=(\d+)$/.test(coodinate)) {
+                  } else if (this.container && /^(\+|-)=(\d+)$/.test(trimedCoodinate)) {
                       var current = getScroll(this.container, enableTop ? "y" : "x");
-                      var _matches = coodinate.match(/^(\+|-)\=(\d+)$/);
-                      var op = _matches[1];
-                      var value = parseInt(_matches[2], 10);
+                      var results = trimedCoodinate.match(/^(\+|-)=(\d+)$/);
+                      var op = results[1];
+                      var value = parseInt(results[2], 10);
                       if (op === "+") {
                         scroll.top = enableTop ? current + value : 0;
                         scroll.left = !enableTop ? current + value : 0;
@@ -1088,9 +1125,9 @@ var Easing = Object.freeze({
 
       /**
        * Update the Hash of the URL.
-       * @param {String}
-       * @param {Boolean} | {String}
-       * @return {Void}
+       * @param {String} hash
+       * @param {Boolean | String} historyType
+       * @return {void}
        */
 
     }, {
@@ -1102,9 +1139,9 @@ var Easing = Object.freeze({
 
       /**
        * Get the container for the scroll, depending on the options.
-       * @param {String} | {Element}
-       * @param {Function}
-       * @return {Void}
+       * @param {String | Element} selector
+       * @param {Function} callback
+       * @return {void}
        * @private
        */
 
@@ -1117,7 +1154,7 @@ var Easing = Object.freeze({
         var verticalScroll = _options.verticalScroll;
         var horizontalScroll = _options.horizontalScroll;
 
-        var container = void 0;
+        var container = null;
 
         if (verticalScroll) {
           container = scrollableFind(selector, "y");
@@ -1150,7 +1187,7 @@ var Easing = Object.freeze({
 
       /**
        * Bind a click event to the container
-       * @return {Void}
+       * @return {void}
        * @private
        */
 
@@ -1166,7 +1203,7 @@ var Easing = Object.freeze({
 
       /**
        * Unbind a click event to the container
-       * @return {Void}
+       * @return {void}
        * @private
        */
 
@@ -1182,7 +1219,7 @@ var Easing = Object.freeze({
 
       /**
        * Bind the scroll stop of events
-       * @return {Void}
+       * @return {void}
        * @private
        */
 
@@ -1198,7 +1235,7 @@ var Easing = Object.freeze({
 
       /**
        * Unbind the scroll stop of events
-       * @return {Void}
+       * @return {void}
        * @private
        */
 
@@ -1214,10 +1251,10 @@ var Easing = Object.freeze({
 
       /**
        * Call the specified callback
-       * @param {Object}
-       * @param {String}
-       * @param {...Any}
-       * @return {Void}
+       * @param {Object} options
+       * @param {String} type
+       * @param {...*} args
+       * @return {void}
        * @private
        */
 
@@ -1234,7 +1271,7 @@ var Easing = Object.freeze({
 
         if (isFunction(callback)) {
           var result = callback.apply(this, args);
-          if (result !== undefined) return result;
+          if (typeof result === "undefined") return result;
         }
 
         // method
@@ -1243,8 +1280,8 @@ var Easing = Object.freeze({
 
       /**
        * Handling of scroll stop event
-       * @param {Event}
-       * @return {Void}
+       * @param {Event} e
+       * @return {void}
        * @private
        */
 
@@ -1261,8 +1298,8 @@ var Easing = Object.freeze({
 
       /**
        * Handling of container click event
-       * @param {Event}
-       * @return {Void}
+       * @param {Event} e
+       * @return {void}
        * @private
        */
 
@@ -1300,7 +1337,7 @@ var Easing = Object.freeze({
 
       /**
        * Parse the data-scroll-options attribute
-       * @param {Element}
+       * @param {Element} el
        * @return {Object}
        * @private
        */
@@ -1309,6 +1346,7 @@ var Easing = Object.freeze({
       key: "parseDataOptions",
       value: function parseDataOptions(el) {
         var options = el.getAttribute("data-scroll-options");
+
         return options ? JSON.parse(options) : {};
       }
     }]);
