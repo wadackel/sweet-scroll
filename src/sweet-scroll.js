@@ -1,13 +1,23 @@
-import * as Util from "./utils"
-import * as Dom from "./dom"
-import * as Supports from "./supports"
-import {$, matches} from "./selectors"
-import {addEvent, removeEvent} from "./events"
-import ScrollTween from "./scroll-tween"
+import * as Util from "./utils";
+import * as Dom from "./dom";
+import * as Supports from "./supports";
+import * as math from "./math";
+import { $, matches } from "./selectors";
+import { addEvent, removeEvent } from "./events";
+import { win, doc } from "./elements";
+import ScrollTween from "./scroll-tween";
 
-const win = window;
-const doc = document;
-const WHEEL_EVENT = ("onwheel" in doc ? "wheel" : "onmousewheel" in doc ? "mousewheel" : "DOMMouseScroll");
+
+const WHEEL_EVENT = (() => {
+  if ("onwheel" in doc) {
+    return "wheel";
+  } else if ("onmousewheel" in doc) {
+    return "mousewheel";
+  } else {
+    return "DOMMouseScroll";
+  }
+})();
+
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
 let isDomContentLoaded = false;
@@ -20,6 +30,7 @@ addEvent(doc, DOM_CONTENT_LOADED, () => {
 class SweetScroll {
 
   // Default options
+  /* eslint-disable max-len */
   static defaults = {
     trigger: "[data-scroll]",       // Selector for trigger (must be a valid css selector)
     header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
@@ -43,15 +54,19 @@ class SweetScroll {
     stepScroll: null
   };
 
+  /* eslint-disable max-len */
+
   /**
    * SweetScroll constructor
-   * @param {Object}
-   * @param {String} | {Element}
+   * @constructor
+   * @param {Object} options
+   * @param {String | Element} container
    */
   constructor(options = {}, container = "body, html") {
     const params = Util.merge({}, SweetScroll.defaults, options);
+
     this.options = params;
-    this.getContainer(container, (target) => {
+    this.getContainer(container, target => {
       this.container = target;
       this.header = $(params.header);
       this.tween = new ScrollTween(target);
@@ -64,12 +79,12 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified position
-   * @param {Any}
-   * @param {Object}
-   * @return {Void}
+   * @param {*} distance
+   * @param {Object} options
+   * @return {void}
    */
   to(distance, options = {}) {
-    const {container, header} = this;
+    const { container, header } = this;
     const params = Util.merge({}, this.options, options);
 
     // Temporary options
@@ -97,8 +112,10 @@ class SweetScroll {
       hash = /^#/.test(distance) ? distance : null;
 
       if (distance === "#") {
-        scroll = {top: 0, left: 0};
-
+        scroll = {
+          top: 0,
+          left: 0
+        };
       } else {
         const target = $(distance);
         const targetOffset = Dom.getOffset(target, container);
@@ -117,11 +134,11 @@ class SweetScroll {
 
     // If the header is present apply the height
     if (header) {
-      scroll.top = Math.max(0, scroll.top - Dom.getSize(header).height);
+      scroll.top = math.max(0, scroll.top - Dom.getSize(header).height);
     }
 
     // Determine the final scroll coordinates
-    const {viewport, size} = Dom.getViewportAndElementSizes(container);
+    const { viewport, size } = Dom.getViewportAndElementSizes(container);
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
@@ -130,8 +147,8 @@ class SweetScroll {
     }
 
     // Adjustment of the maximum value
-    scroll.top = params.verticalScroll ? Math.max(0, Math.min(size.height - viewport.height, scroll.top)) : Dom.getScroll(container, "y");
-    scroll.left = params.horizontalScroll ? Math.max(0, Math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
+    scroll.top = params.verticalScroll ? math.max(0, math.min(size.height - viewport.height, scroll.top)) : Dom.getScroll(container, "y");
+    scroll.left = params.horizontalScroll ? math.max(0, math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, {
@@ -171,9 +188,9 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified top position
-   * @param {Any}
-   * @param {Object}
-   * @return {Void}
+   * @param {*} distance
+   * @param {Object} options
+   * @return {void}
    */
   toTop(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
@@ -184,9 +201,9 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified left position
-   * @param {Any}
-   * @param {Object}
-   * @return {Void}
+   * @param {*} distance
+   * @param {Object} options
+   * @return {void}
    */
   toLeft(distance, options = {}) {
     this.to(distance, Util.merge({}, options, {
@@ -197,21 +214,21 @@ class SweetScroll {
 
   /**
    * Scroll animation to the specified element
-   * @param {Element}
-   * @param {Object}
-   * @return {Void}
+   * @param {Element} el
+   * @param {Object} options
+   * @return {void}
    */
-  toElement($el, options = {}) {
-    if ($el instanceof Element) {
-      const offset = Dom.getOffset($el, this.container);
+  toElement(el, options = {}) {
+    if (el instanceof Element) {
+      const offset = Dom.getOffset(el, this.container);
       this.to(offset, Util.merge({}, options));
     }
   }
 
   /**
    * Stop the current animation
-   * @param {Boolean}
-   * @return {Void}
+   * @param {Boolean} gotoEnd
+   * @return {void}
    */
   stop(gotoEnd = false) {
     if (this._stopScrollListener) {
@@ -222,8 +239,8 @@ class SweetScroll {
 
   /**
    * Update the instance
-   * @param {Object}
-   * @return {Void}
+   * @param {Object} options
+   * @return {void}
    */
   update(options = {}) {
     this.stop();
@@ -236,8 +253,7 @@ class SweetScroll {
 
   /**
    * Destroy SweetScroll instance
-   * @param {Boolean}
-   * @return {Void}
+   * @return {void}
    */
   destroy() {
     this.stop();
@@ -250,62 +266,65 @@ class SweetScroll {
 
   /**
    * Called at after of the initialize.
-   * @return {Void}
+   * @return {void}
    */
   initialized() {
   }
 
   /**
    * Called at before of the scroll.
-   * @param {Object}
-   * @param {Element}
+   * @param {Object} toScroll
+   * @param {Element} trigger
    * @return {Boolean}
    */
+  /* eslint-disable no-unused-vars */
   beforeScroll(toScroll, trigger) {
     return true;
   }
 
+  /* eslint-disable no-unused-vars */
+
   /**
    * Called at cancel of the scroll.
-   * @return {Void}
+   * @return {void}
    */
   cancelScroll() {
   }
 
   /**
    * Called at after of the scroll.
-   * @param {Object}
-   * @param {Element}
-   * @return {Void}
+   * @param {Object} toScroll
+   * @param {Element} trigger
+   * @return {void}
    */
   afterScroll(toScroll, trigger) {
   }
 
   /**
    * Called at complete of the scroll.
-   * @param {Boolean}
-   * @return {Void}
+   * @param {Boolean} isCancel
+   * @return {void}
    */
   completeScroll(isCancel) {
   }
 
   /**
    * Called at each animation frame of the scroll.
-   * @param {Float}
-   * @param {Object}
-   * @return {Void}
+   * @param {Float} currentTime
+   * @param {Object} props
+   * @return {void}
    */
   stepScroll(currentTime, props) {
   }
 
   /**
    * Parse the value of coordinate
-   * @param {Any}
+   * @param {*} coodinate
    * @return {Object}
    */
   parseCoodinate(coodinate) {
     const enableTop = this._options ? this._options.verticalScroll : this.options.verticalScroll;
-    let scroll = {top: 0, left: 0};
+    let scroll = { top: 0, left: 0 };
 
     // Object
     if (Util.hasProp(coodinate, "top") || Util.hasProp(coodinate, "left")) {
@@ -328,27 +347,27 @@ class SweetScroll {
 
     // String
     } else if (Util.isString(coodinate)) {
-      coodinate = Util.removeSpaces(coodinate);
+      let trimedCoodinate = Util.removeSpaces(coodinate);
 
       // "{n},{n}" (Array like syntax)
-      if (/^\d+,\d+$/.test(coodinate)) {
-        coodinate = coodinate.split(",");
-        scroll.top = coodinate[0];
-        scroll.left = coodinate[1];
+      if (/^\d+,\d+$/.test(trimedCoodinate)) {
+        trimedCoodinate = trimedCoodinate.split(",");
+        scroll.top = trimedCoodinate[0];
+        scroll.left = trimedCoodinate[1];
 
       // "top:{n}, left:{n}" (Object like syntax)
-      } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(coodinate)) {
-        const top = coodinate.match(/top:(\d+)/);
-        const left = coodinate.match(/left:(\d+)/);
+      } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(trimedCoodinate)) {
+        const top = trimedCoodinate.match(/top:(\d+)/);
+        const left = trimedCoodinate.match(/left:(\d+)/);
         scroll.top = top ? top[1] : 0;
         scroll.left = left ? left[1] : 0;
 
       // "+={n}", "-={n}" (Relative position)
-      } else if (this.container && /^(\+|-)=(\d+)$/.test(coodinate)) {
+      } else if (this.container && /^(\+|-)=(\d+)$/.test(trimedCoodinate)) {
         const current = Dom.getScroll(this.container, enableTop ? "y" : "x");
-        const matches = coodinate.match(/^(\+|-)\=(\d+)$/);
-        const op = matches[1];
-        const value = parseInt(matches[2], 10);
+        const results = trimedCoodinate.match(/^(\+|-)=(\d+)$/);
+        const op = results[1];
+        const value = parseInt(results[2], 10);
         if (op === "+") {
           scroll.top = enableTop ? current + value : 0;
           scroll.left = !enableTop ? current + value : 0;
@@ -356,11 +375,9 @@ class SweetScroll {
           scroll.top = enableTop ? current - value : 0;
           scroll.left = !enableTop ? current - value : 0;
         }
-
       } else {
         return null;
       }
-
     } else {
       return null;
     }
@@ -373,9 +390,9 @@ class SweetScroll {
 
   /**
    * Update the Hash of the URL.
-   * @param {String}
-   * @param {Boolean} | {String}
-   * @return {Void}
+   * @param {String} hash
+   * @param {Boolean | String} historyType
+   * @return {void}
    */
   updateURLHash(hash, historyType) {
     if (!Supports.history || !historyType) return;
@@ -384,14 +401,14 @@ class SweetScroll {
 
   /**
    * Get the container for the scroll, depending on the options.
-   * @param {String} | {Element}
-   * @param {Function}
-   * @return {Void}
+   * @param {String | Element} selector
+   * @param {Function} callback
+   * @return {void}
    * @private
    */
   getContainer(selector, callback) {
-    const {verticalScroll, horizontalScroll} = this.options;
-    let container;
+    const { verticalScroll, horizontalScroll } = this.options;
+    let container = null;
 
     if (verticalScroll) {
       container = Dom.scrollableFind(selector, "y");
@@ -422,11 +439,11 @@ class SweetScroll {
 
   /**
    * Bind a click event to the container
-   * @return {Void}
+   * @return {void}
    * @private
    */
   bindContainerClick() {
-    const {container} = this;
+    const { container } = this;
     if (!container) return;
     this._containerClickListener = this.handleContainerClick.bind(this);
     addEvent(container, "click", this._containerClickListener);
@@ -434,11 +451,11 @@ class SweetScroll {
 
   /**
    * Unbind a click event to the container
-   * @return {Void}
+   * @return {void}
    * @private
    */
   unbindContainerClick() {
-    const {container} = this;
+    const { container } = this;
     if (!container || !this._containerClickListener) return;
     removeEvent(container, "click", this._containerClickListener);
     this._containerClickListener = null;
@@ -446,11 +463,11 @@ class SweetScroll {
 
   /**
    * Bind the scroll stop of events
-   * @return {Void}
+   * @return {void}
    * @private
    */
   bindContainerStop() {
-    const {container} = this;
+    const { container } = this;
     if (!container) return;
     this._stopScrollListener = this.handleStopScroll.bind(this);
     addEvent(container, CONTAINER_STOP_EVENTS, this._stopScrollListener);
@@ -458,11 +475,11 @@ class SweetScroll {
 
   /**
    * Unbind the scroll stop of events
-   * @return {Void}
+   * @return {void}
    * @private
    */
   unbindContainerStop() {
-    const {container} = this;
+    const { container } = this;
     if (!container || !this._stopScrollListener) return;
     removeEvent(container, CONTAINER_STOP_EVENTS, this._stopScrollListener);
     this._stopScrollListener = null;
@@ -470,10 +487,10 @@ class SweetScroll {
 
   /**
    * Call the specified callback
-   * @param {Object}
-   * @param {String}
-   * @param {...Any}
-   * @return {Void}
+   * @param {Object} options
+   * @param {String} type
+   * @param {...*} args
+   * @return {void}
    * @private
    */
   hook(options, type, ...args) {
@@ -481,18 +498,18 @@ class SweetScroll {
 
     // callback
     if (Util.isFunction(callback)) {
-      let result = callback.apply(this, args);
-      if (result !== undefined) return result;
+      const result = callback.apply(this, args);
+      if (typeof result === "undefined") return result;
     }
 
     // method
-    return this[type].apply(this, args);
+    return this[type](...args);
   }
 
   /**
    * Handling of scroll stop event
-   * @param {Event}
-   * @return {Void}
+   * @param {Event} e
+   * @return {void}
    * @private
    */
   handleStopScroll(e) {
@@ -506,12 +523,12 @@ class SweetScroll {
 
   /**
    * Handling of container click event
-   * @param {Event}
-   * @return {Void}
+   * @param {Event} e
+   * @return {void}
    * @private
    */
   handleContainerClick(e) {
-    let {options} = this;
+    let { options } = this;
     let el = e.target;
 
     // Explore parent element until the trigger selector matches
@@ -531,10 +548,8 @@ class SweetScroll {
 
       if (options.horizontalScroll && options.verticalScroll) {
         this.to(href, options);
-
       } else if (options.verticalScroll) {
         this.toTop(href, options);
-
       } else if (options.horizontalScroll) {
         this.toLeft(href, options);
       }
@@ -543,12 +558,13 @@ class SweetScroll {
 
   /**
    * Parse the data-scroll-options attribute
-   * @param {Element}
+   * @param {Element} el
    * @return {Object}
    * @private
    */
   parseDataOptions(el) {
     const options = el.getAttribute("data-scroll-options");
+
     return options ? JSON.parse(options) : {};
   }
 }

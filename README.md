@@ -97,7 +97,7 @@ The following options are applied by default. It can be customized as needed.
   afterScroll: null,
   cancelScroll: null,
   completeScroll: null,
-  stepScroll: null,
+  stepScroll: null
 }
 ```
 
@@ -122,7 +122,7 @@ Supports the following easing.
     - `easeInOutQuart`
 * **Quint**
     - `easeInQuint`
-    - `easeOutQuint` (default)
+    - `easeOutQuint` **(default)**
     - `easeInOutQuint`
 * **Sine**
     - `easeInSine`
@@ -230,6 +230,7 @@ document.addEventListener("DOMContentLoaded", function() {
 window.addEventListener("load", function() {
   if (needsInitialScroll) {
     // In initial scroll will update the hash without leaving a history.
+    // Support for IE10+.
     sweetScroll.to(hash, {updateURL: "replace"});
   }
 }, false);
@@ -243,21 +244,21 @@ You can also achieve the same thing in other ways by using the provided API.
 
 ## API
 
-* `new SweetScroll(options = {}, container = "body, html")`
-* `to(distance, options = {})`
-* `toTop(distance, options = {})`
-* `toLeft(distance, options = {})`
-* `toElement($el, options = {})`
-* `update(options = {})`
-* `stop(gotoEnd = false)`
-* `destroy()`
-* **Callbacks**
-    - `initialized: function(){}`
-    - `beforeScroll: function(toScroll, trigger){}`
-    - `cancelScroll: function(){}`
-    - `afterScroll: function(toScroll, trigger){}`
-    - `completeScroll: function(isCancel){}`
-    - `stepScroll: function(currentTime, props){}`
+* [new SweetScroll(options = {}, container = "body, html")](#new-sweetscrolloptions---container--body-html)
+* [to(distance, options = {})](#todistance-options--)
+* [toTop(distance, options = {})](#totopdistance-options--)
+* [toLeft(distance, options = {})](#toleftdistance-options--)
+* [toElement(el, options = {})](#toelementel-options--)
+* [update(options = {})](#updateoptions--)
+* [stop(gotoEnd = false)](#stopgotoend--true)
+* [destroy()](#destroy)
+* [Callbacks](#callbacks)
+    - `initialized() {}`
+    - `beforeScroll(toScroll, trigger) {}`
+    - `cancelScroll() {}`
+    - `afterScroll(toScroll, trigger) {}`
+    - `completeScroll(isCancel) {}`
+    - `stepScroll(currentTime, props) {}`
 
 `distance` to can specify the CSS Selector or scroll position.
 
@@ -346,9 +347,9 @@ sweetScroll.toLeft(1500);
 ```
 
 
-### toElement($el, options = {})
+### toElement(el, options = {})
 
-**$el: {Element}**  
+**el: {Element}**  
 **options: {Object}**
 
 Scroll animation to the specified `Element`.
@@ -379,7 +380,7 @@ sweetScroll.update({
 
 ### stop(gotoEnd = true)
 
-**gotoEnd: {boolean}**
+**gotoEnd: {Boolean}**
 
 Will stop the current scroll animation.
 

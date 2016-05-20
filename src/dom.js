@@ -1,4 +1,6 @@
-import {$$} from "./selectors";
+import { $$ } from "./selectors";
+import { win, doc } from "./elements";
+import * as math from "./math";
 
 const directionMethodMap = {
   y: "scrollTop",
@@ -11,7 +13,6 @@ const directionPropMap = {
 };
 
 export function isRootContainer(el) {
-  const doc = document;
   return el === doc.documentElement || el === doc.body;
 }
 
@@ -19,21 +20,20 @@ function getScrollable(selectors, direction = "y", all = true) {
   const method = directionMethodMap[direction];
   const elements = selectors instanceof Element ? [selectors] : $$(selectors);
   const scrollables = [];
-  const $div = document.createElement("div");
+  const $div = doc.createElement("div");
 
-  for ( let i = 0; i < elements.length; i++ ) {
-    let el = elements[i];
+  for (let i = 0; i < elements.length; i++) {
+    const el = elements[i];
 
-    if( el[method] > 0 ) {
+    if (el[method] > 0) {
       scrollables.push(el);
-
     } else {
       $div.style.width = `${el.clientWidth + 1}px`;
       $div.style.height = `${el.clientHeight + 1}px`;
       el.appendChild($div);
 
       el[method] = 1;
-      if( el[method] > 0 ) {
+      if (el[method] > 0) {
         scrollables.push(el);
       }
       el[method] = 0;
@@ -41,7 +41,7 @@ function getScrollable(selectors, direction = "y", all = true) {
       el.removeChild($div);
     }
 
-    if ( !all && scrollables.length > 0 ) break;
+    if (!all && scrollables.length > 0) break;
   }
 
   return scrollables;
@@ -49,7 +49,8 @@ function getScrollable(selectors, direction = "y", all = true) {
 
 export function scrollableFind(selectors, direction) {
   const scrollables = getScrollable(selectors, direction, false);
-  return scrollables.length >= 1 ? scrollables[0] : undefined;
+
+  return scrollables.length >= 1 ? scrollables[0] : null;
 }
 
 function getWindow(el) {
@@ -57,11 +58,11 @@ function getWindow(el) {
 }
 
 function getHeight(el) {
-  return Math.max(el.scrollHeight, el.clientHeight, el.offsetHeight);
+  return math.max(el.scrollHeight, el.clientHeight, el.offsetHeight);
 }
 
 function getWidth(el) {
-  return Math.max(el.scrollWidth, el.clientWidth, el.offsetWidth);
+  return math.max(el.scrollWidth, el.clientWidth, el.offsetWidth);
 }
 
 export function getSize(el) {
@@ -73,8 +74,8 @@ export function getSize(el) {
 
 export function getDocumentSize() {
   return {
-    width: Math.max(getWidth(document.body), getWidth(document.documentElement)),
-    height: Math.max(getHeight(document.body), getHeight(document.documentElement))
+    width: math.max(getWidth(doc.body), getWidth(doc.documentElement)),
+    height: math.max(getHeight(doc.body), getHeight(doc.documentElement))
   };
 }
 
@@ -82,31 +83,37 @@ export function getViewportAndElementSizes(el) {
   if (isRootContainer(el)) {
     return {
       viewport: {
-        width: Math.min(window.innerWidth, document.documentElement.clientWidth),
-        height: window.innerHeight
+        width: math.min(win.innerWidth, doc.documentElement.clientWidth),
+        height: win.innerHeight
       },
       size: getDocumentSize()
     };
   }
 
   return {
-    viewport: {width: el.clientWidth, height: el.clientHeight},
+    viewport: {
+      width: el.clientWidth,
+      height: el.clientHeight
+    },
     size: getSize(el)
   };
 }
 
 export function getScroll(el, direction = "y") {
-  const win = getWindow(el);
-  return win ? win[directionPropMap[direction]] : el[directionMethodMap[direction]];
+  const currentWindow = getWindow(el);
+
+  return currentWindow
+    ? currentWindow[directionPropMap[direction]]
+    : el[directionMethodMap[direction]];
 }
 
 export function setScroll(el, offset, direction = "y") {
-  const win = getWindow(el);
+  const currentWindow = getWindow(el);
   const top = direction === "y";
-  if (win) {
-    win.scrollTo(
-      !top ? offset : win[directionPropMap.x],
-      top  ? offset : win[directionPropMap.y]
+  if (currentWindow) {
+    currentWindow.scrollTo(
+      !top ? offset : currentWindow[directionPropMap.x],
+      top  ? offset : currentWindow[directionPropMap.y]
     );
   } else {
     el[directionMethodMap[direction]] = offset;
@@ -115,26 +122,30 @@ export function setScroll(el, offset, direction = "y") {
 
 export function getOffset(el, context = null) {
   if (!el || (el && !el.getClientRects().length)) {
-    return {top: 0, left: 0};
+    return { top: 0, left: 0 };
   }
+
   const rect = el.getBoundingClientRect();
+
   if (rect.width || rect.height) {
     const scroll = {};
-    let ctx;
+    let ctx = null;
     if (context == null || isRootContainer(context)) {
       ctx = el.ownerDocument.documentElement;
-      scroll.top = window.pageYOffset;
-      scroll.left = window.pageXOffset;
+      scroll.top = win.pageYOffset;
+      scroll.left = win.pageXOffset;
     } else {
       ctx = context;
       const ctxRect = ctx.getBoundingClientRect();
       scroll.top = ctxRect.top * -1 + ctx.scrollTop;
       scroll.left = ctxRect.left * -1 + ctx.scrollLeft;
     }
+
     return {
       top: rect.top + scroll.top - ctx.clientTop,
       left: rect.left + scroll.left - ctx.clientLeft
     };
   }
+
   return rect;
 }

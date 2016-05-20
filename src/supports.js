@@ -10,5 +10,6 @@ export const history = (() => {
   ) {
     return false;
   }
+
   return (window.history && "pushState" in window.history && window.location.protocol !== "file:");
 })();

@@ -1,7 +1,9 @@
-import * as Util from "./utils"
-import * as Dom from "./dom"
-import * as Easing from "./easings"
-import raf from "./request-animation-frame"
+import * as Util from "./utils";
+import * as Dom from "./dom";
+import * as Easing from "./easings";
+import * as math from "./math";
+import { raf, caf } from "./request-animation-frame";
+
 
 export default class ScrollTween {
   constructor(el) {
@@ -9,14 +11,18 @@ export default class ScrollTween {
     this.props = {};
     this.options = {};
     this.progress = false;
+    this.easing = null;
     this.startTime = null;
+    this.rafId = null;
   }
 
   run(x, y, options) {
     if (this.progress) return;
-    this.props = {x, y};
+    this.props = { x, y };
     this.options = options;
-    this.options.easing = options.easing.replace("ease", "");
+    this.easing = Util.isFunction(options.easing)
+      ? options.easing
+      : Easing[options.easing.replace("ease", "")];
     this.progress = true;
 
     setTimeout(() => {
@@ -24,14 +30,15 @@ export default class ScrollTween {
         x: Dom.getScroll(this.el, "x"),
         y: Dom.getScroll(this.el, "y")
       };
-      raf((time) => this._loop(time));
+      this.rafId = raf(time => this._loop(time));
     }, this.options.delay);
   }
 
   stop(gotoEnd = true) {
-    const {complete} = this.options;
+    const { complete } = this.options;
     this.startTime = null;
     this.progress = false;
+    caf(this.rafId);
 
     if (gotoEnd) {
       Dom.setScroll(this.el, this.props.x, "x");
@@ -51,15 +58,15 @@ export default class ScrollTween {
 
     if (!this.progress) {
       this.stop(false);
+
       return;
     }
 
-    const {el, props, options, startTime, startProps} = this;
-    const {duration, step} = options;
+    const { el, props, options, startTime, startProps, easing } = this;
+    const { duration, step } = options;
     const toProps = {};
-    const easing = Easing[this.options.easing];
     const timeElapsed = time - startTime;
-    const t = Math.min(1, Math.max(timeElapsed / duration, 0));
+    const t = math.min(1, math.max(timeElapsed / duration, 0));
 
     Util.each(props, (value, key) => {
       const initialValue = startProps[key];
@@ -67,7 +74,7 @@ export default class ScrollTween {
       if (delta === 0) return true;
 
       const val = easing(t, duration * t, 0, 1, duration);
-      toProps[key] = Math.round(initialValue + delta * val);
+      toProps[key] = math.round(initialValue + delta * val);
     });
 
     Util.each(toProps, (value, key) => {
@@ -76,8 +83,7 @@ export default class ScrollTween {
 
     if (timeElapsed <= duration) {
       step.call(this, t, toProps);
-      raf((time) => this._loop(time));
-
+      this.rafId = raf(currentTime => this._loop(currentTime));
     } else {
       this.stop(true);
     }
