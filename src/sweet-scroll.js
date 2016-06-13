@@ -54,7 +54,7 @@ class SweetScroll {
     stepScroll: null
   };
 
-  /* eslint-disable max-len */
+  /* eslint-enable max-len */
 
   /**
    * SweetScroll constructor
@@ -147,8 +147,12 @@ class SweetScroll {
     }
 
     // Adjustment of the maximum value
-    scroll.top = params.verticalScroll ? math.max(0, math.min(size.height - viewport.height, scroll.top)) : Dom.getScroll(container, "y");
-    scroll.left = params.horizontalScroll ? math.max(0, math.min(size.width - viewport.width, scroll.left)) : Dom.getScroll(container, "x");
+    scroll.top = params.verticalScroll
+      ? math.max(0, math.min(size.height - viewport.height, scroll.top))
+      : Dom.getScroll(container, "y");
+    scroll.left = params.horizontalScroll
+      ? math.max(0, math.min(size.width - viewport.width, scroll.left))
+      : Dom.getScroll(container, "x");
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, {
@@ -282,7 +286,7 @@ class SweetScroll {
     return true;
   }
 
-  /* eslint-disable no-unused-vars */
+  /* eslint-enable no-unused-vars */
 
   /**
    * Called at cancel of the scroll.
@@ -297,16 +301,22 @@ class SweetScroll {
    * @param {Element} trigger
    * @return {void}
    */
+  /* eslint-disable no-unused-vars */
   afterScroll(toScroll, trigger) {
   }
+
+  /* eslint-enable no-unused-vars */
 
   /**
    * Called at complete of the scroll.
    * @param {Boolean} isCancel
    * @return {void}
    */
+  /* eslint-disable no-unused-vars */
   completeScroll(isCancel) {
   }
+
+  /* eslint-enable no-unused-vars */
 
   /**
    * Called at each animation frame of the scroll.
@@ -314,8 +324,11 @@ class SweetScroll {
    * @param {Object} props
    * @return {void}
    */
+  /* eslint-disable no-unused-vars */
   stepScroll(currentTime, props) {
   }
+
+  /* eslint-enable no-unused-vars */
 
   /**
    * Parse the value of coordinate

@@ -12,20 +12,30 @@
   (global.SweetScroll = factory());
 }(this, function () { 'use strict';
 
-  var babelHelpers = {};
-  babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+  var cos = Math.cos;
+  var sin = Math.sin;
+  var pow = Math.pow;
+  var abs = Math.abs;
+  var sqrt = Math.sqrt;
+  var asin = Math.asin;
+  var PI = Math.PI;
+  var max = Math.max;
+  var min = Math.min;
+  var round = Math.round;
+
+  var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
     return typeof obj;
   } : function (obj) {
     return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
   };
 
-  babelHelpers.classCallCheck = function (instance, Constructor) {
+  var classCallCheck = function (instance, Constructor) {
     if (!(instance instanceof Constructor)) {
       throw new TypeError("Cannot call a class as a function");
     }
   };
 
-  babelHelpers.createClass = function () {
+  var createClass = function () {
     function defineProperties(target, props) {
       for (var i = 0; i < props.length; i++) {
         var descriptor = props[i];
@@ -43,19 +53,6 @@
     };
   }();
 
-  babelHelpers;
-
-  var cos = Math.cos;
-  var sin = Math.sin;
-  var pow = Math.pow;
-  var abs = Math.abs;
-  var sqrt = Math.sqrt;
-  var asin = Math.asin;
-  var PI = Math.PI;
-  var max = Math.max;
-  var min = Math.min;
-  var round = Math.round;
-
   var MAX_ARRAY_INDEX = pow(2, 53) - 1;
   var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Object"];
   var classTypes = {};
@@ -69,7 +66,7 @@
       return "";
     }
 
-    return (typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : babelHelpers.typeof(obj);
+    return (typeof obj === "undefined" ? "undefined" : _typeof(obj)) === "object" || typeof obj === "function" ? classTypes[Object.prototype.toString.call(obj)] || "object" : typeof obj === "undefined" ? "undefined" : _typeof(obj);
   }
 
   function isNumber(obj) {
@@ -614,7 +611,7 @@ var Easing = Object.freeze({
 
   var ScrollTween = function () {
     function ScrollTween(el) {
-      babelHelpers.classCallCheck(this, ScrollTween);
+      classCallCheck(this, ScrollTween);
 
       this.el = el;
       this.props = {};
@@ -625,7 +622,7 @@ var Easing = Object.freeze({
       this.rafId = null;
     }
 
-    babelHelpers.createClass(ScrollTween, [{
+    createClass(ScrollTween, [{
       key: "run",
       value: function run(x, y, options) {
         var _this = this;
@@ -740,7 +737,7 @@ var Easing = Object.freeze({
 
   var SweetScroll = function () {
 
-    /* eslint-disable max-len */
+    /* eslint-enable max-len */
 
     /**
      * SweetScroll constructor
@@ -754,7 +751,7 @@ var Easing = Object.freeze({
 
       var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
       var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
-      babelHelpers.classCallCheck(this, SweetScroll);
+      classCallCheck(this, SweetScroll);
 
       var params = merge({}, SweetScroll.defaults, options);
 
@@ -782,7 +779,7 @@ var Easing = Object.freeze({
     /* eslint-disable max-len */
 
 
-    babelHelpers.createClass(SweetScroll, [{
+    createClass(SweetScroll, [{
       key: "to",
       value: function to(distance) {
         var _this2 = this;
@@ -1026,7 +1023,7 @@ var Easing = Object.freeze({
         return true;
       }
 
-      /* eslint-disable no-unused-vars */
+      /* eslint-enable no-unused-vars */
 
       /**
        * Called at cancel of the scroll.
@@ -1043,20 +1040,26 @@ var Easing = Object.freeze({
        * @param {Element} trigger
        * @return {void}
        */
+      /* eslint-disable no-unused-vars */
 
     }, {
       key: "afterScroll",
       value: function afterScroll(toScroll, trigger) {}
+
+      /* eslint-enable no-unused-vars */
 
       /**
        * Called at complete of the scroll.
        * @param {Boolean} isCancel
        * @return {void}
        */
+      /* eslint-disable no-unused-vars */
 
     }, {
       key: "completeScroll",
       value: function completeScroll(isCancel) {}
+
+      /* eslint-enable no-unused-vars */
 
       /**
        * Called at each animation frame of the scroll.
@@ -1064,10 +1067,13 @@ var Easing = Object.freeze({
        * @param {Object} props
        * @return {void}
        */
+      /* eslint-disable no-unused-vars */
 
     }, {
       key: "stepScroll",
       value: function stepScroll(currentTime, props) {}
+
+      /* eslint-enable no-unused-vars */
 
       /**
        * Parse the value of coordinate
