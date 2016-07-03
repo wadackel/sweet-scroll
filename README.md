@@ -490,6 +490,12 @@ Works in `IE9+`, and all modern browsers.
 
 
 
+## CHANGELOG
+
+See the [CHANGELOG.md](https://github.com/tsuyoshiwada/sweet-scroll/blob/master/CHANGELOG.md)
+
+
+
 ## LICENCE
 
 Released under the [MIT Licence](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
