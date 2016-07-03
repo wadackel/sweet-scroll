@@ -71,4 +71,11 @@
     "rollup-plugin-babel": "^2.6.1",
     "uglify-js": "^2.6.4",
     "watchify": "^3.7.0"
+  },
+  "files": [
+    "src",
+    "test",
+    "sweet-scroll.js",
+    "sweet-scroll.min.js"
+  ]
 }
