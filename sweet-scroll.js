@@ -3,7 +3,7 @@
  * Modern and the sweet smooth scroll library.
  * @author tsuyoshiwada
  * @license MIT
- * @version 1.0.1
+ * @version 1.0.2
  */
 
 (function (global, factory) {
@@ -1093,55 +1093,55 @@ var Easing = Object.freeze({
 
           // Array
         } else if (isArray(coodinate)) {
-            if (coodinate.length === 2) {
-              scroll.top = coodinate[0];
-              scroll.left = coodinate[1];
+          if (coodinate.length === 2) {
+            scroll.top = coodinate[0];
+            scroll.left = coodinate[1];
+          } else {
+            scroll.top = enableTop ? coodinate[0] : 0;
+            scroll.left = !enableTop ? coodinate[0] : 0;
+          }
+
+          // Number
+        } else if (isNumeric(coodinate)) {
+          scroll.top = enableTop ? coodinate : 0;
+          scroll.left = !enableTop ? coodinate : 0;
+
+          // String
+        } else if (isString(coodinate)) {
+          var trimedCoodinate = removeSpaces(coodinate);
+
+          // "{n},{n}" (Array like syntax)
+          if (/^\d+,\d+$/.test(trimedCoodinate)) {
+            trimedCoodinate = trimedCoodinate.split(",");
+            scroll.top = trimedCoodinate[0];
+            scroll.left = trimedCoodinate[1];
+
+            // "top:{n}, left:{n}" (Object like syntax)
+          } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(trimedCoodinate)) {
+            var top = trimedCoodinate.match(/top:(\d+)/);
+            var left = trimedCoodinate.match(/left:(\d+)/);
+            scroll.top = top ? top[1] : 0;
+            scroll.left = left ? left[1] : 0;
+
+            // "+={n}", "-={n}" (Relative position)
+          } else if (this.container && /^(\+|-)=(\d+)$/.test(trimedCoodinate)) {
+            var current = getScroll(this.container, enableTop ? "y" : "x");
+            var results = trimedCoodinate.match(/^(\+|-)=(\d+)$/);
+            var op = results[1];
+            var value = parseInt(results[2], 10);
+            if (op === "+") {
+              scroll.top = enableTop ? current + value : 0;
+              scroll.left = !enableTop ? current + value : 0;
             } else {
-              scroll.top = enableTop ? coodinate[0] : 0;
-              scroll.left = !enableTop ? coodinate[0] : 0;
+              scroll.top = enableTop ? current - value : 0;
+              scroll.left = !enableTop ? current - value : 0;
             }
-
-            // Number
-          } else if (isNumeric(coodinate)) {
-              scroll.top = enableTop ? coodinate : 0;
-              scroll.left = !enableTop ? coodinate : 0;
-
-              // String
-            } else if (isString(coodinate)) {
-                var trimedCoodinate = removeSpaces(coodinate);
-
-                // "{n},{n}" (Array like syntax)
-                if (/^\d+,\d+$/.test(trimedCoodinate)) {
-                  trimedCoodinate = trimedCoodinate.split(",");
-                  scroll.top = trimedCoodinate[0];
-                  scroll.left = trimedCoodinate[1];
-
-                  // "top:{n}, left:{n}" (Object like syntax)
-                } else if (/^(top|left):\d+,?(?:(top|left):\d+)?$/.test(trimedCoodinate)) {
-                    var top = trimedCoodinate.match(/top:(\d+)/);
-                    var left = trimedCoodinate.match(/left:(\d+)/);
-                    scroll.top = top ? top[1] : 0;
-                    scroll.left = left ? left[1] : 0;
-
-                    // "+={n}", "-={n}" (Relative position)
-                  } else if (this.container && /^(\+|-)=(\d+)$/.test(trimedCoodinate)) {
-                      var current = getScroll(this.container, enableTop ? "y" : "x");
-                      var results = trimedCoodinate.match(/^(\+|-)=(\d+)$/);
-                      var op = results[1];
-                      var value = parseInt(results[2], 10);
-                      if (op === "+") {
-                        scroll.top = enableTop ? current + value : 0;
-                        scroll.left = !enableTop ? current + value : 0;
-                      } else {
-                        scroll.top = enableTop ? current - value : 0;
-                        scroll.left = !enableTop ? current - value : 0;
-                      }
-                    } else {
-                      return null;
-                    }
-              } else {
-                return null;
-              }
+          } else {
+            return null;
+          }
+        } else {
+          return null;
+        }
 
         scroll.top = parseInt(scroll.top, 10);
         scroll.left = parseInt(scroll.left, 10);
