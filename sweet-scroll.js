@@ -181,6 +181,10 @@
     return el === doc.documentElement || el === doc.body;
   }
 
+  function getZoomLevel() {
+    return window.outerWidth / window.innerWidth;
+  }
+
   function getScrollable(selectors) {
     var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
     var all = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
@@ -200,7 +204,7 @@
         $div.style.height = el.clientHeight + 1 + "px";
         el.appendChild($div);
 
-        el[method] = 1;
+        el[method] = 1.5 / getZoomLevel();
         if (el[method] > 0) {
           scrollables.push(el);
         }

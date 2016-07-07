@@ -16,6 +16,10 @@ export function isRootContainer(el) {
   return el === doc.documentElement || el === doc.body;
 }
 
+function getZoomLevel() {
+  return window.outerWidth / window.innerWidth;
+}
+
 function getScrollable(selectors, direction = "y", all = true) {
   const method = directionMethodMap[direction];
   const elements = selectors instanceof Element ? [selectors] : $$(selectors);
@@ -32,7 +36,7 @@ function getScrollable(selectors, direction = "y", all = true) {
       $div.style.height = `${el.clientHeight + 1}px`;
       el.appendChild($div);
 
-      el[method] = 1;
+      el[method] = 1.5 / getZoomLevel();
       if (el[method] > 0) {
         scrollables.push(el);
       }
