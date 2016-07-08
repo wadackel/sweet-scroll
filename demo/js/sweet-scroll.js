@@ -182,7 +182,12 @@
   }
 
   function getZoomLevel() {
-    return max(window.innerWidth, window.outerWidth) / window.innerWidth;
+    var _window = window;
+    var outerWidth = _window.outerWidth;
+    var innerWidth = _window.innerWidth;
+
+
+    return outerWidth ? outerWidth / innerWidth : 1;
   }
 
   function getScrollable(selectors) {
