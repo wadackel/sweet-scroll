@@ -17,7 +17,7 @@ export function isRootContainer(el) {
 }
 
 function getZoomLevel() {
-  return window.outerWidth / window.innerWidth;
+  return math.max(window.innerWidth, window.outerWidth) / window.innerWidth;
 }
 
 function getScrollable(selectors, direction = "y", all = true) {
