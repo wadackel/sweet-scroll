@@ -1,3 +1,8 @@
+## 1.0.3
+
+* Fix Chrome/Safari: scroll doesn't fire when browser zoom is less than 100% (ref: #23)
+
+
 ## 1.0.2
 
 * Add this `CHANGELOG.md` (ref: #21)
