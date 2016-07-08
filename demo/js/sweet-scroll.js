@@ -3,7 +3,7 @@
  * Modern and the sweet smooth scroll library.
  * @author tsuyoshiwada
  * @license MIT
- * @version 1.0.2
+ * @version 1.0.3
  */
 
 (function (global, factory) {
@@ -182,7 +182,7 @@
   }
 
   function getZoomLevel() {
-    return window.outerWidth / window.innerWidth;
+    return max(window.innerWidth, window.outerWidth) / window.innerWidth;
   }
 
   function getScrollable(selectors) {
