@@ -20,6 +20,7 @@ const WHEEL_EVENT = (() => {
 
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
+const LOAD = "load";
 let isDomContentLoaded = false;
 
 addEvent(doc, DOM_CONTENT_LOADED, () => {
@@ -421,6 +422,7 @@ class SweetScroll {
    */
   getContainer(selector, callback) {
     const { verticalScroll, horizontalScroll } = this.options;
+    const finalCallback = callback.bind(this);
     let container = null;
 
     if (verticalScroll) {
@@ -431,22 +433,37 @@ class SweetScroll {
       container = Dom.scrollableFind(selector, "x");
     }
 
-    if (!container && !isDomContentLoaded) {
+    if (container) {
+      finalCallback(container);
+
+    } else if (!isDomContentLoaded) {
       let isCompleted = false;
 
-      addEvent(doc, DOM_CONTENT_LOADED, () => {
+      const handleDomContentLoaded = () => {
+        removeHandlers(); // eslint-disable-line no-use-before-define
         isCompleted = true;
         this.getContainer(selector, callback);
-      });
+      };
 
-      // Fallback for DOMContentLoaded
-      addEvent(win, "load", () => {
+      const handleLoad = () => {
+        removeHandlers(); // eslint-disable-line no-use-before-define
         if (!isCompleted) {
           this.getContainer(selector, callback);
         }
-      });
+      };
+
+      /* eslint-disable func-style */
+      const removeHandlers = () => {
+        removeEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
+        removeEvent(win, LOAD, handleLoad);
+      };
+      /* eslint-enable func-style */
+
+      addEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
+      addEvent(win, LOAD, handleLoad);
+
     } else {
-      callback.call(this, container);
+      finalCallback(null);
     }
   }
 
