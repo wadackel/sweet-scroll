@@ -1,3 +1,8 @@
+## 1.0.4
+
+* Fixed a bug related to the container. (ref: #27)
+
+
 ## 1.0.3
 
 * Fix Chrome/Safari: scroll doesn't fire when browser zoom is less than 100% (ref: #23)
