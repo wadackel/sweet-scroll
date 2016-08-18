@@ -1,11 +1,16 @@
+## 1.0.4
+
+* Fixed a bug related to the container. (ref: [#27](https://github.com/tsuyoshiwada/sweet-scroll/issues/27))
+
+
 ## 1.0.3
 
-* Fix Chrome/Safari: scroll doesn't fire when browser zoom is less than 100% (ref: #23)
+* Fix Chrome/Safari: scroll doesn't fire when browser zoom is less than 100% (ref: [#23](https://github.com/tsuyoshiwada/sweet-scroll/issues/23))
 
 
 ## 1.0.2
 
-* Add this `CHANGELOG.md` (ref: #21)
+* Add this `CHANGELOG.md` (ref: [#21](https://github.com/tsuyoshiwada/sweet-scroll/issues/21))
 * Change the distribution file in npm (limited to `src`, `test`, `sweet-scroll.js`, `sweet-scroll.min.js`)
 * Update devDependencies
 
@@ -18,7 +23,7 @@
 
 ## 1.0.0
 
-* Fix issue #17
+* Fix issue [#17](https://github.com/tsuyoshiwada/sweet-scroll/issues/17)
 * Change to npm scripts from Gulp the development environment
 * Update eslint config and fix lint
 * Refactor for file size reduction.
@@ -50,7 +55,7 @@
 
 ## 0.6.0
 
-* Add `preventDefault` & `stopPropagation` options #11
+* Add `preventDefault` & `stopPropagation` options [#11](https://github.com/tsuyoshiwada/sweet-scroll/issues/11)
 
 
 ## 0.5.0
@@ -129,7 +134,7 @@
 
 ## 0.0.4
 
-* Fix #1 horizontal scroll bug
+* Fix [#1](https://github.com/tsuyoshiwada/sweet-scroll/issues/1) horizontal scroll bug
 * Update Specifies the container in the HTMLElement
 
 
