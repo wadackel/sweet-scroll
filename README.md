@@ -543,6 +543,14 @@ $ npm run build
 ```
 
 
-----------
+## CONTRIBUTION
 
-Bugs, feature requests and comments are more than welcome in the [issues](https://github.com/tsuyoshiwada/sweet-scroll/issues)
+Thank you for your interest in sweet-scroll.js.  
+Bugs, feature requests and comments are more than welcome in the [issues](https://github.com/tsuyoshiwada/sweet-scroll/issues).
+
+**Before you open a PR:**
+
+Be careful to follow the code style of the project. Run `npm test` after your changes and ensure you do not introduce any new errors or warnings.
+All new features and changes need documentation.
+
+Thanks!
