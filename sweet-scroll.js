@@ -740,11 +740,6 @@ var WHEEL_EVENT = function () {
 var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
 var DOM_CONTENT_LOADED = "DOMContentLoaded";
 var LOAD = "load";
-var isDomContentLoaded = false;
-
-addEvent(doc, DOM_CONTENT_LOADED, function () {
-  isDomContentLoaded = true;
-});
 
 var SweetScroll = function () {
 
@@ -1203,7 +1198,7 @@ var SweetScroll = function () {
 
       if (container) {
         finalCallback(container);
-      } else if (!isDomContentLoaded) {
+      } else if (!/comp|inter|loaded/.test(doc.readyState)) {
         (function () {
           var isCompleted = false;
 
@@ -1231,7 +1226,9 @@ var SweetScroll = function () {
           addEvent(win, LOAD, handleLoad);
         })();
       } else {
-        finalCallback(null);
+        setTimeout(function () {
+          return _this3.getContainer(selector, callback);
+        }, 1);
       }
     }
 

@@ -21,11 +21,6 @@ const WHEEL_EVENT = (() => {
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
 const LOAD = "load";
-let isDomContentLoaded = false;
-
-addEvent(doc, DOM_CONTENT_LOADED, () => {
-  isDomContentLoaded = true;
-});
 
 
 class SweetScroll {
@@ -436,7 +431,7 @@ class SweetScroll {
     if (container) {
       finalCallback(container);
 
-    } else if (!isDomContentLoaded) {
+    } else if (!/comp|inter|loaded/.test(doc.readyState)) {
       let isCompleted = false;
 
       const handleDomContentLoaded = () => {
@@ -463,7 +458,7 @@ class SweetScroll {
       addEvent(win, LOAD, handleLoad);
 
     } else {
-      finalCallback(null);
+      setTimeout(() => this.getContainer(selector, callback), 1);
     }
   }
 
