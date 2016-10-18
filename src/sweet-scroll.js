@@ -266,12 +266,12 @@ class SweetScroll {
     this.tween = null;
   }
 
+  /* eslint-disable no-unused-vars */
   /**
    * Called at after of the initialize.
    * @return {void}
    */
-  initialized() {
-  }
+  initialized() {}
 
   /**
    * Called at before of the scroll.
@@ -279,19 +279,15 @@ class SweetScroll {
    * @param {Element} trigger
    * @return {Boolean}
    */
-  /* eslint-disable no-unused-vars */
   beforeScroll(toScroll, trigger) {
     return true;
   }
-
-  /* eslint-enable no-unused-vars */
 
   /**
    * Called at cancel of the scroll.
    * @return {void}
    */
-  cancelScroll() {
-  }
+  cancelScroll() {}
 
   /**
    * Called at after of the scroll.
@@ -299,22 +295,14 @@ class SweetScroll {
    * @param {Element} trigger
    * @return {void}
    */
-  /* eslint-disable no-unused-vars */
-  afterScroll(toScroll, trigger) {
-  }
-
-  /* eslint-enable no-unused-vars */
+  afterScroll(toScroll, trigger) {}
 
   /**
    * Called at complete of the scroll.
    * @param {Boolean} isCancel
    * @return {void}
    */
-  /* eslint-disable no-unused-vars */
-  completeScroll(isCancel) {
-  }
-
-  /* eslint-enable no-unused-vars */
+  completeScroll(isCancel) {}
 
   /**
    * Called at each animation frame of the scroll.
@@ -322,10 +310,7 @@ class SweetScroll {
    * @param {Object} props
    * @return {void}
    */
-  /* eslint-disable no-unused-vars */
-  stepScroll(currentTime, props) {
-  }
-
+  stepScroll(currentTime, props) {}
   /* eslint-enable no-unused-vars */
 
   /**
