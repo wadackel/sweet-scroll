@@ -1,3 +1,5 @@
+import { win } from "./elements";
+
 // @link https://github.com/Modernizr/Modernizr
 export const history = (() => {
   const ua = navigator.userAgent;
@@ -11,5 +13,5 @@ export const history = (() => {
     return false;
   }
 
-  return (window.history && "pushState" in window.history && window.location.protocol !== "file:");
+  return (win.history && "pushState" in win.history && win.location.protocol !== "file:");
 })();

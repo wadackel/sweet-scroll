@@ -92,3 +92,17 @@ export function merge(obj, ...sources) {
 export function removeSpaces(str) {
   return str.replace(/\s*/g, "") || "";
 }
+
+export function warning(message) {
+  /* eslint-disable no-console */
+  if (typeof console !== "undefined" && typeof console.error === "function") {
+    console.error(message);
+  }
+  /* eslint-enable no-console */
+
+  /* eslint-disable no-empty */
+  try {
+    throw new Error(message);
+  } catch (e) {}
+  /* eslint-enable no-empty */
+}

@@ -4,6 +4,7 @@ import * as Supports from "./supports";
 import * as math from "./math";
 import { $, matches } from "./selectors";
 import { addEvent, removeEvent } from "./events";
+import { raf } from "./request-animation-frame";
 import { win, doc } from "./elements";
 import ScrollTween from "./scroll-tween";
 
@@ -21,11 +22,6 @@ const WHEEL_EVENT = (() => {
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
 const LOAD = "load";
-let isDomContentLoaded = false;
-
-addEvent(doc, DOM_CONTENT_LOADED, () => {
-  isDomContentLoaded = true;
-});
 
 
 class SweetScroll {
@@ -45,6 +41,8 @@ class SweetScroll {
     updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
     preventDefault: true,           // Cancels the container element click event
     stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
+    searchContainerTimeout: 4000,   // Specifies the maximum search time of Scrollabe Container
+    outputLog: false,               // Specify level of output to log
 
     // Callbacks
     initialized: null,
@@ -54,7 +52,6 @@ class SweetScroll {
     completeScroll: null,
     stepScroll: null
   };
-
   /* eslint-enable max-len */
 
   /**
@@ -64,18 +61,33 @@ class SweetScroll {
    * @param {String | Element} container
    */
   constructor(options = {}, container = "body, html") {
-    const params = Util.merge({}, SweetScroll.defaults, options);
+    this.createAt = new Date();
+    this.options = Util.merge({}, SweetScroll.defaults, options);
 
-    this.options = params;
     this.getContainer(container, target => {
+      if (target == null) {
+        this.log(`Not found scrollable container. => "${container}"`);
+      }
+
       this.container = target;
-      this.header = $(params.header);
+      this.header = $(this.options.header);
       this.tween = new ScrollTween(target);
       this._trigger = null;
       this._shouldCallCancelScroll = false;
       this.bindContainerClick();
-      this.hook(params, "initialized");
+      this.hook(this.options, "initialized");
     });
+  }
+
+  /**
+   * Output log
+   * @param {String} message
+   * @return {void}
+   */
+  log(message) {
+    if (this.options.outputLog) {
+      Util.warning(`[SweetScroll] ${message}`);
+    }
   }
 
   /**
@@ -106,7 +118,9 @@ class SweetScroll {
     this.stop();
 
     // Does not move if the container is not found
-    if (!container) return;
+    if (!container) {
+      return this.log("Not found container element.");
+    }
 
     // Using the coordinates in the case of CSS Selector
     if (!scroll && Util.isString(distance)) {
@@ -125,7 +139,9 @@ class SweetScroll {
       }
     }
 
-    if (!scroll) return;
+    if (!scroll) {
+      return this.log(`Invalid parameter of distance. => ${distance}`);
+    }
 
     // Apply `offset` value
     if (offset) {
@@ -162,7 +178,7 @@ class SweetScroll {
       easing: params.easing,
       complete: () => {
         // Update URL
-        if (hash != null && hash !== window.location.hash) {
+        if (hash != null && hash !== win.location.hash) {
           this.updateURLHash(hash, params.updateURL);
         }
 
@@ -227,6 +243,8 @@ class SweetScroll {
     if (el instanceof Element) {
       const offset = Dom.getOffset(el, this.container);
       this.to(offset, Util.merge({}, options));
+    } else {
+      this.log("Invalid parameter. in toElement()");
     }
   }
 
@@ -236,6 +254,10 @@ class SweetScroll {
    * @return {void}
    */
   stop(gotoEnd = false) {
+    if (!this.container) {
+      this.log("Not found scrollable container.");
+    }
+
     if (this._stopScrollListener) {
       this._shouldCallCancelScroll = true;
     }
@@ -248,6 +270,10 @@ class SweetScroll {
    * @return {void}
    */
   update(options = {}) {
+    if (!this.container) {
+      this.log("Not found scrollable container.");
+    }
+
     this.stop();
     this.unbindContainerClick();
     this.unbindContainerStop();
@@ -261,6 +287,10 @@ class SweetScroll {
    * @return {void}
    */
   destroy() {
+    if (!this.container) {
+      this.log("Not found scrollable container.");
+    }
+
     this.stop();
     this.unbindContainerClick();
     this.unbindContainerStop();
@@ -269,12 +299,12 @@ class SweetScroll {
     this.tween = null;
   }
 
+  /* eslint-disable no-unused-vars */
   /**
    * Called at after of the initialize.
    * @return {void}
    */
-  initialized() {
-  }
+  initialized() {}
 
   /**
    * Called at before of the scroll.
@@ -282,19 +312,15 @@ class SweetScroll {
    * @param {Element} trigger
    * @return {Boolean}
    */
-  /* eslint-disable no-unused-vars */
   beforeScroll(toScroll, trigger) {
     return true;
   }
-
-  /* eslint-enable no-unused-vars */
 
   /**
    * Called at cancel of the scroll.
    * @return {void}
    */
-  cancelScroll() {
-  }
+  cancelScroll() {}
 
   /**
    * Called at after of the scroll.
@@ -302,22 +328,14 @@ class SweetScroll {
    * @param {Element} trigger
    * @return {void}
    */
-  /* eslint-disable no-unused-vars */
-  afterScroll(toScroll, trigger) {
-  }
-
-  /* eslint-enable no-unused-vars */
+  afterScroll(toScroll, trigger) {}
 
   /**
    * Called at complete of the scroll.
    * @param {Boolean} isCancel
    * @return {void}
    */
-  /* eslint-disable no-unused-vars */
-  completeScroll(isCancel) {
-  }
-
-  /* eslint-enable no-unused-vars */
+  completeScroll(isCancel) {}
 
   /**
    * Called at each animation frame of the scroll.
@@ -325,10 +343,7 @@ class SweetScroll {
    * @param {Object} props
    * @return {void}
    */
-  /* eslint-disable no-unused-vars */
-  stepScroll(currentTime, props) {
-  }
-
+  stepScroll(currentTime, props) {}
   /* eslint-enable no-unused-vars */
 
   /**
@@ -410,7 +425,7 @@ class SweetScroll {
    */
   updateURLHash(hash, historyType) {
     if (!Supports.history || !historyType) return;
-    window.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
+    win.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
   }
 
   /**
@@ -436,7 +451,7 @@ class SweetScroll {
     if (container) {
       finalCallback(container);
 
-    } else if (!isDomContentLoaded) {
+    } else if (!/comp|inter|loaded/.test(doc.readyState)) {
       let isCompleted = false;
 
       const handleDomContentLoaded = () => {
@@ -463,7 +478,13 @@ class SweetScroll {
       addEvent(win, LOAD, handleLoad);
 
     } else {
-      finalCallback(null);
+      raf(() => {
+        if (Date.now() - this.createAt.getTime() > this.options.searchContainerTimeout) {
+          finalCallback(null);
+        } else {
+          this.getContainer(selector, callback);
+        }
+      });
     }
   }
 

@@ -90,6 +90,8 @@ The following options are applied by default. It can be customized as needed.
   updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
   preventDefault: true,           // Cancels the container element click event
   stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
+  searchContainerTimeout: 4000,   // Specifies the maximum search time of Scrollabe Container
+  outputLog: false,               // Specify level of output to log
 
   // Callbacks
   initialized: null,

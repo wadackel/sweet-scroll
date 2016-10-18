@@ -17,7 +17,7 @@ export function isRootContainer(el) {
 }
 
 function getZoomLevel() {
-  const { outerWidth, innerWidth } = window;
+  const { outerWidth, innerWidth } = win;
 
   return outerWidth ? outerWidth / innerWidth : 1;
 }
