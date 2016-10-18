@@ -43,11 +43,14 @@ describe("SweetScroll", () => {
     it("Should not find container", done => {
       document.body.innerHTML = "";
       getInstance({
+        searchContainerTimeout: 1000,
         initialized() {
           assert(this.container == null);
           done();
         }
       });
+
+      clock.tick(1200);
     });
 
     it("Should be initialize module", done => {
