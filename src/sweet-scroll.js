@@ -4,6 +4,7 @@ import * as Supports from "./supports";
 import * as math from "./math";
 import { $, matches } from "./selectors";
 import { addEvent, removeEvent } from "./events";
+import { raf } from "./request-animation-frame";
 import { win, doc } from "./elements";
 import ScrollTween from "./scroll-tween";
 
@@ -21,11 +22,6 @@ const WHEEL_EVENT = (() => {
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
 const DOM_CONTENT_LOADED = "DOMContentLoaded";
 const LOAD = "load";
-let isDomContentLoaded = false;
-
-addEvent(doc, DOM_CONTENT_LOADED, () => {
-  isDomContentLoaded = true;
-});
 
 
 class SweetScroll {
@@ -45,6 +41,7 @@ class SweetScroll {
     updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
     preventDefault: true,           // Cancels the container element click event
     stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
+    searchContainerTimeout: 4000,         // Specifies the maximum search time of Scrollabe Container
 
     // Callbacks
     initialized: null,
@@ -64,17 +61,17 @@ class SweetScroll {
    * @param {String | Element} container
    */
   constructor(options = {}, container = "body, html") {
-    const params = Util.merge({}, SweetScroll.defaults, options);
+    this.createAt = new Date();
+    this.options = Util.merge({}, SweetScroll.defaults, options);
 
-    this.options = params;
     this.getContainer(container, target => {
       this.container = target;
-      this.header = $(params.header);
+      this.header = $(this.options.header);
       this.tween = new ScrollTween(target);
       this._trigger = null;
       this._shouldCallCancelScroll = false;
       this.bindContainerClick();
-      this.hook(params, "initialized");
+      this.hook(this.options, "initialized");
     });
   }
 
@@ -436,7 +433,7 @@ class SweetScroll {
     if (container) {
       finalCallback(container);
 
-    } else if (!isDomContentLoaded) {
+    } else if (!/comp|inter|loaded/.test(doc.readyState)) {
       let isCompleted = false;
 
       const handleDomContentLoaded = () => {
@@ -463,7 +460,13 @@ class SweetScroll {
       addEvent(win, LOAD, handleLoad);
 
     } else {
-      finalCallback(null);
+      raf(() => {
+        if (Date.now() - this.createAt.getTime() > this.options.searchContainerTimeout) {
+          finalCallback(null);
+        } else {
+          this.getContainer(selector, callback);
+        }
+      });
     }
   }
 
