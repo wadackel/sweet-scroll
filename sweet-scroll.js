@@ -3,7 +3,7 @@
  * Modern and the sweet smooth scroll library.
  * @author tsuyoshiwada
  * @license MIT
- * @version 1.0.4
+ * @version 1.1.0
  */
 
 (function (global, factory) {
@@ -26,8 +26,129 @@ var round = Math.round;
 var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
   return typeof obj;
 } : function (obj) {
-  return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+  return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
 };
+
+
+
+
+
+var asyncGenerator = function () {
+  function AwaitValue(value) {
+    this.value = value;
+  }
+
+  function AsyncGenerator(gen) {
+    var front, back;
+
+    function send(key, arg) {
+      return new Promise(function (resolve, reject) {
+        var request = {
+          key: key,
+          arg: arg,
+          resolve: resolve,
+          reject: reject,
+          next: null
+        };
+
+        if (back) {
+          back = back.next = request;
+        } else {
+          front = back = request;
+          resume(key, arg);
+        }
+      });
+    }
+
+    function resume(key, arg) {
+      try {
+        var result = gen[key](arg);
+        var value = result.value;
+
+        if (value instanceof AwaitValue) {
+          Promise.resolve(value.value).then(function (arg) {
+            resume("next", arg);
+          }, function (arg) {
+            resume("throw", arg);
+          });
+        } else {
+          settle(result.done ? "return" : "normal", result.value);
+        }
+      } catch (err) {
+        settle("throw", err);
+      }
+    }
+
+    function settle(type, value) {
+      switch (type) {
+        case "return":
+          front.resolve({
+            value: value,
+            done: true
+          });
+          break;
+
+        case "throw":
+          front.reject(value);
+          break;
+
+        default:
+          front.resolve({
+            value: value,
+            done: false
+          });
+          break;
+      }
+
+      front = front.next;
+
+      if (front) {
+        resume(front.key, front.arg);
+      } else {
+        back = null;
+      }
+    }
+
+    this._invoke = send;
+
+    if (typeof gen.return !== "function") {
+      this.return = undefined;
+    }
+  }
+
+  if (typeof Symbol === "function" && Symbol.asyncIterator) {
+    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
+      return this;
+    };
+  }
+
+  AsyncGenerator.prototype.next = function (arg) {
+    return this._invoke("next", arg);
+  };
+
+  AsyncGenerator.prototype.throw = function (arg) {
+    return this._invoke("throw", arg);
+  };
+
+  AsyncGenerator.prototype.return = function (arg) {
+    return this._invoke("return", arg);
+  };
+
+  return {
+    wrap: function (fn) {
+      return function () {
+        return new AsyncGenerator(fn.apply(this, arguments));
+      };
+    },
+    await: function (value) {
+      return new AwaitValue(value);
+    }
+  };
+}();
+
+
+
+
 
 var classCallCheck = function (instance, Constructor) {
   if (!(instance instanceof Constructor)) {
@@ -53,6 +174,75 @@ var createClass = function () {
   };
 }();
 
+
+
+
+
+
+
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var set = function set(object, property, value, receiver) {
+  var desc = Object.getOwnPropertyDescriptor(object, property);
+
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent !== null) {
+      set(parent, property, value, receiver);
+    }
+  } else if ("value" in desc && desc.writable) {
+    desc.value = value;
+  } else {
+    var setter = desc.set;
+
+    if (setter !== undefined) {
+      setter.call(receiver, value);
+    }
+  }
+
+  return value;
+};
+
 var MAX_ARRAY_INDEX = pow(2, 53) - 1;
 var classTypeList = ["Boolean", "Number", "String", "Function", "Array", "Object"];
 var classTypes = {};
@@ -76,6 +266,8 @@ function isNumber(obj) {
 function isString(obj) {
   return getType(obj) === "string";
 }
+
+
 
 function isFunction(obj) {
   return getType(obj) === "function";
@@ -102,6 +294,8 @@ function isObject(obj) {
 function hasProp(obj, key) {
   return obj && obj.hasOwnProperty(key);
 }
+
+
 
 function each(obj, iterate, context) {
   if (obj == null) return obj;
@@ -140,11 +334,25 @@ function removeSpaces(str) {
   return str.replace(/\s*/g, "") || "";
 }
 
+function warning(message) {
+  /* eslint-disable no-console */
+  if (typeof console !== "undefined" && typeof console.error === "function") {
+    console.error(message);
+  }
+  /* eslint-enable no-console */
+
+  /* eslint-disable no-empty */
+  try {
+    throw new Error(message);
+  } catch (e) {}
+  /* eslint-enable no-empty */
+}
+
 var win = window;
 var doc = document;
 
 function $(selector) {
-  var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
   if (!selector) return;
 
@@ -152,7 +360,7 @@ function $(selector) {
 }
 
 function $$(selector) {
-  var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
   if (!selector) return;
 
@@ -182,17 +390,16 @@ function isRootContainer(el) {
 }
 
 function getZoomLevel() {
-  var _window = window;
-  var outerWidth = _window.outerWidth;
-  var innerWidth = _window.innerWidth;
+  var outerWidth = win.outerWidth;
+  var innerWidth = win.innerWidth;
 
 
   return outerWidth ? outerWidth / innerWidth : 1;
 }
 
 function getScrollable(selectors) {
-  var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
-  var all = arguments.length <= 2 || arguments[2] === undefined ? true : arguments[2];
+  var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "y";
+  var all = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : true;
 
   var method = directionMethodMap[direction];
   var elements = selectors instanceof Element ? [selectors] : $$(selectors);
@@ -277,7 +484,7 @@ function getViewportAndElementSizes(el) {
 }
 
 function getScroll(el) {
-  var direction = arguments.length <= 1 || arguments[1] === undefined ? "y" : arguments[1];
+  var direction = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "y";
 
   var currentWindow = getWindow(el);
 
@@ -285,7 +492,7 @@ function getScroll(el) {
 }
 
 function setScroll(el, offset) {
-  var direction = arguments.length <= 2 || arguments[2] === undefined ? "y" : arguments[2];
+  var direction = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : "y";
 
   var currentWindow = getWindow(el);
   var top = direction === "y";
@@ -297,7 +504,7 @@ function setScroll(el, offset) {
 }
 
 function getOffset(el) {
-  var context = arguments.length <= 1 || arguments[1] === undefined ? null : arguments[1];
+  var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
   if (!el || el && !el.getClientRects().length) {
     return { top: 0, left: 0 };
@@ -335,7 +542,7 @@ var history = function () {
     return false;
   }
 
-  return window.history && "pushState" in window.history && window.location.protocol !== "file:";
+  return win.history && "pushState" in win.history && win.location.protocol !== "file:";
 }();
 
 function addEvent(el, event, listener) {
@@ -350,6 +557,37 @@ function removeEvent(el, event, listener) {
   events.forEach(function (eventName) {
     el.removeEventListener(eventName.trim(), listener, false);
   });
+}
+
+var vendors = ["ms", "moz", "webkit"];
+var lastTime = 0;
+
+var raf = win.requestAnimationFrame;
+var caf = win.cancelAnimationFrame;
+
+for (var x = 0; x < vendors.length && !raf; ++x) {
+  raf = win[vendors[x] + "RequestAnimationFrame"];
+  caf = win[vendors[x] + "CancelAnimationFrame"] || win[vendors[x] + "CancelRequestAnimationFrame"];
+}
+
+if (!raf) {
+  raf = function raf(callback) {
+    var currentTime = Date.now();
+    var timeToCall = max(0, 16 - (currentTime - lastTime));
+    var id = setTimeout(function () {
+      callback(currentTime + timeToCall);
+    }, timeToCall);
+
+    lastTime = currentTime + timeToCall;
+
+    return id;
+  };
+}
+
+if (!caf) {
+  caf = function caf(id) {
+    clearTimeout(id);
+  };
 }
 
 /* eslint-disable no-param-reassign, newline-before-return, max-params, new-cap */
@@ -511,19 +749,19 @@ function InOutElastic(x, t, b, c, d) {
 }
 
 function InBack(x, t, b, c, d) {
-  var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
+  var s = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1.70158;
 
   return c * (t /= d) * t * ((s + 1) * t - s) + b;
 }
 
 function OutBack(x, t, b, c, d) {
-  var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
+  var s = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1.70158;
 
   return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
 }
 
 function InOutBack(x, t, b, c, d) {
-  var s = arguments.length <= 5 || arguments[5] === undefined ? 1.70158 : arguments[5];
+  var s = arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1.70158;
 
   if ((t /= d / 2) < 1) {
     return c / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + b;
@@ -555,69 +793,38 @@ function InOutBounce(x, t, b, c, d) {
 }
 
 var Easing = Object.freeze({
-  linear: linear,
-  InQuad: InQuad,
-  OutQuad: OutQuad,
-  InOutQuad: InOutQuad,
-  InCubic: InCubic,
-  OutCubic: OutCubic,
-  InOutCubic: InOutCubic,
-  InQuart: InQuart,
-  OutQuart: OutQuart,
-  InOutQuart: InOutQuart,
-  InQuint: InQuint,
-  OutQuint: OutQuint,
-  InOutQuint: InOutQuint,
-  InSine: InSine,
-  OutSine: OutSine,
-  InOutSine: InOutSine,
-  InExpo: InExpo,
-  OutExpo: OutExpo,
-  InOutExpo: InOutExpo,
-  InCirc: InCirc,
-  OutCirc: OutCirc,
-  InOutCirc: InOutCirc,
-  InElastic: InElastic,
-  OutElastic: OutElastic,
-  InOutElastic: InOutElastic,
-  InBack: InBack,
-  OutBack: OutBack,
-  InOutBack: InOutBack,
-  OutBounce: OutBounce,
-  InBounce: InBounce,
-  InOutBounce: InOutBounce
+	linear: linear,
+	InQuad: InQuad,
+	OutQuad: OutQuad,
+	InOutQuad: InOutQuad,
+	InCubic: InCubic,
+	OutCubic: OutCubic,
+	InOutCubic: InOutCubic,
+	InQuart: InQuart,
+	OutQuart: OutQuart,
+	InOutQuart: InOutQuart,
+	InQuint: InQuint,
+	OutQuint: OutQuint,
+	InOutQuint: InOutQuint,
+	InSine: InSine,
+	OutSine: OutSine,
+	InOutSine: InOutSine,
+	InExpo: InExpo,
+	OutExpo: OutExpo,
+	InOutExpo: InOutExpo,
+	InCirc: InCirc,
+	OutCirc: OutCirc,
+	InOutCirc: InOutCirc,
+	InElastic: InElastic,
+	OutElastic: OutElastic,
+	InOutElastic: InOutElastic,
+	InBack: InBack,
+	OutBack: OutBack,
+	InOutBack: InOutBack,
+	OutBounce: OutBounce,
+	InBounce: InBounce,
+	InOutBounce: InOutBounce
 });
-
-var vendors = ["ms", "moz", "webkit"];
-var lastTime = 0;
-
-var raf = win.requestAnimationFrame;
-var caf = win.cancelAnimationFrame;
-
-for (var x = 0; x < vendors.length && !raf; ++x) {
-  raf = win[vendors[x] + "RequestAnimationFrame"];
-  caf = win[vendors[x] + "CancelAnimationFrame"] || win[vendors[x] + "CancelRequestAnimationFrame"];
-}
-
-if (!raf) {
-  raf = function raf(callback) {
-    var currentTime = Date.now();
-    var timeToCall = max(0, 16 - (currentTime - lastTime));
-    var id = setTimeout(function () {
-      callback(currentTime + timeToCall);
-    }, timeToCall);
-
-    lastTime = currentTime + timeToCall;
-
-    return id;
-  };
-}
-
-if (!caf) {
-  caf = function caf(id) {
-    clearTimeout(id);
-  };
-}
 
 var ScrollTween = function () {
   function ScrollTween(el) {
@@ -656,7 +863,7 @@ var ScrollTween = function () {
   }, {
     key: "stop",
     value: function stop() {
-      var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? true : arguments[0];
+      var gotoEnd = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : true;
       var complete = this.options.complete;
 
       this.startTime = null;
@@ -740,14 +947,8 @@ var WHEEL_EVENT = function () {
 var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
 var DOM_CONTENT_LOADED = "DOMContentLoaded";
 var LOAD = "load";
-var isDomContentLoaded = false;
-
-addEvent(doc, DOM_CONTENT_LOADED, function () {
-  isDomContentLoaded = true;
-});
 
 var SweetScroll = function () {
-
   /* eslint-enable max-len */
 
   /**
@@ -759,28 +960,31 @@ var SweetScroll = function () {
   function SweetScroll() {
     var _this = this;
 
-    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
-    var container = arguments.length <= 1 || arguments[1] === undefined ? "body, html" : arguments[1];
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    var container = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "body, html";
     classCallCheck(this, SweetScroll);
 
-    var params = merge({}, SweetScroll.defaults, options);
+    this.createAt = new Date();
+    this.options = merge({}, SweetScroll.defaults, options);
 
-    this.options = params;
     this.getContainer(container, function (target) {
+      if (target == null) {
+        _this.log("Not found scrollable container. => \"" + container + "\"");
+      }
+
       _this.container = target;
-      _this.header = $(params.header);
+      _this.header = $(_this.options.header);
       _this.tween = new ScrollTween(target);
       _this._trigger = null;
       _this._shouldCallCancelScroll = false;
       _this.bindContainerClick();
-      _this.hook(params, "initialized");
+      _this.hook(_this.options, "initialized");
     });
   }
 
   /**
-   * Scroll animation to the specified position
-   * @param {*} distance
-   * @param {Object} options
+   * Output log
+   * @param {String} message
    * @return {void}
    */
 
@@ -790,11 +994,26 @@ var SweetScroll = function () {
 
 
   createClass(SweetScroll, [{
+    key: "log",
+    value: function log(message) {
+      if (this.options.outputLog) {
+        warning("[SweetScroll] " + message);
+      }
+    }
+
+    /**
+     * Scroll animation to the specified position
+     * @param {*} distance
+     * @param {Object} options
+     * @return {void}
+     */
+
+  }, {
     key: "to",
     value: function to(distance) {
       var _this2 = this;
 
-      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
       var container = this.container;
       var header = this.header;
 
@@ -818,7 +1037,9 @@ var SweetScroll = function () {
       this.stop();
 
       // Does not move if the container is not found
-      if (!container) return;
+      if (!container) {
+        return this.log("Not found container element.");
+      }
 
       // Using the coordinates in the case of CSS Selector
       if (!scroll && isString(distance)) {
@@ -837,7 +1058,9 @@ var SweetScroll = function () {
         }
       }
 
-      if (!scroll) return;
+      if (!scroll) {
+        return this.log("Invalid parameter of distance. => " + distance);
+      }
 
       // Apply `offset` value
       if (offset) {
@@ -875,7 +1098,7 @@ var SweetScroll = function () {
         easing: params.easing,
         complete: function complete() {
           // Update URL
-          if (hash != null && hash !== window.location.hash) {
+          if (hash != null && hash !== win.location.hash) {
             _this2.updateURLHash(hash, params.updateURL);
           }
 
@@ -914,7 +1137,7 @@ var SweetScroll = function () {
   }, {
     key: "toTop",
     value: function toTop(distance) {
-      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       this.to(distance, merge({}, options, {
         verticalScroll: true,
@@ -932,7 +1155,7 @@ var SweetScroll = function () {
   }, {
     key: "toLeft",
     value: function toLeft(distance) {
-      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       this.to(distance, merge({}, options, {
         verticalScroll: false,
@@ -950,11 +1173,13 @@ var SweetScroll = function () {
   }, {
     key: "toElement",
     value: function toElement(el) {
-      var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
       if (el instanceof Element) {
         var offset = getOffset(el, this.container);
         this.to(offset, merge({}, options));
+      } else {
+        this.log("Invalid parameter. in toElement()");
       }
     }
 
@@ -967,7 +1192,11 @@ var SweetScroll = function () {
   }, {
     key: "stop",
     value: function stop() {
-      var gotoEnd = arguments.length <= 0 || arguments[0] === undefined ? false : arguments[0];
+      var gotoEnd = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (!this.container) {
+        this.log("Not found scrollable container.");
+      }
 
       if (this._stopScrollListener) {
         this._shouldCallCancelScroll = true;
@@ -984,7 +1213,11 @@ var SweetScroll = function () {
   }, {
     key: "update",
     value: function update() {
-      var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+
+      if (!this.container) {
+        this.log("Not found scrollable container.");
+      }
 
       this.stop();
       this.unbindContainerClick();
@@ -1002,6 +1235,10 @@ var SweetScroll = function () {
   }, {
     key: "destroy",
     value: function destroy() {
+      if (!this.container) {
+        this.log("Not found scrollable container.");
+      }
+
       this.stop();
       this.unbindContainerClick();
       this.unbindContainerStop();
@@ -1010,6 +1247,7 @@ var SweetScroll = function () {
       this.tween = null;
     }
 
+    /* eslint-disable no-unused-vars */
     /**
      * Called at after of the initialize.
      * @return {void}
@@ -1025,15 +1263,12 @@ var SweetScroll = function () {
      * @param {Element} trigger
      * @return {Boolean}
      */
-    /* eslint-disable no-unused-vars */
 
   }, {
     key: "beforeScroll",
     value: function beforeScroll(toScroll, trigger) {
       return true;
     }
-
-    /* eslint-enable no-unused-vars */
 
     /**
      * Called at cancel of the scroll.
@@ -1050,26 +1285,20 @@ var SweetScroll = function () {
      * @param {Element} trigger
      * @return {void}
      */
-    /* eslint-disable no-unused-vars */
 
   }, {
     key: "afterScroll",
     value: function afterScroll(toScroll, trigger) {}
-
-    /* eslint-enable no-unused-vars */
 
     /**
      * Called at complete of the scroll.
      * @param {Boolean} isCancel
      * @return {void}
      */
-    /* eslint-disable no-unused-vars */
 
   }, {
     key: "completeScroll",
     value: function completeScroll(isCancel) {}
-
-    /* eslint-enable no-unused-vars */
 
     /**
      * Called at each animation frame of the scroll.
@@ -1077,12 +1306,10 @@ var SweetScroll = function () {
      * @param {Object} props
      * @return {void}
      */
-    /* eslint-disable no-unused-vars */
 
   }, {
     key: "stepScroll",
     value: function stepScroll(currentTime, props) {}
-
     /* eslint-enable no-unused-vars */
 
     /**
@@ -1170,7 +1397,7 @@ var SweetScroll = function () {
     key: "updateURLHash",
     value: function updateURLHash(hash, historyType) {
       if (!history || !historyType) return;
-      window.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
+      win.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
     }
 
     /**
@@ -1203,7 +1430,7 @@ var SweetScroll = function () {
 
       if (container) {
         finalCallback(container);
-      } else if (!isDomContentLoaded) {
+      } else if (!/comp|inter|loaded/.test(doc.readyState)) {
         (function () {
           var isCompleted = false;
 
@@ -1231,7 +1458,13 @@ var SweetScroll = function () {
           addEvent(win, LOAD, handleLoad);
         })();
       } else {
-        finalCallback(null);
+        raf(function () {
+          if (Date.now() - _this3.createAt.getTime() > _this3.options.searchContainerTimeout) {
+            finalCallback(null);
+          } else {
+            _this3.getContainer(selector, callback);
+          }
+        });
       }
     }
 
@@ -1419,6 +1652,8 @@ SweetScroll.defaults = {
   updateURL: false, // Update the URL hash on after scroll (true | false | "push" | "replace")
   preventDefault: true, // Cancels the container element click event
   stopPropagation: true, // Prevents further propagation of the container element click event in the bubbling phase
+  searchContainerTimeout: 4000, // Specifies the maximum search time of Scrollabe Container
+  outputLog: false, // Specify level of output to log
 
   // Callbacks
   initialized: null,
