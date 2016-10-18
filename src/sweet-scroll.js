@@ -41,7 +41,8 @@ class SweetScroll {
     updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
     preventDefault: true,           // Cancels the container element click event
     stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
-    searchContainerTimeout: 4000,         // Specifies the maximum search time of Scrollabe Container
+    searchContainerTimeout: 4000,   // Specifies the maximum search time of Scrollabe Container
+    outputLog: false,               // Specify level of output to log
 
     // Callbacks
     initialized: null,
@@ -51,7 +52,6 @@ class SweetScroll {
     completeScroll: null,
     stepScroll: null
   };
-
   /* eslint-enable max-len */
 
   /**
@@ -65,6 +65,10 @@ class SweetScroll {
     this.options = Util.merge({}, SweetScroll.defaults, options);
 
     this.getContainer(container, target => {
+      if (target == null) {
+        this.log(`Not found scrollable container. => "${container}"`);
+      }
+
       this.container = target;
       this.header = $(this.options.header);
       this.tween = new ScrollTween(target);
@@ -73,6 +77,17 @@ class SweetScroll {
       this.bindContainerClick();
       this.hook(this.options, "initialized");
     });
+  }
+
+  /**
+   * Output log
+   * @param {string} message
+   * @return {void}
+   */
+  log(message) {
+    if (this.options.outputLog) {
+      Util.warning(`[SweetScroll] ${message}`);
+    }
   }
 
   /**
@@ -103,7 +118,9 @@ class SweetScroll {
     this.stop();
 
     // Does not move if the container is not found
-    if (!container) return;
+    if (!container) {
+      return this.log("Not found container element.");
+    }
 
     // Using the coordinates in the case of CSS Selector
     if (!scroll && Util.isString(distance)) {
@@ -122,7 +139,9 @@ class SweetScroll {
       }
     }
 
-    if (!scroll) return;
+    if (!scroll) {
+      return this.log(`Invalid parameter of distance. => ${distance}`);
+    }
 
     // Apply `offset` value
     if (offset) {
@@ -224,6 +243,8 @@ class SweetScroll {
     if (el instanceof Element) {
       const offset = Dom.getOffset(el, this.container);
       this.to(offset, Util.merge({}, options));
+    } else {
+      this.log("Invalid parameter. in toElement()");
     }
   }
 
@@ -233,6 +254,10 @@ class SweetScroll {
    * @return {void}
    */
   stop(gotoEnd = false) {
+    if (!this.container) {
+      this.log("Not found scrollable container.");
+    }
+
     if (this._stopScrollListener) {
       this._shouldCallCancelScroll = true;
     }
@@ -245,6 +270,10 @@ class SweetScroll {
    * @return {void}
    */
   update(options = {}) {
+    if (!this.container) {
+      this.log("Not found scrollable container.");
+    }
+
     this.stop();
     this.unbindContainerClick();
     this.unbindContainerStop();
@@ -258,6 +287,10 @@ class SweetScroll {
    * @return {void}
    */
   destroy() {
+    if (!this.container) {
+      this.log("Not found scrollable container.");
+    }
+
     this.stop();
     this.unbindContainerClick();
     this.unbindContainerStop();
