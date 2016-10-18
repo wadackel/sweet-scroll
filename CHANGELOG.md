@@ -1,3 +1,14 @@
+## 1.1.0
+
+* Add `searchContainerTimeout` options
+    - We changed the find logic of container element. Because there is a possibility of Timeout Along with it was to add this option.
+* Add `outputLog` options
+    - In order to aid in debugging has been added the output of the warning log.
+* Add `yarn.lock`
+* Update devDependencies
+* Fix some tests
+
+
 ## 1.0.4
 
 * Fixed a bug related to the container. (ref: [#27](https://github.com/tsuyoshiwada/sweet-scroll/issues/27))
