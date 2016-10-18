@@ -1,5 +1,6 @@
 /* eslint-disable no-underscore-dangle, no-undefined */
 import assert from "power-assert";
+import sinon from "sinon";
 import SweetScroll from "../src/sweet-scroll";
 
 
@@ -10,8 +11,8 @@ function trigger(el, type) {
   el.dispatchEvent(e);
 }
 
-function getInstance(options = {}) {
-  return new SweetScroll(options, "#container");
+function getInstance(options = {}, container = "#container") {
+  return new SweetScroll(options, container);
 }
 
 function getContainer() {
@@ -19,7 +20,17 @@ function getContainer() {
 }
 
 
+let clock = null;
+
 describe("SweetScroll", () => {
+  before(() => {
+    clock = sinon.useFakeTimers();
+  });
+
+  after(() => {
+    clock.restore();
+  });
+
   beforeEach(() => {
     document.body.innerHTML = window.__html__["test/fixtures/sweet-scroll.html"];
   });
@@ -154,21 +165,23 @@ describe("SweetScroll", () => {
     });
 
     it("Should be run afterScroll", done => {
-      const sweetScroll = getInstance({ afterScroll(toScroll) {
-        assert(toScroll.top === 500);
-        assert(toScroll.left === 0);
-        done();
-      } });
+      const sweetScroll = getInstance({
+        afterScroll(toScroll) {
+          assert(toScroll.top === 500);
+          assert(toScroll.left === 0);
+          done();
+        }
+      });
       sweetScroll.to(500);
+      clock.tick(1000);
     });
 
     it("Should be run cancelScroll", done => {
       const $container = getContainer();
       const sweetScroll = getInstance({ cancelScroll: done });
       sweetScroll.to(1200);
-      setTimeout(() => {
-        trigger($container, "touchstart");
-      }, 500);
+      clock.tick(500);
+      trigger($container, "touchstart");
     });
 
     it("Should be run completeScroll (isCancel=false)", done => {
@@ -179,6 +192,7 @@ describe("SweetScroll", () => {
         }
       });
       sweetScroll.to(1200);
+      clock.tick(1000);
     });
 
     it("Should be run completeScroll (isCancel=true)", done => {
@@ -190,9 +204,8 @@ describe("SweetScroll", () => {
         }
       });
       sweetScroll.to(1200);
-      setTimeout(() => {
-        trigger($container, "touchstart");
-      }, 500);
+      clock.tick(500);
+      trigger($container, "touchstart");
     });
   });
 
@@ -219,6 +232,7 @@ describe("SweetScroll", () => {
       }
       const myScroll = new MyScroll({}, "#container");
       myScroll.to(500);
+      clock.tick(1000);
     });
 
     it("Should be run cancelScroll", done => {
@@ -230,9 +244,8 @@ describe("SweetScroll", () => {
       const $container = getContainer();
       const myScroll = new MyScroll({}, "#container");
       myScroll.to(1200);
-      setTimeout(() => {
-        trigger($container, "touchstart");
-      }, 500);
+      clock.tick(500);
+      trigger($container, "touchstart");
     });
 
     it("Should be run completeScroll(isCancel=false)", done => {
@@ -244,6 +257,7 @@ describe("SweetScroll", () => {
       }
       const myScroll = new MyScroll({}, "#container");
       myScroll.to(1200);
+      clock.tick(1000);
     });
 
     it("Should be run completeScroll(isCancel=true)", done => {
@@ -256,9 +270,8 @@ describe("SweetScroll", () => {
       const $container = getContainer();
       const myScroll = new MyScroll({}, "#container");
       myScroll.to(1200);
-      setTimeout(() => {
-        trigger($container, "touchstart");
-      }, 500);
+      clock.tick(500);
+      trigger($container, "touchstart");
     });
   });
 
@@ -272,25 +285,27 @@ describe("SweetScroll", () => {
     it("Should be run beforeScroll", done => {
       getInstance({ trigger: triggerAnchorSelector, beforeScroll: () => done() });
       trigger(getAnchor(), "click");
+      clock.tick(1000);
     });
 
     it("Should be run afterScroll", done => {
       getInstance({ trigger: triggerAnchorSelector, afterScroll: () => done() });
       trigger(getAnchor(), "click");
+      clock.tick(1000);
     });
 
     it("Should be run cancelScroll", done => {
       const $container = getContainer();
       getInstance({ trigger: triggerAnchorSelector, cancelScroll: () => done() });
       trigger(getAnchor(), "click");
-      setTimeout(() => {
-        trigger($container, "touchstart");
-      }, 500);
+      clock.tick(500);
+      trigger($container, "touchstart");
     });
 
     it("Should be run completeScroll", done => {
       getInstance({ trigger: triggerAnchorSelector, completeScroll: () => done() });
       trigger(getAnchor(), "click");
+      clock.tick(1000);
     });
   });
 });
