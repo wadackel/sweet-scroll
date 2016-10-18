@@ -81,7 +81,7 @@ class SweetScroll {
 
   /**
    * Output log
-   * @param {string} message
+   * @param {String} message
    * @return {void}
    */
   log(message) {
@@ -178,7 +178,7 @@ class SweetScroll {
       easing: params.easing,
       complete: () => {
         // Update URL
-        if (hash != null && hash !== window.location.hash) {
+        if (hash != null && hash !== win.location.hash) {
           this.updateURLHash(hash, params.updateURL);
         }
 
@@ -425,7 +425,7 @@ class SweetScroll {
    */
   updateURLHash(hash, historyType) {
     if (!Supports.history || !historyType) return;
-    window.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
+    win.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
   }
 
   /**
