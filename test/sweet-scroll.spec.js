@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle, no-undefined */
+/* eslint-disable no-underscore-dangle, no-undefined, max-nested-callbacks */
 import assert from "power-assert";
 import sinon from "sinon";
 import SweetScroll from "../src/sweet-scroll";
@@ -40,36 +40,20 @@ describe("SweetScroll", () => {
   });
 
   describe("Initialize", () => {
-    it("Should not find container", done => {
+    it("Should not find container", () => {
       document.body.innerHTML = "";
-      getInstance({
-        searchContainerTimeout: 1000,
-        initialized() {
-          assert(this.container == null);
-          done();
-        }
-      });
-
-      clock.tick(1200);
+      const scroller = getInstance();
+      assert(scroller.container == null);
     });
 
-    it("Should be initialize module", done => {
-      getInstance({
-        trigger: "a[href^='#']",
-        initialized() {
-          assert(this.container === getContainer());
-          done();
-        }
-      });
+    it("Should be initialize module", () => {
+      const scroller = getInstance({ trigger: "a[href^='#']" });
+      assert(scroller.container === getContainer());
     });
 
-    it("Should be match specified container", done => {
-      getInstance({
-        initialized() {
-          assert(this.container === getContainer());
-          done();
-        }
-      }, getContainer());
+    it("Should be match specified container", () => {
+      const scroller = getInstance({}, getContainer());
+      assert(scroller.container === getContainer());
     });
 
     it("Should be parse the coodinate", () => {
@@ -101,112 +85,112 @@ describe("SweetScroll", () => {
 
     describe("Should be parse the relative coodinate", () => {
       it("Vertical and Horizontal", () => {
-        const sweetScroll = getInstance({ verticalScroll: true, horizontalScroll: true });
-        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), { top: 100, left: 0 });
-        sweetScroll.container.scrollTop = 100;
-        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), { top: 200, left: 0 });
-        sweetScroll.container.scrollTop = 200;
-        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), { top: 150, left: 0 });
-        sweetScroll.container.scrollTop = 150;
-        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), { top: 100, left: 0 });
+        const scroller = getInstance({ verticalScroll: true, horizontalScroll: true });
+        assert.deepEqual(scroller.parseCoodinate("+=100"), { top: 100, left: 0 });
+        scroller.container.scrollTop = 100;
+        assert.deepEqual(scroller.parseCoodinate("+=100"), { top: 200, left: 0 });
+        scroller.container.scrollTop = 200;
+        assert.deepEqual(scroller.parseCoodinate("-=50"), { top: 150, left: 0 });
+        scroller.container.scrollTop = 150;
+        assert.deepEqual(scroller.parseCoodinate("-=50"), { top: 100, left: 0 });
       });
 
       it("Vertical only", () => {
-        const sweetScroll = getInstance({ verticalScroll: true, horizontalScroll: false });
-        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), { top: 100, left: 0 });
-        sweetScroll.container.scrollTop = 100;
-        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), { top: 200, left: 0 });
-        sweetScroll.container.scrollTop = 200;
-        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), { top: 150, left: 0 });
-        sweetScroll.container.scrollTop = 150;
-        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), { top: 100, left: 0 });
+        const scroller = getInstance({ verticalScroll: true, horizontalScroll: false });
+        assert.deepEqual(scroller.parseCoodinate("+=100"), { top: 100, left: 0 });
+        scroller.container.scrollTop = 100;
+        assert.deepEqual(scroller.parseCoodinate("+=100"), { top: 200, left: 0 });
+        scroller.container.scrollTop = 200;
+        assert.deepEqual(scroller.parseCoodinate("-=50"), { top: 150, left: 0 });
+        scroller.container.scrollTop = 150;
+        assert.deepEqual(scroller.parseCoodinate("-=50"), { top: 100, left: 0 });
       });
 
       it("Horizontal only", () => {
-        const sweetScroll = getInstance({ verticalScroll: false, horizontalScroll: true });
-        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), { top: 0, left: 100 });
-        sweetScroll.container.scrollLeft = 100;
-        assert.deepEqual(sweetScroll.parseCoodinate("+=100"), { top: 0, left: 200 });
-        sweetScroll.container.scrollLeft = 200;
-        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), { top: 0, left: 150 });
-        sweetScroll.container.scrollLeft = 150;
-        assert.deepEqual(sweetScroll.parseCoodinate("-=50"), { top: 0, left: 100 });
+        const scroller = getInstance({ verticalScroll: false, horizontalScroll: true });
+        assert.deepEqual(scroller.parseCoodinate("+=100"), { top: 0, left: 100 });
+        scroller.container.scrollLeft = 100;
+        assert.deepEqual(scroller.parseCoodinate("+=100"), { top: 0, left: 200 });
+        scroller.container.scrollLeft = 200;
+        assert.deepEqual(scroller.parseCoodinate("-=50"), { top: 0, left: 150 });
+        scroller.container.scrollLeft = 150;
+        assert.deepEqual(scroller.parseCoodinate("-=50"), { top: 0, left: 100 });
       });
     });
   });
 
   describe("Update", () => {
     it("Should be option updated", () => {
-      const sweetScroll = getInstance({
+      const scroller = getInstance({
         easing: "linear",
         duration: 1000,
         offset: -10
       });
 
-      assert(sweetScroll.options.easing === "linear");
-      sweetScroll.update({ easing: "easeOutExpo" });
-      assert(sweetScroll.options.easing === "easeOutExpo");
+      assert(scroller.options.easing === "linear");
+      scroller.update({ easing: "easeOutExpo" });
+      assert(scroller.options.easing === "easeOutExpo");
 
-      assert(sweetScroll.options.duration === 1000);
-      sweetScroll.update({ duration: 1500 });
-      assert(sweetScroll.options.duration === 1500);
+      assert(scroller.options.duration === 1000);
+      scroller.update({ duration: 1500 });
+      assert(scroller.options.duration === 1500);
 
-      assert(sweetScroll.options.offset === -10);
-      sweetScroll.update({ offset: 0 });
-      assert(sweetScroll.options.offset === 0);
+      assert(scroller.options.offset === -10);
+      scroller.update({ offset: 0 });
+      assert(scroller.options.offset === 0);
     });
   });
 
   describe("Callbacks", () => {
     it("Should be run beforeScroll", done => {
-      const sweetScroll = getInstance({ beforeScroll(toScroll) {
+      const scroller = getInstance({ beforeScroll(toScroll) {
         assert(toScroll.top === 100);
         assert(toScroll.left === 0);
         done();
       } });
-      sweetScroll.to(100);
+      scroller.to(100);
     });
 
     it("Should be run afterScroll", done => {
-      const sweetScroll = getInstance({
+      const scroller = getInstance({
         afterScroll(toScroll) {
           assert(toScroll.top === 500);
           assert(toScroll.left === 0);
           done();
         }
       });
-      sweetScroll.to(500);
+      scroller.to(500);
       clock.tick(1000);
     });
 
     it("Should be run cancelScroll", done => {
       const $container = getContainer();
-      const sweetScroll = getInstance({ cancelScroll: done });
-      sweetScroll.to(1200);
+      const scroller = getInstance({ cancelScroll: done });
+      scroller.to(1200);
       clock.tick(500);
       trigger($container, "touchstart");
     });
 
     it("Should be run completeScroll (isCancel=false)", done => {
-      const sweetScroll = getInstance({
+      const scroller = getInstance({
         completeScroll(isCancel) {
           assert(isCancel === false);
           done();
         }
       });
-      sweetScroll.to(1200);
+      scroller.to(1200);
       clock.tick(1000);
     });
 
     it("Should be run completeScroll (isCancel=true)", done => {
       const $container = getContainer();
-      const sweetScroll = getInstance({
+      const scroller = getInstance({
         completeScroll(isCancel) {
           assert(isCancel === true);
           done();
         }
       });
-      sweetScroll.to(1200);
+      scroller.to(1200);
       clock.tick(500);
       trigger($container, "touchstart");
     });
