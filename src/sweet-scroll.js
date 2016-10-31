@@ -4,7 +4,6 @@ import * as Supports from "./supports";
 import * as math from "./math";
 import { $, matches } from "./selectors";
 import { addEvent, removeEvent } from "./events";
-import { raf } from "./request-animation-frame";
 import { win, doc } from "./elements";
 import ScrollTween from "./scroll-tween";
 
@@ -20,8 +19,6 @@ const WHEEL_EVENT = (() => {
 })();
 
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
-const DOM_CONTENT_LOADED = "DOMContentLoaded";
-const LOAD = "load";
 
 
 class SweetScroll {
@@ -41,11 +38,9 @@ class SweetScroll {
     updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
     preventDefault: true,           // Cancels the container element click event
     stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
-    searchContainerTimeout: 4000,   // Specifies the maximum search time of Scrollabe Container
     outputLog: false,               // Specify level of output to log
 
     // Callbacks
-    initialized: null,
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null,
@@ -61,22 +56,26 @@ class SweetScroll {
    * @param {String | Element} container
    */
   constructor(options = {}, container = "body, html") {
-    this.createAt = new Date();
     this.options = Util.merge({}, SweetScroll.defaults, options);
+    this.container = this.getContainer(container);
 
-    this.getContainer(container, target => {
-      if (target == null) {
+    if (this.container == null) {
+      this.header = null;
+      this.tween = null;
+
+      if (!/comp|inter|loaded/.test(doc.readyState)) {
+        this.log("Should be initialize later than DOMContentLoaded.");
+      } else {
         this.log(`Not found scrollable container. => "${container}"`);
       }
 
-      this.container = target;
+    } else {
       this.header = $(this.options.header);
-      this.tween = new ScrollTween(target);
+      this.tween = new ScrollTween(this.container);
       this._trigger = null;
       this._shouldCallCancelScroll = false;
       this.bindContainerClick();
-      this.hook(this.options, "initialized");
-    });
+    }
   }
 
   /**
@@ -301,12 +300,6 @@ class SweetScroll {
 
   /* eslint-disable no-unused-vars */
   /**
-   * Called at after of the initialize.
-   * @return {void}
-   */
-  initialized() {}
-
-  /**
    * Called at before of the scroll.
    * @param {Object} toScroll
    * @param {Element} trigger
@@ -431,13 +424,11 @@ class SweetScroll {
   /**
    * Get the container for the scroll, depending on the options.
    * @param {String | Element} selector
-   * @param {Function} callback
-   * @return {void}
+   * @return {?Element}
    * @private
    */
-  getContainer(selector, callback) {
+  getContainer(selector) {
     const { verticalScroll, horizontalScroll } = this.options;
-    const finalCallback = callback.bind(this);
     let container = null;
 
     if (verticalScroll) {
@@ -448,44 +439,7 @@ class SweetScroll {
       container = Dom.scrollableFind(selector, "x");
     }
 
-    if (container) {
-      finalCallback(container);
-
-    } else if (!/comp|inter|loaded/.test(doc.readyState)) {
-      let isCompleted = false;
-
-      const handleDomContentLoaded = () => {
-        removeHandlers(); // eslint-disable-line no-use-before-define
-        isCompleted = true;
-        this.getContainer(selector, callback);
-      };
-
-      const handleLoad = () => {
-        removeHandlers(); // eslint-disable-line no-use-before-define
-        if (!isCompleted) {
-          this.getContainer(selector, callback);
-        }
-      };
-
-      /* eslint-disable func-style */
-      const removeHandlers = () => {
-        removeEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
-        removeEvent(win, LOAD, handleLoad);
-      };
-      /* eslint-enable func-style */
-
-      addEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
-      addEvent(win, LOAD, handleLoad);
-
-    } else {
-      raf(() => {
-        if (Date.now() - this.createAt.getTime() > this.options.searchContainerTimeout) {
-          finalCallback(null);
-        } else {
-          this.getContainer(selector, callback);
-        }
-      });
-    }
+    return container;
   }
 
   /**
