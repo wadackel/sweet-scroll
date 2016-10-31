@@ -90,40 +90,21 @@ class SweetScroll {
   }
 
   /**
-   * Scroll animation to the specified position
+   * Get scroll offset
    * @param {*} distance
    * @param {Object} options
-   * @return {void}
+   * @return {Object}
+   * @private
    */
-  to(distance, options = {}) {
+  getScrollOffset(distance, options) {
     const { container, header } = this;
-    const params = Util.merge({}, this.options, options);
-
-    // Temporary options
-    this._options = params;
-
-    const offset = this.parseCoodinate(params.offset);
-    const trigger = this._trigger;
+    const offset = this.parseCoodinate(options.offset);
     let scroll = this.parseCoodinate(distance);
-    let hash = null;
-
-    // Remove the triggering elements which has been temporarily retained
-    this._trigger = null;
-
-    // Disable the call flag of `cancelScroll`
-    this._shouldCallCancelScroll = false;
-
-    // Stop current animation
-    this.stop();
-
-    // Does not move if the container is not found
-    if (!container) {
-      return this.log("Not found container element.");
-    }
+    // let hash = null;
 
     // Using the coordinates in the case of CSS Selector
     if (!scroll && Util.isString(distance)) {
-      hash = /^#/.test(distance) ? distance : null;
+      // hash = /^#/.test(distance) ? distance : null;
 
       if (distance === "#") {
         scroll = {
@@ -139,7 +120,7 @@ class SweetScroll {
     }
 
     if (!scroll) {
-      return this.log(`Invalid parameter of distance. => ${distance}`);
+      return null;
     }
 
     // Apply `offset` value
@@ -153,22 +134,79 @@ class SweetScroll {
       scroll.top = math.max(0, scroll.top - Dom.getSize(header).height);
     }
 
+    return scroll;
+  }
+
+  /**
+   * Normalize scroll offset
+   * @param {Ojbect} scroll
+   * @param {Ojbect} options
+   * @return {Object}
+   * @private
+   */
+  normalizeScrollOffset(scroll, options) {
+    const { container } = this;
+    const finalScroll = Util.merge({}, scroll);
+
     // Determine the final scroll coordinates
     const { viewport, size } = Dom.getViewportAndElementSizes(container);
+
+    // Adjustment of the maximum value
+    finalScroll.top = options.verticalScroll
+      ? math.max(0, math.min(size.height - viewport.height, finalScroll.top))
+      : Dom.getScroll(container, "y");
+
+    finalScroll.left = options.horizontalScroll
+      ? math.max(0, math.min(size.width - viewport.width, finalScroll.left))
+      : Dom.getScroll(container, "x");
+
+    return finalScroll;
+  }
+
+  /**
+   * Scroll animation to the specified position
+   * @param {*} distance
+   * @param {Object} options
+   * @return {void}
+   */
+  to(distance, options = {}) {
+    const { container } = this;
+    const params = Util.merge({}, this.options, options);
+    const trigger = this._trigger;
+    const hash = Util.isString(distance) && /^#/.test(distance) ? distance : null;
+
+    // Temporary options
+    this._options = params;
+
+    // Remove the triggering elements which has been temporarily retained
+    this._trigger = null;
+
+    // Disable the call flag of `cancelScroll`
+    this._shouldCallCancelScroll = false;
+
+    // Stop current animation
+    this.stop();
+
+    // Does not move if the container is not found
+    if (!container) {
+      return this.log("Not found container element.");
+    }
+
+    // Get scroll offset
+    let scroll = this.getScrollOffset(distance, params);
+
+    if (!scroll) {
+      return this.log(`Invalid parameter of distance. => ${distance}`);
+    }
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
     if (this.hook(params, "beforeScroll", scroll, trigger) === false) {
+      this._options = null;
       return;
     }
 
-    // Adjustment of the maximum value
-    scroll.top = params.verticalScroll
-      ? math.max(0, math.min(size.height - viewport.height, scroll.top))
-      : Dom.getScroll(container, "y");
-    scroll.left = params.horizontalScroll
-      ? math.max(0, math.min(size.width - viewport.width, scroll.left))
-      : Dom.getScroll(container, "x");
+    scroll = this.normalizeScrollOffset(scroll, params);
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, {
@@ -569,7 +607,6 @@ class SweetScroll {
    */
   parseDataOptions(el) {
     const options = el.getAttribute("data-scroll-options");
-
     return options ? JSON.parse(options) : {};
   }
 }
