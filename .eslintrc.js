@@ -96,7 +96,7 @@ module.exports = {
     "max-statements-per-line": ["error", { max: 1 }],
     "new-cap": "error",
     "new-parens": "error",
-    "newline-before-return": "error",
+    "newline-before-return": "off",
     "no-array-constructor": "error",
     "no-lonely-if": "error",
     "no-mixed-spaces-and-tabs": "error",

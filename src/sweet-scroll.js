@@ -4,7 +4,6 @@ import * as Supports from "./supports";
 import * as math from "./math";
 import { $, matches } from "./selectors";
 import { addEvent, removeEvent } from "./events";
-import { raf } from "./request-animation-frame";
 import { win, doc } from "./elements";
 import ScrollTween from "./scroll-tween";
 
@@ -20,8 +19,6 @@ const WHEEL_EVENT = (() => {
 })();
 
 const CONTAINER_STOP_EVENTS = `${WHEEL_EVENT}, touchstart, touchmove`;
-const DOM_CONTENT_LOADED = "DOMContentLoaded";
-const LOAD = "load";
 
 
 class SweetScroll {
@@ -41,11 +38,9 @@ class SweetScroll {
     updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
     preventDefault: true,           // Cancels the container element click event
     stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
-    searchContainerTimeout: 4000,   // Specifies the maximum search time of Scrollabe Container
     outputLog: false,               // Specify level of output to log
 
     // Callbacks
-    initialized: null,
     beforeScroll: null,
     afterScroll: null,
     cancelScroll: null,
@@ -61,22 +56,26 @@ class SweetScroll {
    * @param {String | Element} container
    */
   constructor(options = {}, container = "body, html") {
-    this.createAt = new Date();
     this.options = Util.merge({}, SweetScroll.defaults, options);
+    this.container = this.getContainer(container);
 
-    this.getContainer(container, target => {
-      if (target == null) {
+    if (this.container == null) {
+      this.header = null;
+      this.tween = null;
+
+      if (!/comp|inter|loaded/.test(doc.readyState)) {
+        this.log("Should be initialize later than DOMContentLoaded.");
+      } else {
         this.log(`Not found scrollable container. => "${container}"`);
       }
 
-      this.container = target;
+    } else {
       this.header = $(this.options.header);
-      this.tween = new ScrollTween(target);
+      this.tween = new ScrollTween(this.container);
       this._trigger = null;
       this._shouldCallCancelScroll = false;
       this.bindContainerClick();
-      this.hook(this.options, "initialized");
-    });
+    }
   }
 
   /**
@@ -91,40 +90,21 @@ class SweetScroll {
   }
 
   /**
-   * Scroll animation to the specified position
+   * Get scroll offset
    * @param {*} distance
    * @param {Object} options
-   * @return {void}
+   * @return {Object}
+   * @private
    */
-  to(distance, options = {}) {
+  getScrollOffset(distance, options) {
     const { container, header } = this;
-    const params = Util.merge({}, this.options, options);
-
-    // Temporary options
-    this._options = params;
-
-    const offset = this.parseCoodinate(params.offset);
-    const trigger = this._trigger;
+    const offset = this.parseCoodinate(options.offset);
     let scroll = this.parseCoodinate(distance);
-    let hash = null;
-
-    // Remove the triggering elements which has been temporarily retained
-    this._trigger = null;
-
-    // Disable the call flag of `cancelScroll`
-    this._shouldCallCancelScroll = false;
-
-    // Stop current animation
-    this.stop();
-
-    // Does not move if the container is not found
-    if (!container) {
-      return this.log("Not found container element.");
-    }
+    // let hash = null;
 
     // Using the coordinates in the case of CSS Selector
     if (!scroll && Util.isString(distance)) {
-      hash = /^#/.test(distance) ? distance : null;
+      // hash = /^#/.test(distance) ? distance : null;
 
       if (distance === "#") {
         scroll = {
@@ -140,7 +120,7 @@ class SweetScroll {
     }
 
     if (!scroll) {
-      return this.log(`Invalid parameter of distance. => ${distance}`);
+      return null;
     }
 
     // Apply `offset` value
@@ -154,22 +134,79 @@ class SweetScroll {
       scroll.top = math.max(0, scroll.top - Dom.getSize(header).height);
     }
 
+    return scroll;
+  }
+
+  /**
+   * Normalize scroll offset
+   * @param {Ojbect} scroll
+   * @param {Ojbect} options
+   * @return {Object}
+   * @private
+   */
+  normalizeScrollOffset(scroll, options) {
+    const { container } = this;
+    const finalScroll = Util.merge({}, scroll);
+
     // Determine the final scroll coordinates
     const { viewport, size } = Dom.getViewportAndElementSizes(container);
+
+    // Adjustment of the maximum value
+    finalScroll.top = options.verticalScroll
+      ? math.max(0, math.min(size.height - viewport.height, finalScroll.top))
+      : Dom.getScroll(container, "y");
+
+    finalScroll.left = options.horizontalScroll
+      ? math.max(0, math.min(size.width - viewport.width, finalScroll.left))
+      : Dom.getScroll(container, "x");
+
+    return finalScroll;
+  }
+
+  /**
+   * Scroll animation to the specified position
+   * @param {*} distance
+   * @param {Object} options
+   * @return {void}
+   */
+  to(distance, options = {}) {
+    const { container } = this;
+    const params = Util.merge({}, this.options, options);
+    const trigger = this._trigger;
+    const hash = Util.isString(distance) && /^#/.test(distance) ? distance : null;
+
+    // Temporary options
+    this._options = params;
+
+    // Remove the triggering elements which has been temporarily retained
+    this._trigger = null;
+
+    // Disable the call flag of `cancelScroll`
+    this._shouldCallCancelScroll = false;
+
+    // Stop current animation
+    this.stop();
+
+    // Does not move if the container is not found
+    if (!container) {
+      return this.log("Not found container element.");
+    }
+
+    // Get scroll offset
+    let scroll = this.getScrollOffset(distance, params);
+
+    if (!scroll) {
+      return this.log(`Invalid parameter of distance. => ${distance}`);
+    }
 
     // Call `beforeScroll`
     // Stop scrolling when it returns false
     if (this.hook(params, "beforeScroll", scroll, trigger) === false) {
+      this._options = null;
       return;
     }
 
-    // Adjustment of the maximum value
-    scroll.top = params.verticalScroll
-      ? math.max(0, math.min(size.height - viewport.height, scroll.top))
-      : Dom.getScroll(container, "y");
-    scroll.left = params.horizontalScroll
-      ? math.max(0, math.min(size.width - viewport.width, scroll.left))
-      : Dom.getScroll(container, "x");
+    scroll = this.normalizeScrollOffset(scroll, params);
 
     // Run the animation!!
     this.tween.run(scroll.left, scroll.top, {
@@ -301,12 +338,6 @@ class SweetScroll {
 
   /* eslint-disable no-unused-vars */
   /**
-   * Called at after of the initialize.
-   * @return {void}
-   */
-  initialized() {}
-
-  /**
    * Called at before of the scroll.
    * @param {Object} toScroll
    * @param {Element} trigger
@@ -431,13 +462,11 @@ class SweetScroll {
   /**
    * Get the container for the scroll, depending on the options.
    * @param {String | Element} selector
-   * @param {Function} callback
-   * @return {void}
+   * @return {?Element}
    * @private
    */
-  getContainer(selector, callback) {
+  getContainer(selector) {
     const { verticalScroll, horizontalScroll } = this.options;
-    const finalCallback = callback.bind(this);
     let container = null;
 
     if (verticalScroll) {
@@ -448,44 +477,7 @@ class SweetScroll {
       container = Dom.scrollableFind(selector, "x");
     }
 
-    if (container) {
-      finalCallback(container);
-
-    } else if (!/comp|inter|loaded/.test(doc.readyState)) {
-      let isCompleted = false;
-
-      const handleDomContentLoaded = () => {
-        removeHandlers(); // eslint-disable-line no-use-before-define
-        isCompleted = true;
-        this.getContainer(selector, callback);
-      };
-
-      const handleLoad = () => {
-        removeHandlers(); // eslint-disable-line no-use-before-define
-        if (!isCompleted) {
-          this.getContainer(selector, callback);
-        }
-      };
-
-      /* eslint-disable func-style */
-      const removeHandlers = () => {
-        removeEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
-        removeEvent(win, LOAD, handleLoad);
-      };
-      /* eslint-enable func-style */
-
-      addEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
-      addEvent(win, LOAD, handleLoad);
-
-    } else {
-      raf(() => {
-        if (Date.now() - this.createAt.getTime() > this.options.searchContainerTimeout) {
-          finalCallback(null);
-        } else {
-          this.getContainer(selector, callback);
-        }
-      });
-    }
+    return container;
   }
 
   /**
@@ -615,7 +607,6 @@ class SweetScroll {
    */
   parseDataOptions(el) {
     const options = el.getAttribute("data-scroll-options");
-
     return options ? JSON.parse(options) : {};
   }
 }

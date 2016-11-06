@@ -1,0 +1,60 @@
+@mixin position($type, $top: null, $right: null, $bottom: null, $left: null, $z-index: null) {
+  position: $type;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+  z-index: $z-index;
+}
+
+@mixin fixed($top: null, $right: null, $bottom: null, $left: null, $z-index: null) {
+  @include position(fixed, $top, $right, $bottom, $left, $z-index);
+}
+
+@mixin absolute($top: null, $right: null, $bottom: null, $left: null, $z-index: null) {
+  @include position(absolute, $top, $right, $bottom, $left, $z-index);
+}
+
+@mixin relative($top: null, $right: null, $bottom: null, $left: null, $z-index: null) {
+  @include position(relative, $top, $right, $bottom, $left, $z-index);
+}
+
+@mixin static() {
+  @include position(static, null, null, null, null, null);
+}
+
+@mixin icomoon() {
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@mixin mq-extra-small() {
+  @media (max-width: 480px) {
+    @content;
+  }
+}
+
+@mixin mq-small() {
+  @media (max-width: 770px) {
+    @content;
+  }
+}
+
+@mixin mq-medium() {
+  @media (max-width: 980px) {
+    @content;
+  }
+}
+
+@mixin mq-large() {
+  @media (max-width: 1200px) {
+    @content;
+  }
+}

@@ -1,12 +1,9 @@
-sweet-scroll.js
-===============
+<img src="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png" width="340" height="135" alt="sweet-scroll.js">
 
 [![Build Status](http://img.shields.io/travis/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://travis-ci.org/tsuyoshiwada/sweet-scroll)
 [![npm version](https://img.shields.io/npm/v/sweet-scroll.svg?style=flat-square)](http://badge.fury.io/js/sweet-scroll)
 [![David](https://img.shields.io/david/dev/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://david-dm.org/tsuyoshiwada/sweet-scroll/#info=devDependencies&view=table)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
-
-<img src="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png" width="600" height="127" alt="sweet-scroll.js">
 
 ECMAScript2015 Friendly, dependency-free smooth scroll library.
 
@@ -66,8 +63,12 @@ import SweetScroll from "sweet-scroll"
 
 ### 3. Initialize SweetScroll
 
+You need to initialize an instance after `DOMContentLoaded`.
+
 ```javascript
-const sweetScroll = new SweetScroll({/* some options */});
+document.addEventListener("DOMContentLoaded", () => {
+  const sweetScroll = new SweetScroll({/* some options */});
+}, false);
 ```
 
 
@@ -90,11 +91,9 @@ The following options are applied by default. It can be customized as needed.
   updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
   preventDefault: true,           // Cancels the container element click event
   stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
-  searchContainerTimeout: 4000,   // Specifies the maximum search time of Scrollabe Container
   outputLog: false,               // Specify level of output to log
 
   // Callbacks
-  initialized: null,
   beforeScroll: null,
   afterScroll: null,
   cancelScroll: null,
@@ -218,23 +217,20 @@ Will use the data-scroll attribute instead of href.
 The following, Introduce one of the mounting method.
 
 ```javascript
-const sweetScroll = new SweetScroll();
-const hash = window.location.hash;
-let needsInitialScroll = false;
+document.addEventListener("DOMContentLoaded", () => {
+  const sweetScroll = new SweetScroll();
+  const hash = window.location.hash;
+  const needsInitialScroll = needsInitialScroll = document.getElementById(hash.substr(1)) != null;
 
-document.addEventListener("DOMContentLoaded", function() {
-  needsInitialScroll = document.getElementById(hash.substr(1)) != null;
   if (needsInitialScroll) {
     window.location.hash = "";
   }
-}, false);
 
-window.addEventListener("load", function() {
-  if (needsInitialScroll) {
-    // In initial scroll will update the hash without leaving a history.
-    // Support for IE10+.
-    sweetScroll.to(hash, {updateURL: "replace"});
-  }
+  window.addEventListener("load", () => {
+    if (needsInitialScroll) {
+      sweetScroll.to(hash, { updateURL: "replace" });
+    }
+  }, false);
 }, false);
 ```
 
@@ -255,7 +251,6 @@ You can also achieve the same thing in other ways by using the provided API.
 * [stop(gotoEnd = false)](#stopgotoend--true)
 * [destroy()](#destroy)
 * [Callbacks](#callbacks)
-    - `initialized() {}`
     - `beforeScroll(toScroll, trigger) {}`
     - `cancelScroll() {}`
     - `afterScroll(toScroll, trigger) {}`
@@ -415,11 +410,6 @@ In addition, you can stop the scrolling by return a `beforeScroll` in `false`.
 ```javascript
 const sweetScroll = new SweetScroll({
 
-  // Initialized the instance.
-  initialized() {
-    console.log("Initialized");
-  },
-
   // Stop scrolling case of trigger element that contains the `is-disabled` class.
   beforeScroll(toScroll, trigger) {
     console.log("Before!!");
@@ -456,10 +446,6 @@ The following is a pattern to override a method in the inheritance destination c
 
 ```javascript
 class MyScroll extends SweetScroll {
-  initialized() {
-    console.log("Initialized");
-  }
-
   beforeScroll(toScroll, trigger) {
     // Stop scrolling case of trigger element that contains the `is-disabled` class.
     console.log("Before!!");

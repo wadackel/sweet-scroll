@@ -2,10 +2,12 @@ branches:
   only:
     - master
     - dev
-
 notifications:
   email: false
-
 language: node_js
 node_js:
-  - 4.2.2
+  - node
+sudo: false
+cache:
+  directories:
+    - node_modules
