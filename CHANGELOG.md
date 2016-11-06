@@ -1,3 +1,24 @@
+## 2.0.0
+
+### Breaking changes
+
+Related issues [#31](https://github.com/tsuyoshiwada/sweet-scroll/issues/31). Thanks [@nickclaw](https://github.com/nickclaw)!!
+
+* Need to initialize an instance after `DOMContentLoaded`. (So far it has been listening in the library.)
+    - In many cases, since there is no need to be initialized before DOMContentLoaded.
+* Removed `initialized` callback & method.
+* Removed `searchContainerTimeout` options.
+
+
+### Minor changes
+
+* Update doc
+* Update design of [demo page](http://tsuyoshiwada.github.io/sweet-scroll/)
+* Update devDependencies
+* Change some of output log
+* Update some tests
+
+
 ## 1.1.0
 
 * Add `searchContainerTimeout` options
