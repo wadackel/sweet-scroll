@@ -5,119 +5,127 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <title>Easings | sweet-scroll.js</title>
-  <link rel="shortcut icon" href="./images/favicon.ico">
-  <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+  <link rel="stylesheet" href="./lib/icomoon/style.css">
+  <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
   <link rel="stylesheet" href="./css/style.css">
-  <style type="text/css">
-    section {
-      height: 95vh;
-    }
-    #content01 {
-      background: #f5f5f5;
-    }
-    #content02 {
-      background: #eee;
-    }
-    #content03 {
-      background: #e0e0e0;
-    }
-    #content04 {
-      background: #bdbdbd;
-    }
-    #content05 {
-      background: #9e9e9e;
-    }
-  </style>
 </head>
 <body>
-  <header id="demo-header" data-scroll-header>
-    <a href="./#example"><i class="fa fa-chevron-left"></i> Back front</a>
-    <ul>
-      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/easings.html"><i class="fa fa-code"></i> <span>Source</span></i></a></li>
-      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> <span>Document on GitHub</span></i></a></li>
-    </ul>
+  <header class="header" data-scroll-header>
+    <a class="header__back" href="./#examples"><i class="icon-angle-left"></i><span>Back</span></a>
+    <h1 class="header__logo"><img src="./images/icon-logo.svg" width="32" height="32" alt="sweet-scroll.js"></h1>
+    <a class="header__code" href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/easings.html"><i class="icon-code"></i><span>Source</span></a>
   </header>
-  <section id="first">
-    <h1>Easings</h1>
-    <p>Please select the type of easing.</p>
-    <p>
-      <select id="easing-type">
-        <option value="linear">linear</option>
-        <option value="easeInQuad">easeInQuad</option>
-        <option value="easeOutQuad">easeOutQuad</option>
-        <option value="easeInOutQuad">easeInOutQuad</option>
-        <option value="easeInCubic">easeInCubic</option>
-        <option value="easeOutCubic">easeInOutCubic</option>
-        <option value="easeInQuart">easeInQuart</option>
-        <option value="easeOutQuart">easeOutQuart</option>
-        <option value="easeInOutQuart">easeInOutQuart</option>
-        <option value="easeInQuint">easeInQuint</option>
-        <option value="easeOutQuint">easeOutQuint</option>
-        <option value="easeInOutQuint">easeInOutQuint</option>
-        <option value="easeInSine">easeInSine</option>
-        <option value="easeOutSine">easeOutSine</option>
-        <option value="easeInOutSine">easeInOutSine</option>
-        <option value="easeInExpo">easeInExpo</option>
-        <option value="easeOutExpo">easeOutExpo</option>
-        <option value="easeInOutExpo">easeInOutExpo</option>
-        <option value="easeInCirc">easeInCirc</option>
-        <option value="easeOutCirc">easeOutCirc</option>
-        <option value="easeInOutCirc">easeInOutCirc</option>
-        <option value="easeInElastic">easeInElastic</option>
-        <option value="easeOutElastic">easeOutElastic</option>
-        <option value="easeInOutElastic">easeInOutElastic</option>
-        <option value="easeInBack">easeInBack</option>
-        <option value="easeOutBack">easeOutBack</option>
-        <option value="easeInOutBack">easeInOutBack</option>
-        <option value="easeInBounce">easeInBounce</option>
-        <option value="easeOutBounce" selected="selected">easeOutBounce</option>
-        <option value="easeInOutBounce">easeInOutBounce</option>
-      </select>
-    </p>
-    <ul class="list-inline">
-      <li><a href="#content01" data-scroll>#Content 01</a></li>
-      <li><a href="#content02" data-scroll>#Content 02</a></li>
-      <li><a href="#content03" data-scroll>#Content 03</a></li>
-      <li><a href="#content04" data-scroll>#Content 04</a></li>
-      <li><a href="#content05" data-scroll>#Content 05</a></li>
-    </ul>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__container">
+        <div class="section__header">
+          <h2 class="section__title">Easings</h2>
+          <p class="section__lead">You can use various types of easing.</p>
+        </div>
+        <div class="section__body">
+          <h3>Please select the type of easing.</h3>
+          <p>
+            <select id="easing-type">
+              <option value="linear">linear</option>
+              <option value="easeInQuad">easeInQuad</option>
+              <option value="easeOutQuad">easeOutQuad</option>
+              <option value="easeInOutQuad">easeInOutQuad</option>
+              <option value="easeInCubic">easeInCubic</option>
+              <option value="easeOutCubic">easeInOutCubic</option>
+              <option value="easeInQuart">easeInQuart</option>
+              <option value="easeOutQuart">easeOutQuart</option>
+              <option value="easeInOutQuart">easeInOutQuart</option>
+              <option value="easeInQuint">easeInQuint</option>
+              <option value="easeOutQuint">easeOutQuint</option>
+              <option value="easeInOutQuint">easeInOutQuint</option>
+              <option value="easeInSine">easeInSine</option>
+              <option value="easeOutSine">easeOutSine</option>
+              <option value="easeInOutSine">easeInOutSine</option>
+              <option value="easeInExpo">easeInExpo</option>
+              <option value="easeOutExpo">easeOutExpo</option>
+              <option value="easeInOutExpo">easeInOutExpo</option>
+              <option value="easeInCirc">easeInCirc</option>
+              <option value="easeOutCirc">easeOutCirc</option>
+              <option value="easeInOutCirc">easeInOutCirc</option>
+              <option value="easeInElastic">easeInElastic</option>
+              <option value="easeOutElastic">easeOutElastic</option>
+              <option value="easeInOutElastic">easeInOutElastic</option>
+              <option value="easeInBack">easeInBack</option>
+              <option value="easeOutBack">easeOutBack</option>
+              <option value="easeInOutBack">easeInOutBack</option>
+              <option value="easeInBounce">easeInBounce</option>
+              <option value="easeOutBounce" selected="selected">easeOutBounce</option>
+              <option value="easeInOutBounce">easeInOutBounce</option>
+            </select>
+          </p>
+          <ul class="list--inline">
+            <li><a href="#first" data-scroll>1. First</a></li>
+            <li><a href="#second" data-scroll>2. Second</a></li>
+            <li><a href="#third" data-scroll>3. Third</a></li>
+            <li><a href="#fourth" data-scroll>4. Fourth</a></li>
+            <li><a href="#fifth" data-scroll>5. Fifth</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
   </section>
 
-  <section id="content01">
-    <h2>Content 01</h2>
-    <p><a href="#" data-scroll>Page top</a></p>
+  <section class="section demo-content" id="first">
+    <div class="container">
+      <div class="section__header">
+        <div class="section__title">1. First</div>
+        <div class="section__lead"><a href="#" data-scroll>Page top</a> <a href="#second" data-scroll>Next content</a></div>
+      </div>
+    </div>
   </section>
 
-  <section id="content02">
-    <h2>Content 02</h2>
-    <p><a href="#" data-scroll>Page top</a></p>
+  <section class="section demo-content" id="second">
+    <div class="container">
+      <div class="section__header">
+        <div class="section__title">2. Second</div>
+        <div class="section__lead"><a href="#" data-scroll>Page top</a> <a href="#third" data-scroll>Next content</a></div>
+      </div>
+    </div>
   </section>
 
-  <section id="content03">
-    <h2>Content 03</h2>
-    <p><a href="#" data-scroll>Page top</a></p>
+  <section class="section demo-content" id="third">
+    <div class="container">
+      <div class="section__header">
+        <div class="section__title">3. Third</div>
+        <div class="section__lead"><a href="#" data-scroll>Page top</a> <a href="#fourth" data-scroll>Next content</a></div>
+      </div>
+    </div>
   </section>
 
-  <section id="content04">
-    <h2>Content 04</h2>
-    <p><a href="#" data-scroll>Page top</a></p>
+  <section class="section demo-content" id="fourth">
+    <div class="container">
+      <div class="section__header">
+        <div class="section__title">4. Fourth</div>
+        <div class="section__lead"><a href="#" data-scroll>Page top</a> <a href="#fifth" data-scroll>Next content</a></div>
+      </div>
+    </div>
   </section>
 
-  <section id="content05">
-    <h2>Content 05</h2>
-    <p><a href="#" data-scroll>Page top</a></p>
+  <section class="section demo-content" id="fifth">
+    <div class="container">
+      <div class="section__header">
+        <div class="section__title">5. Fifth</div>
+        <div class="section__lead"><a href="#" data-scroll>Page top</a></div>
+      </div>
+    </div>
   </section>
 
   <script src="./js/sweet-scroll.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      var sweetScroll = new SweetScroll({easing: "easeOutBounce"});
-      var $easings = document.getElementById("easing-type");
+    var sweetScroll = new SweetScroll({ easing: "easeOutBounce" });
+    var $easings = document.getElementById("easing-type");
 
-      $easings.addEventListener("change", function() {
-        var easing = $easings.options[$easings.selectedIndex].value;
-        sweetScroll.update({easing: easing});
-      }, false);
+    $easings.addEventListener("change", function() {
+      var easing = $easings.options[$easings.selectedIndex].value;
+      sweetScroll.update({ easing: easing });
     }, false);
   </script>
 </body>

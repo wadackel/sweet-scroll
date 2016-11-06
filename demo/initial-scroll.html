@@ -5,57 +5,56 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <title>Initial Scroll | sweet-scroll.js</title>
-  <link rel="shortcut icon" href="./images/favicon.ico">
-  <link rel="stylesheet" href="./font-awesome/css/font-awesome.min.css">
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+  <link rel="stylesheet" href="./lib/icomoon/style.css">
+  <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
   <link rel="stylesheet" href="./css/style.css">
-  <style type="text/css">
-    section h1 {
-      margin: 0;
-    }
-
-    #first {
-      margin-top: 50px;
-    }
-
-    #footer {
-      margin-top: 2000px;
-      background: #eee;
-    }
-  </style>
 </head>
 <body>
-  <header id="demo-header" data-scroll-header>
-    <a href="./#example"><i class="fa fa-chevron-left"></i> Back front</a>
-    <ul>
-      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/initial-scroll.html"><i class="fa fa-code"></i><span>Source</span></a></li>
-      <li><a href="https://github.com/tsuyoshiwada/sweet-scroll"><i class="fa fa-github"></i> <span>Document on GitHub</span></a></li>
-    </ul>
+  <header class="header" data-scroll-header>
+    <a class="header__back" href="./#examples"><i class="icon-angle-left"></i><span>Back</span></a>
+    <h1 class="header__logo"><img src="./images/icon-logo.svg" width="32" height="32" alt="sweet-scroll.js"></h1>
+    <a class="header__code" href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/demo/initial-scroll.html"><i class="icon-code"></i><span>Source</span></a>
   </header>
-  <section id="first">
-    <h1>Initial Scroll</h1>
-    <p><a href="#footer" data-scroll>Go to Footer</a></p>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__container">
+        <div class="section__header">
+          <h2 class="section__title">Initial scroll</h2>
+          <p class="section__lead">This is a sample to scroll after the page is loaded.</p>
+        </div>
+        <div class="section__body"></div>
+      </div>
+    </div>
   </section>
-  <footer id="footer">
-    <h2>Footer</h2>
-    <p><a href="#" data-scroll>Page top</a></p>
+
+  <div style="height: 500vh;"></div>
+
+  <footer class="footer" id="footer">
+    <div class="container">
+      <p class="footer__logo"><a href="#" data-scroll><img src="./images/icon-logo.svg" width="60" height="60" alt="sweet-scroll.js"></a></p>
+      <p class="footer__made-by">Made by <a href="https://github.com/tsuyoshiwada/sweet-scroll">tsuyoshiwada</a></p>
+    </div>
   </footer>
+
   <script src="./js/sweet-scroll.js"></script>
   <script>
-    var sweetScroll = new SweetScroll();
-    var hash = window.location.hash;
-    var needsInitialScroll = false;
-
     document.addEventListener("DOMContentLoaded", function() {
-      needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+      var sweetScroll = new SweetScroll();
+      var hash = window.location.hash;
+      var needsInitialScroll = needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+
       if (needsInitialScroll) {
         window.location.hash = "";
       }
-    }, false);
 
-    window.addEventListener("load", function() {
-      if (needsInitialScroll) {
-        sweetScroll.to(hash, {updateURL: "replace"});
-      }
+      window.addEventListener("load", function() {
+        if (needsInitialScroll) {
+          sweetScroll.to(hash, { updateURL: "replace" });
+        }
+      }, false);
     }, false);
   </script>
 </body>

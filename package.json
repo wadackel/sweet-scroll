@@ -17,7 +17,7 @@
     "demo:build": "npm run demo:build:js && npm run demo:build:sass",
     "demo:build:js": "copyfiles sweet-scroll.js demo/js/",
     "demo:build:sass": "node-sass demo/sass/ -o demo/css/ --output-style compressed && postcss --use autoprefixer demo/css/*.css -d demo/css/",
-    "demo:watch:server": "browser-sync start -s 'demo/' -f 'demo/**/*' --no-notify --no-open --no-ghost-mode",
+    "demo:watch:server": "browser-sync start -s 'demo/' -f 'demo/**/*,!demo/sass/**/*' --no-notify --no-open --no-ghost-mode",
     "demo:watch:js": "onchange 'sweet-scroll.js' -- npm run demo:build:js",
     "demo:watch:sass": "onchange 'demo/sass/**/*.scss' -- npm run demo:build:sass"
   },
