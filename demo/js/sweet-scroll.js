@@ -3,13 +3,13 @@
  * Modern and the sweet smooth scroll library.
  * @author tsuyoshiwada
  * @license MIT
- * @version 1.1.0
+ * @version 2.0.0
  */
 
 (function (global, factory) {
-  typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
-  typeof define === 'function' && define.amd ? define(factory) :
-  (global.SweetScroll = factory());
+    typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
+    typeof define === 'function' && define.amd ? define(factory) :
+    (global.SweetScroll = factory());
 }(this, (function () { 'use strict';
 
 var cos = Math.cos;
@@ -390,8 +390,8 @@ function isRootContainer(el) {
 }
 
 function getZoomLevel() {
-  var outerWidth = win.outerWidth;
-  var innerWidth = win.innerWidth;
+  var outerWidth = win.outerWidth,
+      innerWidth = win.innerWidth;
 
 
   return outerWidth ? outerWidth / innerWidth : 1;
@@ -557,37 +557,6 @@ function removeEvent(el, event, listener) {
   events.forEach(function (eventName) {
     el.removeEventListener(eventName.trim(), listener, false);
   });
-}
-
-var vendors = ["ms", "moz", "webkit"];
-var lastTime = 0;
-
-var raf = win.requestAnimationFrame;
-var caf = win.cancelAnimationFrame;
-
-for (var x = 0; x < vendors.length && !raf; ++x) {
-  raf = win[vendors[x] + "RequestAnimationFrame"];
-  caf = win[vendors[x] + "CancelAnimationFrame"] || win[vendors[x] + "CancelRequestAnimationFrame"];
-}
-
-if (!raf) {
-  raf = function raf(callback) {
-    var currentTime = Date.now();
-    var timeToCall = max(0, 16 - (currentTime - lastTime));
-    var id = setTimeout(function () {
-      callback(currentTime + timeToCall);
-    }, timeToCall);
-
-    lastTime = currentTime + timeToCall;
-
-    return id;
-  };
-}
-
-if (!caf) {
-  caf = function caf(id) {
-    clearTimeout(id);
-  };
 }
 
 /* eslint-disable no-param-reassign, newline-before-return, max-params, new-cap */
@@ -826,6 +795,37 @@ var Easing = Object.freeze({
 	InOutBounce: InOutBounce
 });
 
+var vendors = ["ms", "moz", "webkit"];
+var lastTime = 0;
+
+var raf = win.requestAnimationFrame;
+var caf = win.cancelAnimationFrame;
+
+for (var x = 0; x < vendors.length && !raf; ++x) {
+  raf = win[vendors[x] + "RequestAnimationFrame"];
+  caf = win[vendors[x] + "CancelAnimationFrame"] || win[vendors[x] + "CancelRequestAnimationFrame"];
+}
+
+if (!raf) {
+  raf = function raf(callback) {
+    var currentTime = Date.now();
+    var timeToCall = max(0, 16 - (currentTime - lastTime));
+    var id = setTimeout(function () {
+      callback(currentTime + timeToCall);
+    }, timeToCall);
+
+    lastTime = currentTime + timeToCall;
+
+    return id;
+  };
+}
+
+if (!caf) {
+  caf = function caf(id) {
+    clearTimeout(id);
+  };
+}
+
 var ScrollTween = function () {
   function ScrollTween(el) {
     classCallCheck(this, ScrollTween);
@@ -895,14 +895,14 @@ var ScrollTween = function () {
         return;
       }
 
-      var el = this.el;
-      var props = this.props;
-      var options = this.options;
-      var startTime = this.startTime;
-      var startProps = this.startProps;
-      var easing = this.easing;
-      var duration = options.duration;
-      var step = options.step;
+      var el = this.el,
+          props = this.props,
+          options = this.options,
+          startTime = this.startTime,
+          startProps = this.startProps,
+          easing = this.easing;
+      var duration = options.duration,
+          step = options.step;
 
       var toProps = {};
       var timeElapsed = time - startTime;
@@ -945,8 +945,6 @@ var WHEEL_EVENT = function () {
 }();
 
 var CONTAINER_STOP_EVENTS = WHEEL_EVENT + ", touchstart, touchmove";
-var DOM_CONTENT_LOADED = "DOMContentLoaded";
-var LOAD = "load";
 
 var SweetScroll = function () {
   /* eslint-enable max-len */
@@ -958,28 +956,29 @@ var SweetScroll = function () {
    * @param {String | Element} container
    */
   function SweetScroll() {
-    var _this = this;
-
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
     var container = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "body, html";
     classCallCheck(this, SweetScroll);
 
-    this.createAt = new Date();
     this.options = merge({}, SweetScroll.defaults, options);
+    this.container = this.getContainer(container);
 
-    this.getContainer(container, function (target) {
-      if (target == null) {
-        _this.log("Not found scrollable container. => \"" + container + "\"");
+    if (this.container == null) {
+      this.header = null;
+      this.tween = null;
+
+      if (!/comp|inter|loaded/.test(doc.readyState)) {
+        this.log("Should be initialize later than DOMContentLoaded.");
+      } else {
+        this.log("Not found scrollable container. => \"" + container + "\"");
       }
-
-      _this.container = target;
-      _this.header = $(_this.options.header);
-      _this.tween = new ScrollTween(target);
-      _this._trigger = null;
-      _this._shouldCallCancelScroll = false;
-      _this.bindContainerClick();
-      _this.hook(_this.options, "initialized");
-    });
+    } else {
+      this.header = $(this.options.header);
+      this.tween = new ScrollTween(this.container);
+      this._trigger = null;
+      this._shouldCallCancelScroll = false;
+      this.bindContainerClick();
+    }
   }
 
   /**
@@ -1002,48 +1001,26 @@ var SweetScroll = function () {
     }
 
     /**
-     * Scroll animation to the specified position
+     * Get scroll offset
      * @param {*} distance
      * @param {Object} options
-     * @return {void}
+     * @return {Object}
+     * @private
      */
 
   }, {
-    key: "to",
-    value: function to(distance) {
-      var _this2 = this;
+    key: "getScrollOffset",
+    value: function getScrollOffset(distance, options) {
+      var container = this.container,
+          header = this.header;
 
-      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
-      var container = this.container;
-      var header = this.header;
-
-      var params = merge({}, this.options, options);
-
-      // Temporary options
-      this._options = params;
-
-      var offset = this.parseCoodinate(params.offset);
-      var trigger = this._trigger;
+      var offset = this.parseCoodinate(options.offset);
       var scroll = this.parseCoodinate(distance);
-      var hash = null;
-
-      // Remove the triggering elements which has been temporarily retained
-      this._trigger = null;
-
-      // Disable the call flag of `cancelScroll`
-      this._shouldCallCancelScroll = false;
-
-      // Stop current animation
-      this.stop();
-
-      // Does not move if the container is not found
-      if (!container) {
-        return this.log("Not found container element.");
-      }
+      // let hash = null;
 
       // Using the coordinates in the case of CSS Selector
       if (!scroll && isString(distance)) {
-        hash = /^#/.test(distance) ? distance : null;
+        // hash = /^#/.test(distance) ? distance : null;
 
         if (distance === "#") {
           scroll = {
@@ -1059,7 +1036,7 @@ var SweetScroll = function () {
       }
 
       if (!scroll) {
-        return this.log("Invalid parameter of distance. => " + distance);
+        return null;
       }
 
       // Apply `offset` value
@@ -1073,23 +1050,91 @@ var SweetScroll = function () {
         scroll.top = max(0, scroll.top - getSize(header).height);
       }
 
+      return scroll;
+    }
+
+    /**
+     * Normalize scroll offset
+     * @param {Ojbect} scroll
+     * @param {Ojbect} options
+     * @return {Object}
+     * @private
+     */
+
+  }, {
+    key: "normalizeScrollOffset",
+    value: function normalizeScrollOffset(scroll, options) {
+      var container = this.container;
+
+      var finalScroll = merge({}, scroll);
+
       // Determine the final scroll coordinates
 
-      var _Dom$getViewportAndEl = getViewportAndElementSizes(container);
+      var _Dom$getViewportAndEl = getViewportAndElementSizes(container),
+          viewport = _Dom$getViewportAndEl.viewport,
+          size = _Dom$getViewportAndEl.size;
 
-      var viewport = _Dom$getViewportAndEl.viewport;
-      var size = _Dom$getViewportAndEl.size;
+      // Adjustment of the maximum value
+
+
+      finalScroll.top = options.verticalScroll ? max(0, min(size.height - viewport.height, finalScroll.top)) : getScroll(container, "y");
+
+      finalScroll.left = options.horizontalScroll ? max(0, min(size.width - viewport.width, finalScroll.left)) : getScroll(container, "x");
+
+      return finalScroll;
+    }
+
+    /**
+     * Scroll animation to the specified position
+     * @param {*} distance
+     * @param {Object} options
+     * @return {void}
+     */
+
+  }, {
+    key: "to",
+    value: function to(distance) {
+      var _this = this;
+
+      var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+      var container = this.container;
+
+      var params = merge({}, this.options, options);
+      var trigger = this._trigger;
+      var hash = isString(distance) && /^#/.test(distance) ? distance : null;
+
+      // Temporary options
+      this._options = params;
+
+      // Remove the triggering elements which has been temporarily retained
+      this._trigger = null;
+
+      // Disable the call flag of `cancelScroll`
+      this._shouldCallCancelScroll = false;
+
+      // Stop current animation
+      this.stop();
+
+      // Does not move if the container is not found
+      if (!container) {
+        return this.log("Not found container element.");
+      }
+
+      // Get scroll offset
+      var scroll = this.getScrollOffset(distance, params);
+
+      if (!scroll) {
+        return this.log("Invalid parameter of distance. => " + distance);
+      }
 
       // Call `beforeScroll`
       // Stop scrolling when it returns false
-
       if (this.hook(params, "beforeScroll", scroll, trigger) === false) {
+        this._options = null;
         return;
       }
 
-      // Adjustment of the maximum value
-      scroll.top = params.verticalScroll ? max(0, min(size.height - viewport.height, scroll.top)) : getScroll(container, "y");
-      scroll.left = params.horizontalScroll ? max(0, min(size.width - viewport.width, scroll.left)) : getScroll(container, "x");
+      scroll = this.normalizeScrollOffset(scroll, params);
 
       // Run the animation!!
       this.tween.run(scroll.left, scroll.top, {
@@ -1099,27 +1144,27 @@ var SweetScroll = function () {
         complete: function complete() {
           // Update URL
           if (hash != null && hash !== win.location.hash) {
-            _this2.updateURLHash(hash, params.updateURL);
+            _this.updateURLHash(hash, params.updateURL);
           }
 
           // Unbind the scroll stop events, And call `afterScroll` or `cancelScroll`
-          _this2.unbindContainerStop();
+          _this.unbindContainerStop();
 
           // Remove the temporary options
-          _this2._options = null;
+          _this._options = null;
 
           // Call `cancelScroll` or `afterScroll`
-          if (_this2._shouldCallCancelScroll) {
-            _this2.hook(params, "cancelScroll");
+          if (_this._shouldCallCancelScroll) {
+            _this.hook(params, "cancelScroll");
           } else {
-            _this2.hook(params, "afterScroll", scroll, trigger);
+            _this.hook(params, "afterScroll", scroll, trigger);
           }
 
           // Call `completeScroll`
-          _this2.hook(params, "completeScroll", _this2._shouldCallCancelScroll);
+          _this.hook(params, "completeScroll", _this._shouldCallCancelScroll);
         },
         step: function step(currentTime, props) {
-          _this2.hook(params, "stepScroll", currentTime, props);
+          _this.hook(params, "stepScroll", currentTime, props);
         }
       });
 
@@ -1248,15 +1293,6 @@ var SweetScroll = function () {
     }
 
     /* eslint-disable no-unused-vars */
-    /**
-     * Called at after of the initialize.
-     * @return {void}
-     */
-
-  }, {
-    key: "initialized",
-    value: function initialized() {}
-
     /**
      * Called at before of the scroll.
      * @param {Object} toScroll
@@ -1403,21 +1439,17 @@ var SweetScroll = function () {
     /**
      * Get the container for the scroll, depending on the options.
      * @param {String | Element} selector
-     * @param {Function} callback
-     * @return {void}
+     * @return {?Element}
      * @private
      */
 
   }, {
     key: "getContainer",
-    value: function getContainer(selector, callback) {
-      var _this3 = this;
+    value: function getContainer(selector) {
+      var _options = this.options,
+          verticalScroll = _options.verticalScroll,
+          horizontalScroll = _options.horizontalScroll;
 
-      var _options = this.options;
-      var verticalScroll = _options.verticalScroll;
-      var horizontalScroll = _options.horizontalScroll;
-
-      var finalCallback = callback.bind(this);
       var container = null;
 
       if (verticalScroll) {
@@ -1428,44 +1460,7 @@ var SweetScroll = function () {
         container = scrollableFind(selector, "x");
       }
 
-      if (container) {
-        finalCallback(container);
-      } else if (!/comp|inter|loaded/.test(doc.readyState)) {
-        (function () {
-          var isCompleted = false;
-
-          var handleDomContentLoaded = function handleDomContentLoaded() {
-            removeHandlers(); // eslint-disable-line no-use-before-define
-            isCompleted = true;
-            _this3.getContainer(selector, callback);
-          };
-
-          var handleLoad = function handleLoad() {
-            removeHandlers(); // eslint-disable-line no-use-before-define
-            if (!isCompleted) {
-              _this3.getContainer(selector, callback);
-            }
-          };
-
-          /* eslint-disable func-style */
-          var removeHandlers = function removeHandlers() {
-            removeEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
-            removeEvent(win, LOAD, handleLoad);
-          };
-          /* eslint-enable func-style */
-
-          addEvent(doc, DOM_CONTENT_LOADED, handleDomContentLoaded);
-          addEvent(win, LOAD, handleLoad);
-        })();
-      } else {
-        raf(function () {
-          if (Date.now() - _this3.createAt.getTime() > _this3.options.searchContainerTimeout) {
-            finalCallback(null);
-          } else {
-            _this3.getContainer(selector, callback);
-          }
-        });
-      }
+      return container;
     }
 
     /**
@@ -1629,7 +1624,6 @@ var SweetScroll = function () {
     key: "parseDataOptions",
     value: function parseDataOptions(el) {
       var options = el.getAttribute("data-scroll-options");
-
       return options ? JSON.parse(options) : {};
     }
   }]);
@@ -1652,11 +1646,9 @@ SweetScroll.defaults = {
   updateURL: false, // Update the URL hash on after scroll (true | false | "push" | "replace")
   preventDefault: true, // Cancels the container element click event
   stopPropagation: true, // Prevents further propagation of the container element click event in the bubbling phase
-  searchContainerTimeout: 4000, // Specifies the maximum search time of Scrollabe Container
   outputLog: false, // Specify level of output to log
 
   // Callbacks
-  initialized: null,
   beforeScroll: null,
   afterScroll: null,
   cancelScroll: null,
