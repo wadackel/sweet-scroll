@@ -293,12 +293,14 @@ class SweetScroll {
   stop(gotoEnd = false) {
     if (!this.container) {
       this.log("Not found scrollable container.");
-    }
 
-    if (this._stopScrollListener) {
-      this._shouldCallCancelScroll = true;
+    } else {
+      if (this._stopScrollListener) {
+        this._shouldCallCancelScroll = true;
+      }
+
+      this.tween.stop(gotoEnd);
     }
-    this.tween.stop(gotoEnd);
   }
 
   /**
@@ -309,14 +311,14 @@ class SweetScroll {
   update(options = {}) {
     if (!this.container) {
       this.log("Not found scrollable container.");
+    } else {
+      this.stop();
+      this.unbindContainerClick();
+      this.unbindContainerStop();
+      this.options = Util.merge({}, this.options, options);
+      this.header = $(this.options.header);
+      this.bindContainerClick();
     }
-
-    this.stop();
-    this.unbindContainerClick();
-    this.unbindContainerStop();
-    this.options = Util.merge({}, this.options, options);
-    this.header = $(this.options.header);
-    this.bindContainerClick();
   }
 
   /**
@@ -326,14 +328,14 @@ class SweetScroll {
   destroy() {
     if (!this.container) {
       this.log("Not found scrollable container.");
+    } else {
+      this.stop();
+      this.unbindContainerClick();
+      this.unbindContainerStop();
+      this.container = null;
+      this.header = null;
+      this.tween = null;
     }
-
-    this.stop();
-    this.unbindContainerClick();
-    this.unbindContainerStop();
-    this.container = null;
-    this.header = null;
-    this.tween = null;
   }
 
   /* eslint-disable no-unused-vars */
