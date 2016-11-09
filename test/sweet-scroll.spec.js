@@ -1,4 +1,4 @@
-/* eslint-disable no-underscore-dangle, no-undefined, max-nested-callbacks */
+/* eslint-disable no-underscore-dangle, no-undefined, max-nested-callbacks, no-console */
 import assert from "power-assert";
 import sinon from "sinon";
 import SweetScroll from "../src/sweet-scroll";
@@ -293,6 +293,110 @@ describe("SweetScroll", () => {
       getInstance({ trigger: triggerAnchorSelector, completeScroll: () => done() });
       trigger(getAnchor(), "click");
       clock.tick(1000);
+    });
+  });
+
+  describe("Keep silent on error", () => {
+    beforeEach(() => {
+      sinon.spy(console, "error");
+      document.body.innerHTML = "";
+    });
+
+    afterEach(() => {
+      console.error.restore();
+    });
+
+    it("constructor", () => {
+      getInstance({ outputLog: false });
+      assert(console.error.called === false);
+    });
+
+    it("to()", () => {
+      const scroller = getInstance({ outputLog: false });
+      scroller.to("+=100");
+      assert(console.error.called === false);
+    });
+
+    it("toTop()", () => {
+      const scroller = getInstance({ outputLog: false });
+      scroller.toTop(0);
+      assert(console.error.called === false);
+    });
+
+    it("toElement()", () => {
+      const scroller = getInstance({ outputLog: false });
+      scroller.toElement(document.body);
+      assert(console.error.called === false);
+    });
+
+    it("update()", () => {
+      const scroller = getInstance({ outputLog: false });
+      scroller.update({ stopScroll: false });
+      assert(console.error.called === false);
+    });
+
+    it("stop()", () => {
+      const scroller = getInstance({ outputLog: false });
+      scroller.stop(true);
+      assert(console.error.called === false);
+    });
+
+    it("destroy()", () => {
+      const scroller = getInstance({ outputLog: false });
+      scroller.destroy();
+      assert(console.error.called === false);
+    });
+  });
+
+  describe("Output error log", () => {
+    beforeEach(() => {
+      sinon.spy(console, "error");
+      document.body.innerHTML = "";
+    });
+
+    afterEach(() => {
+      console.error.restore();
+    });
+
+    it("constructor", () => {
+      getInstance({ outputLog: true });
+      assert(console.error.called === true);
+    });
+
+    it("to()", () => {
+      const scroller = getInstance({ outputLog: true });
+      scroller.to("+=100");
+      assert(console.error.called === true);
+    });
+
+    it("toTop()", () => {
+      const scroller = getInstance({ outputLog: true });
+      scroller.toTop(0);
+      assert(console.error.called === true);
+    });
+
+    it("toElement()", () => {
+      const scroller = getInstance({ outputLog: true });
+      scroller.toElement(document.body);
+      assert(console.error.called === true);
+    });
+
+    it("update()", () => {
+      const scroller = getInstance({ outputLog: true });
+      scroller.update({ stopScroll: false });
+      assert(console.error.called === true);
+    });
+
+    it("stop()", () => {
+      const scroller = getInstance({ outputLog: true });
+      scroller.stop(true);
+      assert(console.error.called === true);
+    });
+
+    it("destroy()", () => {
+      const scroller = getInstance({ outputLog: true });
+      scroller.destroy();
+      assert(console.error.called === true);
     });
   });
 });
