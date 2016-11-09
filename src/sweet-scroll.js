@@ -100,12 +100,9 @@ class SweetScroll {
     const { container, header } = this;
     const offset = this.parseCoodinate(options.offset);
     let scroll = this.parseCoodinate(distance);
-    // let hash = null;
 
     // Using the coordinates in the case of CSS Selector
     if (!scroll && Util.isString(distance)) {
-      // hash = /^#/.test(distance) ? distance : null;
-
       if (distance === "#") {
         scroll = {
           top: 0,
