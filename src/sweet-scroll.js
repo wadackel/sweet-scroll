@@ -281,7 +281,7 @@ class SweetScroll {
       const offset = Dom.getOffset(el, this.container);
       this.to(offset, Util.merge({}, options));
     } else {
-      this.log("Invalid parameter. in toElement()");
+      this.log("Invalid parameter.");
     }
   }
 
