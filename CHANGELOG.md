@@ -1,3 +1,11 @@
+## 2.0.1
+
+* Change to silent error if container element is not found. (Outputable with `outputLog` option)
+* Minor change in log messages
+* Fix demo page can't be viewed locally
+* Add loging tests
+
+
 ## 2.0.0
 
 ### Breaking changes
