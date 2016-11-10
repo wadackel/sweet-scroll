@@ -3,7 +3,7 @@
  * Modern and the sweet smooth scroll library.
  * @author tsuyoshiwada
  * @license MIT
- * @version 2.0.0
+ * @version 2.0.1
  */
 
 (function (global, factory) {
@@ -1016,12 +1016,9 @@ var SweetScroll = function () {
 
       var offset = this.parseCoodinate(options.offset);
       var scroll = this.parseCoodinate(distance);
-      // let hash = null;
 
       // Using the coordinates in the case of CSS Selector
       if (!scroll && isString(distance)) {
-        // hash = /^#/.test(distance) ? distance : null;
-
         if (distance === "#") {
           scroll = {
             top: 0,
@@ -1224,7 +1221,7 @@ var SweetScroll = function () {
         var offset = getOffset(el, this.container);
         this.to(offset, merge({}, options));
       } else {
-        this.log("Invalid parameter. in toElement()");
+        this.log("Invalid parameter.");
       }
     }
 
@@ -1241,12 +1238,13 @@ var SweetScroll = function () {
 
       if (!this.container) {
         this.log("Not found scrollable container.");
-      }
+      } else {
+        if (this._stopScrollListener) {
+          this._shouldCallCancelScroll = true;
+        }
 
-      if (this._stopScrollListener) {
-        this._shouldCallCancelScroll = true;
+        this.tween.stop(gotoEnd);
       }
-      this.tween.stop(gotoEnd);
     }
 
     /**
@@ -1262,14 +1260,14 @@ var SweetScroll = function () {
 
       if (!this.container) {
         this.log("Not found scrollable container.");
+      } else {
+        this.stop();
+        this.unbindContainerClick();
+        this.unbindContainerStop();
+        this.options = merge({}, this.options, options);
+        this.header = $(this.options.header);
+        this.bindContainerClick();
       }
-
-      this.stop();
-      this.unbindContainerClick();
-      this.unbindContainerStop();
-      this.options = merge({}, this.options, options);
-      this.header = $(this.options.header);
-      this.bindContainerClick();
     }
 
     /**
@@ -1282,14 +1280,14 @@ var SweetScroll = function () {
     value: function destroy() {
       if (!this.container) {
         this.log("Not found scrollable container.");
+      } else {
+        this.stop();
+        this.unbindContainerClick();
+        this.unbindContainerStop();
+        this.container = null;
+        this.header = null;
+        this.tween = null;
       }
-
-      this.stop();
-      this.unbindContainerClick();
-      this.unbindContainerStop();
-      this.container = null;
-      this.header = null;
-      this.tween = null;
     }
 
     /* eslint-disable no-unused-vars */

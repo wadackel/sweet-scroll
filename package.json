@@ -1,6 +1,6 @@
 {
   "name": "sweet-scroll",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Modern and the sweet smooth scroll library.",
   "main": "sweet-scroll.js",
   "scripts": {
