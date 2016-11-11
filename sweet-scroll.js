@@ -3,7 +3,7 @@
  * Modern and the sweet smooth scroll library.
  * @author tsuyoshiwada
  * @license MIT
- * @version 2.0.1
+ * @version 2.1.0
  */
 
 (function (global, factory) {
