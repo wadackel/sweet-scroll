@@ -39,6 +39,7 @@ class SweetScroll {
     preventDefault: true,           // Cancels the container element click event
     stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
     outputLog: false,               // Specify level of output to log
+    quickMode: false,               // Instantly scroll to the destination! (It's recommended to use it with `easeOutExpo`)
 
     // Callbacks
     beforeScroll: null,
@@ -210,6 +211,7 @@ class SweetScroll {
       duration: params.duration,
       delay: params.delay,
       easing: params.easing,
+      quickMode: params.quickMode,
       complete: () => {
         // Update URL
         if (hash != null && hash !== win.location.hash) {

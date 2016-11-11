@@ -92,6 +92,7 @@ The following options are applied by default. It can be customized as needed.
   preventDefault: true,           // Cancels the container element click event
   stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
   outputLog: false,               // Specify level of output to log
+  quickMode: false,               // Instantly scroll to the destination! (It's recommended to use it with `easeOutExpo`)
 
   // Callbacks
   beforeScroll: null,
@@ -210,6 +211,21 @@ Will use the data-scroll attribute instead of href.
 ```html
 <button type="button" data-scroll="+=500">Scroll under 500px</button>
 ```
+
+
+#### Do you feel scrolling is slow?
+
+You can solve with `quickMode` options!
+
+```javascript
+const sweetScroll = new SweetScroll({
+  quickMode: true,
+  easing: "easeOutExpo" // Recommended
+});
+```
+
+`quickMode` finishes scrolling in a moment.
+
 
 
 #### Scroll animation in a other page

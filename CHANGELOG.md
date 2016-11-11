@@ -1,3 +1,16 @@
+## 2.1.0
+
+### New feature
+
+* Add `quickMode` options
+    - Instantly scroll to the destination! (It's recommended to use it with `easeOutExpo`)
+
+### Minor changes
+
+* Update doc
+* Update devDependencies
+
+
 ## 2.0.1
 
 * Change to silent error if container element is not found. (Outputable with `outputLog` option)

@@ -851,10 +851,7 @@ var ScrollTween = function () {
       this.progress = true;
 
       setTimeout(function () {
-        _this.startProps = {
-          x: getScroll(_this.el, "x"),
-          y: getScroll(_this.el, "y")
-        };
+        _this.startProps = _this.calcStartProps(x, y);
         _this.rafId = raf(function (time) {
           return _this._loop(time);
         });
@@ -929,6 +926,31 @@ var ScrollTween = function () {
       } else {
         this.stop(true);
       }
+    }
+  }, {
+    key: "calcStartProps",
+    value: function calcStartProps(x, y) {
+      var startProps = {
+        x: getScroll(this.el, "x"),
+        y: getScroll(this.el, "y")
+      };
+
+      if (this.options.quickMode) {
+        var _Dom$getViewportAndEl = getViewportAndElementSizes(this.el),
+            _Dom$getViewportAndEl2 = _Dom$getViewportAndEl.viewport,
+            width = _Dom$getViewportAndEl2.width,
+            height = _Dom$getViewportAndEl2.height;
+
+        if (abs(startProps.y - y) > height) {
+          startProps.y = startProps.y > y ? y + height : y - height;
+        }
+
+        if (abs(startProps.x - x) > width) {
+          startProps.x = startProps.x > x ? x + width : x - width;
+        }
+      }
+
+      return startProps;
     }
   }]);
   return ScrollTween;
@@ -1138,6 +1160,7 @@ var SweetScroll = function () {
         duration: params.duration,
         delay: params.delay,
         easing: params.easing,
+        quickMode: params.quickMode,
         complete: function complete() {
           // Update URL
           if (hash != null && hash !== win.location.hash) {
@@ -1645,6 +1668,7 @@ SweetScroll.defaults = {
   preventDefault: true, // Cancels the container element click event
   stopPropagation: true, // Prevents further propagation of the container element click event in the bubbling phase
   outputLog: false, // Specify level of output to log
+  quickMode: false, // Instantly scroll to the destination! (It's recommended to use it with `easeOutExpo`)
 
   // Callbacks
   beforeScroll: null,

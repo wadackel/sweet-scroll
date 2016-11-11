@@ -26,10 +26,7 @@ export default class ScrollTween {
     this.progress = true;
 
     setTimeout(() => {
-      this.startProps = {
-        x: Dom.getScroll(this.el, "x"),
-        y: Dom.getScroll(this.el, "y")
-      };
+      this.startProps = this.calcStartProps(x, y);
       this.rafId = raf(time => this._loop(time));
     }, this.options.delay);
   }
@@ -87,5 +84,26 @@ export default class ScrollTween {
     } else {
       this.stop(true);
     }
+  }
+
+  calcStartProps(x, y) {
+    const startProps = {
+      x: Dom.getScroll(this.el, "x"),
+      y: Dom.getScroll(this.el, "y")
+    };
+
+    if (this.options.quickMode) {
+      const { viewport: { width, height } } = Dom.getViewportAndElementSizes(this.el);
+
+      if (math.abs(startProps.y - y) > height) {
+        startProps.y = startProps.y > y ? y + height : y - height;
+      }
+
+      if (math.abs(startProps.x - x) > width) {
+        startProps.x = startProps.x > x ? x + width : x - width;
+      }
+    }
+
+    return startProps;
   }
 }

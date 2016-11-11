@@ -617,6 +617,67 @@ select {
   }
 }
 
+.quick-mode {
+  @include fixed(null, 30px, 30px, null, 1000);
+  padding: 10px;
+  user-select: none;
+
+  input {
+    @include absolute(-9999px);
+    visibility: hidden;
+  }
+
+  &__label {
+    display: block;
+    margin: 0 0 5px;
+    color: #fff;
+    font-weight: bold;
+    font-size: .75rem;
+    text-align: center;
+  }
+
+  &__control {
+    $size: 40px;
+    display: block;
+    position: relative;
+    width: $size * 2;
+    height: $size;
+    padding: 2px;
+    background: #ddd;
+    border-radius: $size;
+    cursor: pointer;
+
+    &::before,
+    &::after {
+      display: block;
+      transition: all 120ms ease-out;
+      content: "";
+    }
+
+    &::before {
+      @include absolute(2px, 2px, 2px, 2px);
+      background: #fff;
+      border-radius: $size;
+    }
+
+    &::after {
+      @include absolute(4px, null, 4px, 4px);
+      width: $size - (4 * 2);
+      background: #ddd;
+      border-radius: $size - (4 * 2);
+    }
+
+    input:checked + & {
+      background-color: $color-yellow;
+
+      &::after {
+        transform: translateX($size);
+        background-color: $color-yellow;
+      }
+    }
+  }
+}
+
 #install {
   background-color: $color-yellow;
 }
