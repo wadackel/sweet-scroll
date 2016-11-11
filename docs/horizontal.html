@@ -114,11 +114,22 @@
     </div>
   </div>
 
+  <div class="quick-mode">
+    <span class="quick-mode__label">QuickMode!!</span>
+    <input type="checkbox" id="quick-mode">
+    <label class="quick-mode__control" for="quick-mode"></label>
+  </div>
+
   <script src="./js/sweet-scroll.js"></script>
   <script>
     var sweetScroll = new SweetScroll({
       horizontalScroll: true
     }, "#wrapper");
+
+    // Toggle quickMode
+    document.querySelector("#quick-mode").addEventListener("change", function(e) {
+      sweetScroll.update({ quickMode: this.checked });
+    }, false);
   </script>
 </body>
 </html>
