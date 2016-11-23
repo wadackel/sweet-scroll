@@ -236,7 +236,7 @@ The following, Introduce one of the mounting method.
 document.addEventListener("DOMContentLoaded", () => {
   const sweetScroll = new SweetScroll();
   const hash = window.location.hash;
-  const needsInitialScroll = needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+  const needsInitialScroll = document.getElementById(hash.substr(1)) != null;
 
   if (needsInitialScroll) {
     window.location.hash = "";
