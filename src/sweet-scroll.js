@@ -9,6 +9,8 @@ import ScrollTween from "./scroll-tween";
 
 
 const WHEEL_EVENT = (() => {
+  if (!Supports.canUseDOM) return "wheel";
+
   if ("onwheel" in doc) {
     return "wheel";
   } else if ("onmousewheel" in doc) {
@@ -57,6 +59,7 @@ class SweetScroll {
    * @param {String | Element} container
    */
   constructor(options = {}, container = "body, html") {
+    this.isSSR = !Supports.canUseDOM;
     this.options = Util.merge({}, SweetScroll.defaults, options);
     this.container = this.getContainer(container);
 
@@ -64,10 +67,12 @@ class SweetScroll {
       this.header = null;
       this.tween = null;
 
-      if (!/comp|inter|loaded/.test(doc.readyState)) {
-        this.log("Should be initialize later than DOMContentLoaded.");
-      } else {
-        this.log(`Not found scrollable container. => "${container}"`);
+      if (!this.isSSR) {
+        if (!/comp|inter|loaded/.test(doc.readyState)) {
+          this.log("Should be initialize later than DOMContentLoaded.");
+        } else {
+          this.log(`Not found scrollable container. => "${container}"`);
+        }
       }
 
     } else {
@@ -168,6 +173,8 @@ class SweetScroll {
    * @return {void}
    */
   to(distance, options = {}) {
+    if (this.isSSR) return;
+
     const { container } = this;
     const params = Util.merge({}, this.options, options);
     const trigger = this._trigger;
@@ -276,6 +283,8 @@ class SweetScroll {
    * @return {void}
    */
   toElement(el, options = {}) {
+    if (this.isSSR) return;
+
     if (el instanceof Element) {
       const offset = Dom.getOffset(el, this.container);
       this.to(offset, Util.merge({}, options));
@@ -290,6 +299,8 @@ class SweetScroll {
    * @return {void}
    */
   stop(gotoEnd = false) {
+    if (this.isSSR) return;
+
     if (!this.container) {
       this.log("Not found scrollable container.");
 
@@ -309,7 +320,9 @@ class SweetScroll {
    */
   update(options = {}) {
     if (!this.container) {
-      this.log("Not found scrollable container.");
+      if (!this.isSSR) {
+        this.log("Not found scrollable container.");
+      }
     } else {
       this.stop();
       this.unbindContainerClick();
@@ -326,7 +339,9 @@ class SweetScroll {
    */
   destroy() {
     if (!this.container) {
-      this.log("Not found scrollable container.");
+      if (!this.isSSR) {
+        this.log("Not found scrollable container.");
+      }
     } else {
       this.stop();
       this.unbindContainerClick();
@@ -456,7 +471,7 @@ class SweetScroll {
    * @return {void}
    */
   updateURLHash(hash, historyType) {
-    if (!Supports.history || !historyType) return;
+    if (this.isSSR || !Supports.history || !historyType) return;
     win.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
   }
 
@@ -469,6 +484,8 @@ class SweetScroll {
   getContainer(selector) {
     const { verticalScroll, horizontalScroll } = this.options;
     let container = null;
+
+    if (this.isSSR) return container;
 
     if (verticalScroll) {
       container = Dom.scrollableFind(selector, "y");
