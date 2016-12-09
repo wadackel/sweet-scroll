@@ -20,6 +20,7 @@ ECMAScript2015 Friendly, dependency-free smooth scroll library.
 * Supports dynamic trigger (event delegation)
 * Supports container for the scroll
 * Supports many easing types
+* Supports server-side rendering (Can load without putting out errors.)
 
 
 
