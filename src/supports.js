@@ -1,7 +1,14 @@
-import { win } from "./elements";
+// @link https://github.com/JedWatson/exenv/blob/master/index.js
+export const canUseDOM = !!(
+  typeof window !== "undefined" &&
+  window.document &&
+  window.document.createElement
+);
 
 // @link https://github.com/Modernizr/Modernizr
 export const history = (() => {
+  if (!canUseDOM) return false;
+
   const ua = navigator.userAgent;
   if (
     (ua.indexOf("Android 2.") !== -1 ||
@@ -13,5 +20,9 @@ export const history = (() => {
     return false;
   }
 
-  return (win.history && "pushState" in win.history && win.location.protocol !== "file:");
+  return (
+    window.history &&
+    "pushState" in window.history &&
+    window.location.protocol !== "file:"
+  );
 })();

@@ -12,9 +12,13 @@ const banner = `/*!
 
 export default {
   banner,
+  entry: "src/sweet-scroll.js",
+  dest: "sweet-scroll.js",
   moduleName: "SweetScroll",
   format: "umd",
   plugins: [
-    babel()
+    babel({
+      exclude: "node_modules/**"
+    })
   ]
 };
