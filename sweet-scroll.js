@@ -3,7 +3,7 @@
  * Modern and the sweet smooth scroll library.
  * @author tsuyoshiwada
  * @license MIT
- * @version 2.1.0
+ * @version 2.2.0
  */
 
 (function (global, factory) {
@@ -33,118 +33,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
 
 
 
-var asyncGenerator = function () {
-  function AwaitValue(value) {
-    this.value = value;
-  }
 
-  function AsyncGenerator(gen) {
-    var front, back;
-
-    function send(key, arg) {
-      return new Promise(function (resolve, reject) {
-        var request = {
-          key: key,
-          arg: arg,
-          resolve: resolve,
-          reject: reject,
-          next: null
-        };
-
-        if (back) {
-          back = back.next = request;
-        } else {
-          front = back = request;
-          resume(key, arg);
-        }
-      });
-    }
-
-    function resume(key, arg) {
-      try {
-        var result = gen[key](arg);
-        var value = result.value;
-
-        if (value instanceof AwaitValue) {
-          Promise.resolve(value.value).then(function (arg) {
-            resume("next", arg);
-          }, function (arg) {
-            resume("throw", arg);
-          });
-        } else {
-          settle(result.done ? "return" : "normal", result.value);
-        }
-      } catch (err) {
-        settle("throw", err);
-      }
-    }
-
-    function settle(type, value) {
-      switch (type) {
-        case "return":
-          front.resolve({
-            value: value,
-            done: true
-          });
-          break;
-
-        case "throw":
-          front.reject(value);
-          break;
-
-        default:
-          front.resolve({
-            value: value,
-            done: false
-          });
-          break;
-      }
-
-      front = front.next;
-
-      if (front) {
-        resume(front.key, front.arg);
-      } else {
-        back = null;
-      }
-    }
-
-    this._invoke = send;
-
-    if (typeof gen.return !== "function") {
-      this.return = undefined;
-    }
-  }
-
-  if (typeof Symbol === "function" && Symbol.asyncIterator) {
-    AsyncGenerator.prototype[Symbol.asyncIterator] = function () {
-      return this;
-    };
-  }
-
-  AsyncGenerator.prototype.next = function (arg) {
-    return this._invoke("next", arg);
-  };
-
-  AsyncGenerator.prototype.throw = function (arg) {
-    return this._invoke("throw", arg);
-  };
-
-  AsyncGenerator.prototype.return = function (arg) {
-    return this._invoke("return", arg);
-  };
-
-  return {
-    wrap: function (fn) {
-      return function () {
-        return new AsyncGenerator(fn.apply(this, arguments));
-      };
-    },
-    await: function (value) {
-      return new AwaitValue(value);
-    }
-  };
-}();
 
 
 
@@ -348,8 +237,23 @@ function warning(message) {
   /* eslint-enable no-empty */
 }
 
-var win = window;
-var doc = document;
+// @link https://github.com/JedWatson/exenv/blob/master/index.js
+var canUseDOM = !!(typeof window !== "undefined" && window.document && window.document.createElement);
+
+// @link https://github.com/Modernizr/Modernizr
+var history = function () {
+  if (!canUseDOM) return false;
+
+  var ua = navigator.userAgent;
+  if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
+    return false;
+  }
+
+  return window.history && "pushState" in window.history && window.location.protocol !== "file:";
+}();
+
+var win = canUseDOM ? window : null;
+var doc = canUseDOM ? document : null;
 
 function $(selector) {
   var context = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
@@ -534,16 +438,6 @@ function getOffset(el) {
 
   return rect;
 }
-
-// @link https://github.com/Modernizr/Modernizr
-var history = function () {
-  var ua = navigator.userAgent;
-  if ((ua.indexOf("Android 2.") !== -1 || ua.indexOf("Android 4.0") !== -1) && ua.indexOf("Mobile Safari") !== -1 && ua.indexOf("Chrome") === -1 && ua.indexOf("Windows Phone") === -1) {
-    return false;
-  }
-
-  return win.history && "pushState" in win.history && win.location.protocol !== "file:";
-}();
 
 function addEvent(el, event, listener) {
   var events = event.split(",");
@@ -798,32 +692,34 @@ var Easing = Object.freeze({
 var vendors = ["ms", "moz", "webkit"];
 var lastTime = 0;
 
-var raf = win.requestAnimationFrame;
-var caf = win.cancelAnimationFrame;
+var raf = canUseDOM ? win.requestAnimationFrame : null;
+var caf = canUseDOM ? win.cancelAnimationFrame : null;
 
-for (var x = 0; x < vendors.length && !raf; ++x) {
-  raf = win[vendors[x] + "RequestAnimationFrame"];
-  caf = win[vendors[x] + "CancelAnimationFrame"] || win[vendors[x] + "CancelRequestAnimationFrame"];
-}
+if (canUseDOM) {
+  for (var x = 0; x < vendors.length && !raf; ++x) {
+    raf = win[vendors[x] + "RequestAnimationFrame"];
+    caf = win[vendors[x] + "CancelAnimationFrame"] || win[vendors[x] + "CancelRequestAnimationFrame"];
+  }
 
-if (!raf) {
-  raf = function raf(callback) {
-    var currentTime = Date.now();
-    var timeToCall = max(0, 16 - (currentTime - lastTime));
-    var id = setTimeout(function () {
-      callback(currentTime + timeToCall);
-    }, timeToCall);
+  if (!raf) {
+    raf = function raf(callback) {
+      var currentTime = Date.now();
+      var timeToCall = max(0, 16 - (currentTime - lastTime));
+      var id = setTimeout(function () {
+        callback(currentTime + timeToCall);
+      }, timeToCall);
 
-    lastTime = currentTime + timeToCall;
+      lastTime = currentTime + timeToCall;
 
-    return id;
-  };
-}
+      return id;
+    };
+  }
 
-if (!caf) {
-  caf = function caf(id) {
-    clearTimeout(id);
-  };
+  if (!caf) {
+    caf = function caf(id) {
+      clearTimeout(id);
+    };
+  }
 }
 
 var ScrollTween = function () {
@@ -957,6 +853,8 @@ var ScrollTween = function () {
 }();
 
 var WHEEL_EVENT = function () {
+  if (!canUseDOM) return "wheel";
+
   if ("onwheel" in doc) {
     return "wheel";
   } else if ("onmousewheel" in doc) {
@@ -982,6 +880,7 @@ var SweetScroll = function () {
     var container = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "body, html";
     classCallCheck(this, SweetScroll);
 
+    this.isSSR = !canUseDOM;
     this.options = merge({}, SweetScroll.defaults, options);
     this.container = this.getContainer(container);
 
@@ -989,10 +888,12 @@ var SweetScroll = function () {
       this.header = null;
       this.tween = null;
 
-      if (!/comp|inter|loaded/.test(doc.readyState)) {
-        this.log("Should be initialize later than DOMContentLoaded.");
-      } else {
-        this.log("Not found scrollable container. => \"" + container + "\"");
+      if (!this.isSSR) {
+        if (!/comp|inter|loaded/.test(doc.readyState)) {
+          this.log("Should be initialize later than DOMContentLoaded.");
+        } else {
+          this.log("Not found scrollable container. => \"" + container + "\"");
+        }
       }
     } else {
       this.header = $(this.options.header);
@@ -1116,6 +1017,9 @@ var SweetScroll = function () {
       var _this = this;
 
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+      if (this.isSSR) return;
+
       var container = this.container;
 
       var params = merge({}, this.options, options);
@@ -1240,6 +1144,8 @@ var SweetScroll = function () {
     value: function toElement(el) {
       var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
 
+      if (this.isSSR) return;
+
       if (el instanceof Element) {
         var offset = getOffset(el, this.container);
         this.to(offset, merge({}, options));
@@ -1258,6 +1164,8 @@ var SweetScroll = function () {
     key: "stop",
     value: function stop() {
       var gotoEnd = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
+
+      if (this.isSSR) return;
 
       if (!this.container) {
         this.log("Not found scrollable container.");
@@ -1282,7 +1190,9 @@ var SweetScroll = function () {
       var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
       if (!this.container) {
-        this.log("Not found scrollable container.");
+        if (!this.isSSR) {
+          this.log("Not found scrollable container.");
+        }
       } else {
         this.stop();
         this.unbindContainerClick();
@@ -1302,7 +1212,9 @@ var SweetScroll = function () {
     key: "destroy",
     value: function destroy() {
       if (!this.container) {
-        this.log("Not found scrollable container.");
+        if (!this.isSSR) {
+          this.log("Not found scrollable container.");
+        }
       } else {
         this.stop();
         this.unbindContainerClick();
@@ -1453,7 +1365,7 @@ var SweetScroll = function () {
   }, {
     key: "updateURLHash",
     value: function updateURLHash(hash, historyType) {
-      if (!history || !historyType) return;
+      if (this.isSSR || !history || !historyType) return;
       win.history[historyType === "replace" ? "replaceState" : "pushState"](null, null, hash);
     }
 
@@ -1472,6 +1384,8 @@ var SweetScroll = function () {
           horizontalScroll = _options.horizontalScroll;
 
       var container = null;
+
+      if (this.isSSR) return container;
 
       if (verticalScroll) {
         container = scrollableFind(selector, "y");

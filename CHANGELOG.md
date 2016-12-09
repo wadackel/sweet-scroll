@@ -1,3 +1,8 @@
+## 2.2.0
+
+* Support server-side rendering
+
+
 ## 2.1.0
 
 ### New feature
