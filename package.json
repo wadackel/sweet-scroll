@@ -16,7 +16,7 @@
     "docs": "npm-run-all --parallel docs:watch:*",
     "docs:build": "npm run docs:build:js && npm run docs:build:sass",
     "docs:build:js": "copyfiles sweet-scroll.js docs/js/",
-    "docs:build:sass": "node-sass docs/sass/ -o docs/css/ --output-style compressed && postcss --use autoprefixer docs/css/*.css -d docs/css/",
+    "docs:build:sass": "node-sass docs/sass/ -o docs/css/ --output-style compressed && postcss docs/css/*.css --use autoprefixer -d docs/css/",
     "docs:watch:server": "browser-sync start -s 'docs/' -f 'docs/**/*,!docs/sass/**/*' --no-notify --no-open --no-ghost-mode",
     "docs:watch:js": "onchange 'sweet-scroll.js' -- npm run docs:build:js",
     "docs:watch:sass": "onchange 'docs/sass/**/*.scss' -- npm run docs:build:sass"
