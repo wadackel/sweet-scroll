@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png" width="340" height="135" alt="sweet-scroll.js">
+# <img src="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png" width="340" height="135" alt="sweet-scroll.js">
 
 [![Build Status](http://img.shields.io/travis/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://travis-ci.org/tsuyoshiwada/sweet-scroll)
 [![npm version](https://img.shields.io/npm/v/sweet-scroll.svg?style=flat-square)](http://badge.fury.io/js/sweet-scroll)
@@ -48,6 +48,13 @@ import SweetScroll from "sweet-scroll"
 
 ```html
 <script src="sweet-scroll.min.js"></script>
+```
+
+
+#### via CDN (UNPKG)
+
+```html
+<script src="https://unpkg.com/sweet-scroll/sweet-scroll.min.js"></script>
 ```
 
 
