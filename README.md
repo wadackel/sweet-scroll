@@ -420,7 +420,7 @@ Disable of the method and event handler.
 **Example:**
 
 ```javascript
-sweetScroll.destory();
+sweetScroll.destroy();
 ```
 
 
