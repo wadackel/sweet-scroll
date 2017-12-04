@@ -1,0 +1,9 @@
+notifications:
+  email: false
+language: node_js
+node_js:
+  - node
+sudo: false
+cache:
+  directories:
+    - node_modules
