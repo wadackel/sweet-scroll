@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "rootDirs": [
+      "./src"
+    ],
+    "lib": [
+      "node",
+      "dom",
+      "es2017"
+    ],
+    "types": [
+      "jest"
+    ],
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "experimentalDecorators": true,
+    "forceConsistentCasingInFileNames": true,
+    "stripInternal": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": false,
+    "declarationDir": "decls",
+    "declaration": true,
+    "listFiles": false,
+    "traceResolution": false,
+    "newLine": "LF",
+    "noEmitOnError": true,
+    "inlineSourceMap": false,
+    "inlineSources": false,
+    "listEmittedFiles": false
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "./node_modules"
+  ]
+}

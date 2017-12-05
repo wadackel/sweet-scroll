@@ -1,24 +1,18 @@
-import babel from "rollup-plugin-babel";
+import typescript from 'rollup-plugin-typescript2';
 
-const pkg = require("./package.json");
-const banner = `/*!
- * ${pkg.name}
- * ${pkg.description}
- * @author ${pkg.author}
- * @license ${pkg.license}
- * @version ${pkg.version}
- */
-`;
+const pkg = require('./package.json');
+
+const banner = `/*! @preserve ${pkg.name} v${pkg.version} - ${pkg.author} | ${pkg.license} License */`;
 
 export default {
   banner,
-  entry: "src/sweet-scroll.js",
-  dest: "sweet-scroll.js",
-  moduleName: "SweetScroll",
-  format: "umd",
+  entry: 'src/index.ts',
+  dest: 'sweet-scroll.js',
+  moduleName: 'SweetScroll',
+  format: 'umd',
   plugins: [
-    babel({
-      exclude: "node_modules/**"
-    })
-  ]
+    typescript({
+      useTsconfigDeclarationDir: true,
+    }),
+  ],
 };
