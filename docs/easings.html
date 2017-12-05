@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
   <link rel="stylesheet" href="./lib/icomoon/style.css">
   <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <header class="header" data-scroll-header>
@@ -124,19 +124,128 @@
     <label class="quick-mode__control" for="quick-mode"></label>
   </div>
 
-  <script src="./js/sweet-scroll.js"></script>
+  <script src="./sweet-scroll.js"></script>
   <script>
-    var sweetScroll = new SweetScroll({ easing: "easeOutBounce" });
-    var $easings = document.getElementById("easing-type");
+    var easeInElastic = function(_, t, b, c, d) {
+      var s = 1.70158;
+      var p = 0;
+      var a = c;
+      if (t === 0) return b;
+      if ((t /= d) === 1) return b + c;
+      if (!p) p = d * 0.3;
+      if (a < Math.abs(c)) {
+        a = c;
+        s = p / 4;
+      } else {
+        s = p / (2 * Math.PI) * Math.asin(c / a);
+      }
+      return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+    };
 
-    $easings.addEventListener("change", function() {
-      var easing = $easings.options[$easings.selectedIndex].value;
-      sweetScroll.update({ easing: easing });
+    var easeOutElastic = function(_, t, b, c, d) {
+      var s = 1.70158;
+      var p = 0;
+      var a = c;
+      if (t === 0) return b;
+      if ((t /= d) === 1) return b + c;
+      if (!p) p = d * 0.3;
+      if (a < Math.abs(c)) {
+        a = c;
+        s = p / 4;
+      } else {
+        s = p / (2 * Math.PI) * Math.asin(c / a);
+      }
+      return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+    };
+
+    var easeInOutElastic = function(_, t, b, c, d) {
+      var s = 1.70158;
+      var p = 0;
+      var a = c;
+      if (t === 0) return b;
+      if ((t /= d / 2) === 2) return b + c;
+      if (!p) p = d * (0.3 * 1.5);
+      if (a < Math.abs(c)) {
+        a = c;
+        s = p / 4;
+      } else {
+        s = p / (2 * Math.PI) * Math.asin(c / a);
+      }
+      if (t < 1) {
+        return (
+          -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b
+        );
+      }
+      return (
+        a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * 0.5 + c + b
+      );
+    };
+
+    var easeInBack = function(_, t, b, c, d) {
+      var s =
+        arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1.70158;
+      return c * (t /= d) * t * ((s + 1) * t - s) + b;
+    };
+
+    var easeOutBack = function(_, t, b, c, d) {
+      var s =
+        arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1.70158;
+      return c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+    };
+
+    var easeInOutBack = function(_, t, b, c, d) {
+      var s =
+        arguments.length > 5 && arguments[5] !== undefined ? arguments[5] : 1.70158;
+      return (t /= d / 2) < 1
+        ? c / 2 * (t * t * (((s *= 1.525) + 1) * t - s)) + b
+        : c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
+    };
+
+    var easeOutBounce = function(_, t, b, c, d) {
+      if ((t /= d) < 1 / 2.75) {
+        return c * (7.5625 * t * t) + b;
+      } else if (t < 2 / 2.75) {
+        return c * (7.5625 * (t -= 1.5 / 2.75) * t + 0.75) + b;
+      } else if (t < 2.5 / 2.75) {
+        return c * (7.5625 * (t -= 2.25 / 2.75) * t + 0.9375) + b;
+      }
+      return c * (7.5625 * (t -= 2.625 / 2.75) * t + 0.984375) + b;
+    };
+
+    var easeInBounce = function(x, t, b, c, d) {
+      return c - easeOutBounce(x, d - t, 0, c, d) + b;
+    };
+
+    var easeInOutBounce = function(x, t, b, c, d) {
+      return t < d / 2
+        ? easeInBounce(x, t * 2, 0, c, d) * 0.5 + b
+        : easeOutBounce(x, t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b;
+    };
+
+    var registry = {
+      easeInElastic: easeInElastic,
+      easeOutElastic: easeOutElastic,
+      easeInOutElastic: easeInOutElastic,
+      easeInBack: easeInBack,
+      easeOutBack: easeOutBack,
+      easeInOutBack: easeInOutBack,
+      easeInBounce: easeInBounce,
+      easeOutBounce: easeOutBounce,
+      easeInOutBounce: easeInOutBounce,
+    };
+
+    var scroller = new SweetScroll({ easing: easeOutBounce });
+    var $easings = document.getElementById('easing-type');
+
+    $easings.addEventListener('change', function() {
+      var name = $easings.options[$easings.selectedIndex].value;
+      var easing = registry.hasOwnProperty(name) ? registry[name] : name;
+      scroller.update({ easing: easing });
     }, false);
 
     // Toggle quickMode
-    document.querySelector("#quick-mode").addEventListener("change", function(e) {
-      sweetScroll.update({ quickMode: this.checked });
+    document.querySelector('#quick-mode').addEventListener('change', function(e) {
+      scroller.update({ quickMode: this.checked });
     }, false);
   </script>
 </body>

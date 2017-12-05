@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
   <link rel="stylesheet" href="./lib/icomoon/style.css">
   <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
   <header class="header" data-scroll-header>
@@ -39,20 +39,20 @@
     </div>
   </footer>
 
-  <script src="./js/sweet-scroll.js"></script>
+  <script src="./sweet-scroll.js"></script>
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      var sweetScroll = new SweetScroll();
+    document.addEventListener('DOMContentLoaded', function() {
+      var scroller = new SweetScroll();
       var hash = window.location.hash;
       var needsInitialScroll = document.getElementById(hash.substr(1)) != null;
 
       if (needsInitialScroll) {
-        window.location.hash = "";
+        window.location.hash = '';
       }
 
-      window.addEventListener("load", function() {
+      window.addEventListener('load', function() {
         if (needsInitialScroll) {
-          sweetScroll.to(hash, { updateURL: "replace" });
+          scroller.to(hash, { updateURL: 'replace' });
         }
       }, false);
     }, false);
