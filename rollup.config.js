@@ -6,10 +6,12 @@ const banner = `/*! @preserve ${pkg.name} v${pkg.version} - ${pkg.author} | ${pk
 
 export default {
   banner,
-  entry: 'src/index.ts',
-  dest: 'sweet-scroll.js',
-  moduleName: 'SweetScroll',
-  format: 'umd',
+  input: 'src/index.ts',
+  output: {
+    name: 'SweetScroll',
+    file: 'sweet-scroll.js',
+    format: 'umd',
+  },
   plugins: [
     typescript({
       useTsconfigDeclarationDir: true,
