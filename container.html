@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Container | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+  <link rel="stylesheet" href="./lib/icomoon/style.css">
+  <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
+  <link rel="stylesheet" href="./style.css">
+  <style type="text/css">
+    #container {
+      width: 100%;
+      height: 400px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 2rem;
+      background: #ba9b5b;
+      color: #fff;
+      text-align: left;
+      -webkit-overflow-scrolling: touch;
+    }
+    #container h2 {
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <header class="header" data-scroll-header>
+    <a class="header__back" href="./#examples"><i class="icon-angle-left"></i><span>Back</span></a>
+    <h1 class="header__logo"><img src="./images/icon-logo.svg" width="32" height="32" alt="sweet-scroll.js"></h1>
+    <a class="header__code" href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/docs/container.html"><i class="icon-code"></i><span>Source</span></a>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__container">
+        <div class="section__header">
+          <h2 class="section__title">Container</h2>
+          <p class="section__lead">In the following example we have specified in the container for scrolling the <code>#container</code>.</p>
+        </div>
+        <div class="section__body">
+          <div id="container">
+            <h2 id="heading1">Heading1</h2>
+            <p>
+            <a href="#heading2">Go to Heading2</a><br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...
+            </p>
+            <h2 id="heading2">Heading2</h2>
+            <p>
+            <a href="#demo-footer">Go to Footer</a><br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...<br>
+            ...
+            </p>
+            <h2 id="demo-footer">Footer</h2>
+            <p><a href="#">Back to top</a></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="quick-mode">
+    <span class="quick-mode__label">QuickMode!!</span>
+    <input type="checkbox" id="quick-mode">
+    <label class="quick-mode__control" for="quick-mode"></label>
+  </div>
+
+  <script src="./sweet-scroll.js"></script>
+  <script>
+    var scroller = new SweetScroll({
+      header: '',
+      trigger: 'a[href^="#"]',
+    }, '#container');
+
+    // Toggle quickMode
+    document.querySelector('#quick-mode').addEventListener('change', function(e) {
+      scroller.update({ quickMode: this.checked });
+    }, false);
+  </script>
+</body>
+</html>

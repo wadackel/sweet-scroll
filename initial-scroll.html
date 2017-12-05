@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Initial Scroll | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+  <link rel="stylesheet" href="./lib/icomoon/style.css">
+  <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <header class="header" data-scroll-header>
+    <a class="header__back" href="./#examples"><i class="icon-angle-left"></i><span>Back</span></a>
+    <h1 class="header__logo"><img src="./images/icon-logo.svg" width="32" height="32" alt="sweet-scroll.js"></h1>
+    <a class="header__code" href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/docs/initial-scroll.html"><i class="icon-code"></i><span>Source</span></a>
+  </header>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__container">
+        <div class="section__header">
+          <h2 class="section__title">Initial scroll</h2>
+          <p class="section__lead">This is a sample to scroll after the page is loaded.</p>
+        </div>
+        <div class="section__body"></div>
+      </div>
+    </div>
+  </section>
+
+  <div style="height: 500vh;"></div>
+
+  <footer class="footer" id="footer">
+    <div class="container">
+      <p class="footer__logo"><a href="#" data-scroll><img src="./images/icon-logo.svg" width="60" height="60" alt="sweet-scroll.js"></a></p>
+      <p class="footer__made-by">Made by <a href="https://github.com/tsuyoshiwada/sweet-scroll">tsuyoshiwada</a></p>
+    </div>
+  </footer>
+
+  <script src="./sweet-scroll.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      var scroller = new SweetScroll();
+      var hash = window.location.hash;
+      var needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+
+      if (needsInitialScroll) {
+        window.location.hash = '';
+      }
+
+      window.addEventListener('load', function() {
+        if (needsInitialScroll) {
+          scroller.to(hash, { updateURL: 'replace' });
+        }
+      }, false);
+    }, false);
+  </script>
+</body>
+</html>

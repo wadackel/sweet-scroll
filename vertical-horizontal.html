@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Vertical &amp; Horizontal Scroll | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+  <link rel="stylesheet" href="./lib/icomoon/style.css">
+  <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+  #wrapper > div {
+    width: 300vw;
+    height: 300vh;
+  }
+  .section {
+    float: left;
+    width: 33.33%;
+    height: 100vh;
+  }
+  </style>
+</head>
+<body>
+  <header class="header" data-scroll-header>
+    <a class="header__back" href="./#examples"><i class="icon-angle-left"></i><span>Back</span></a>
+    <h1 class="header__logo"><img src="./images/icon-logo.svg" width="32" height="32" alt="sweet-scroll.js"></h1>
+    <a class="header__code" href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/docs/vertical-horizontal.html"><i class="icon-code"></i><span>Source</span></a>
+  </header>
+
+  <div id="wrapper">
+    <div>
+      <div class="controller">
+        <a class="btn btn--ghost" href="#first" data-scroll>1</a>
+        <a class="btn btn--ghost" href="#second" data-scroll>2</a>
+        <a class="btn btn--ghost" href="#third" data-scroll>3</a>
+        <a class="btn btn--ghost" href="#fourth" data-scroll>4</a>
+        <a class="btn btn--ghost" href="#fifth" data-scroll>5</a>
+        <a class="btn btn--ghost" href="#sixth" data-scroll>6</a>
+        <a class="btn btn--ghost" href="#seventh" data-scroll>7</a>
+        <a class="btn btn--ghost" href="#eighth" data-scroll>8</a>
+        <a class="btn btn--ghost" href="#ninth" data-scroll>9</a>
+      </div>
+
+      <section class="section" id="first">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">Vertical &amp; Horizontal scroll</h2>
+              <p class="section__lead">You can also easily achieved scroll vertically and horizontally.</p>
+            </div>
+            <div class="section__body">
+              <h3>This demo is vertical and horizontal scroll example.</h3>
+              <p>Please try to click the controller!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="second">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">2. Second</h2>
+              <p class="section__lead">This is second content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="third">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">3. Third</h2>
+              <p class="section__lead">This is third content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="fourth">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">4. Fourth</h2>
+              <p class="section__lead">This is fourth content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="fifth">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">5. Fifth</h2>
+              <p class="section__lead">This is fifth content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="sixth">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">6. Sixth</h2>
+              <p class="section__lead">This is sixth content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="seventh">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">7. Seventh</h2>
+              <p class="section__lead">This is seventh content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="eighth">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">8. Eighth</h2>
+              <p class="section__lead">This is eighth content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="ninth">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">9. Ninth</h2>
+              <p class="section__lead">This is ninth content.</p>
+            </div>
+            <div class="section__body"></div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="quick-mode">
+    <span class="quick-mode__label">QuickMode!!</span>
+    <input type="checkbox" id="quick-mode">
+    <label class="quick-mode__control" for="quick-mode"></label>
+  </div>
+
+  <script src='./sweet-scroll.js'></script>
+  <script>
+    var scroller = new SweetScroll({
+      vertical: true,
+      horizontal: true,
+    }, '#wrapper');
+
+    // Toggle quickMode
+    document.querySelector('#quick-mode').addEventListener('change', function(e) {
+      scroller.update({ quickMode: this.checked });
+    }, false);
+  </script>
+</body>
+</html>

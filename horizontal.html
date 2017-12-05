@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Horizontal Scroll | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+  <link rel="stylesheet" href="./lib/icomoon/style.css">
+  <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
+  <link rel="stylesheet" href="./style.css">
+  <style>
+    #wrapper > div {
+      width: 500vw;
+    }
+    .section {
+      float: left;
+      width: 20%;
+    }
+  </style>
+</head>
+<body>
+  <header class="header" data-scroll-header>
+    <a class="header__back" href="./#examples"><i class="icon-angle-left"></i><span>Back</span></a>
+    <h1 class="header__logo"><img src="./images/icon-logo.svg" width="32" height="32" alt="sweet-scroll.js"></h1>
+    <a class="header__code" href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/docs/horizontal.html"><i class="icon-code"></i><span>Source</span></a>
+  </header>
+
+  <div id="wrapper">
+    <div>
+      <section class="section" id="first">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">Horizontal scroll</h2>
+              <p class="section__lead">Horizontal scrolling can also be easily achieved.</p>
+            </div>
+            <div class="section__body">
+              <ul class="list--inline">
+                <li><button class="btn btn--ghost" data-scroll="#second">Next page<i class="icon-angle-right"></i></button></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="second">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">2. Second</h2>
+              <p class="section__lead">This is second content.</p>
+            </div>
+            <div class="section__body">
+              <ul class="list--inline">
+                <li><button class="btn btn--ghost" data-scroll="#first"><i class="icon-angle-left"></i>Prev page</button></li>
+                <li><button class="btn btn--ghost" data-scroll="#third">Next page<i class="icon-angle-right"></i></button></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="third">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">3. Third</h2>
+              <p class="section__lead">This is third content.</p>
+            </div>
+            <div class="section__body">
+              <ul class="list--inline">
+                <li><button class="btn btn--ghost" data-scroll="#second"><i class="icon-angle-left"></i>Prev page</button></li>
+                <li><button class="btn btn--ghost" data-scroll="#fourth">Next page<i class="icon-angle-right"></i></button></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="fourth">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">4. Fourth</h2>
+              <p class="section__lead">This is fourth content.</p>
+            </div>
+            <div class="section__body">
+              <ul class="list--inline">
+                <li><button class="btn btn--ghost" data-scroll="#third"><i class="icon-angle-left"></i>Prev page</button></li>
+                <li><button class="btn btn--ghost" data-scroll="#fifth">Next page<i class="icon-angle-right"></i></button></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="fifth">
+        <div class="container">
+          <div class="section__container">
+            <div class="section__header">
+              <h2 class="section__title">5. Fifth</h2>
+              <p class="section__lead">This is fifth content.</p>
+            </div>
+            <div class="section__body">
+              <ul class="list--inline">
+                <li><button class="btn btn--ghost" data-scroll="#first"><i class="icon-angle-left"></i>First page</button></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="quick-mode">
+    <span class="quick-mode__label">QuickMode!!</span>
+    <input type="checkbox" id="quick-mode">
+    <label class="quick-mode__control" for="quick-mode"></label>
+  </div>
+
+  <script src="./sweet-scroll.js"></script>
+  <script>
+    var sweetScroll = new SweetScroll({
+      horizontal: true,
+    }, "#wrapper");
+
+    // Toggle quickMode
+    document.querySelector("#quick-mode").addEventListener("change", function(e) {
+      sweetScroll.update({ quickMode: this.checked });
+    }, false);
+  </script>
+</body>
+</html>

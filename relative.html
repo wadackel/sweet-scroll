@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+  <title>Relative scroll | sweet-scroll.js</title>
+  <link rel="shortcut icon" href="./favicon.ico">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
+  <link rel="stylesheet" href="./lib/icomoon/style.css">
+  <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
+  <link rel="stylesheet" href="./style.css">
+  <style type="text/css">
+    .controller {
+      width: 280px;
+      margin-left: -140px;
+    }
+    .controller .btn {
+      border-left-width: 1px !important;
+    }
+    .controller div:first-child .btn {
+      width: 50%;
+    }
+    .controller div:first-child .btn:last-child {
+      border-right-width: 1px;
+    }
+    .controller div:last-child .btn {
+      width: 100%;
+      border-top-width: 0;
+    }
+    .controller div:last-child .btn:first-child {
+      border-right-width: 1px;
+    }
+    .section,
+    .demo-content {
+      height: 100vh;
+    }
+    .demo-content {
+      border-top-width: 0;
+    }
+    #box1 {
+      background-color: #e0e0d8;
+    }
+    #box2 {
+      background-color: #d4d5cb;
+    }
+    #box3 {
+      background-color: #c9c9bf;
+    }
+    #box4 {
+      background-color: #bdbeb2;
+    }
+  </style>
+</head>
+<body>
+  <header class="header" data-scroll-header>
+    <a class="header__back" href="./#examples"><i class="icon-angle-left"></i><span>Back</span></a>
+    <h1 class="header__logo"><img src="./images/icon-logo.svg" width="32" height="32" alt="sweet-scroll.js"></h1>
+    <a class="header__code" href="https://github.com/tsuyoshiwada/sweet-scroll/blob/master/docs/relative.html"><i class="icon-code"></i><span>Source</span></a>
+  </header>
+
+  <div class="controller">
+    <div>
+      <button class="btn btn--ghost" type="button" data-scroll="+=500">+=500</button>
+      <button class="btn btn--ghost" type="button" data-scroll="-=500">-=500</button>
+    </div>
+    <div>
+      <button class="btn btn--ghost" id="control-bottom" type="button">+=window.innerHeight</button><br>
+      <button class="btn btn--ghost" id="control-top" type="button">-=window.innerHeight</button>
+    </div>
+  </div>
+
+  <section class="section">
+    <div class="container">
+      <div class="section__container">
+        <div class="section__header">
+          <h2 class="section__title">Relative scroll</h2>
+          <p class="section__lead">Corresponds to the relative scroll.</p>
+        </div>
+        <div class="section__body">
+          <h3>This demo is vertical and horizontal scroll example.</h3>
+          <p>Please try to click the controller!</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="demo-content" id="box1"></div>
+  <div class="demo-content" id="box2"></div>
+  <div class="demo-content" id="box3"></div>
+  <div class="demo-content" id="box4"></div>
+
+  <script src="./sweet-scroll.js"></script>
+  <script>
+    var scroller = new SweetScroll({ header: null, outputLog: true });
+    var controlBottom = document.getElementById('control-bottom');
+    var controlTop = document.getElementById('control-top');
+
+    controlBottom.addEventListener('click', function() {
+      scroller.to('+=' + window.innerHeight);
+    }, false);
+
+    controlTop.addEventListener('click', function() {
+      scroller.to('-=' + window.innerHeight);
+    }, false);
+  </script>
+</body>
+</html>
