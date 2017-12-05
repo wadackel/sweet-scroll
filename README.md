@@ -1,21 +1,26 @@
-# <img src="https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/images/logo.png" width="340" height="135" alt="sweet-scroll.js">
+![sweet-scroll](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/artwork/repo-banner.png)
+
+---
 
 [![Build Status](http://img.shields.io/travis/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://travis-ci.org/tsuyoshiwada/sweet-scroll)
 [![npm version](https://img.shields.io/npm/v/sweet-scroll.svg?style=flat-square)](http://badge.fury.io/js/sweet-scroll)
 [![David](https://img.shields.io/david/dev/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://david-dm.org/tsuyoshiwada/sweet-scroll/#info=devDependencies&view=table)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
 
-ECMAScript2015 Friendly, dependency-free smooth scroll library.
+ECMAScript2015+ & TypeScript Friendly, dependency-free smooth scroll library.
 
-[See Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
+---
+
+:lollipop: [See Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
 
 
 
-## FEATURES
+
+## Features
 
 * Dependecy-free!!
-* ECMAScript2015 friendly
-* Use `requestAnimationFrame` API (IE9 works in `setTimeout` instead)
+* ECMAScript2015+ & TypeScript friendly
+* Use `requestAnimationFrame` API
 * Supports vertical and horizontal scroll
 * Supports dynamic trigger (event delegation)
 * Supports container for the scroll
@@ -24,7 +29,46 @@ ECMAScript2015 Friendly, dependency-free smooth scroll library.
 
 
 
-## USAGE
+
+## Table of Contents
+
+* [Usage](#usage)
+    - [1. Install](#1-install)
+    - [2. Setup of HTML](#2-setup-of-html)
+    - [3. Initialize SweetScroll](#3-initialize-sweetscroll)
+* [Options](#options)
+* [Easings](#easings)
+    - [Built-in (22)](#built-in-22)
+    - [Advanced (9)](#advanced-9)
+* [Customizing Tips](#customizing-tips)
+    - [Specifying container elements](#specifying-container-elements)
+    - [Specify fixed header](#specify-fixed-header)
+    - [Override of options for each element](#override-of-options-for-each-element)
+    - [if you want to use in non anchor element](#if-you-want-to-use-in-non-anchor-element)
+    - [Do you feel scrolling is slow?](#do-you-feel-scrolling-is-slow)
+    - [Scrolling animation in another page](#scrolling-animation-in-another-page)
+* [API](#api)
+    - [new SweetScroll(options?: PartialOptions, container?: string | Element)](#new-sweetscrolloptions-partialoptions-container-string--element)
+    - [SweetScroll.create(options?: PartialOptions, container?: string | Element)](#sweetscrollcreateoptions-partialoptions-container-string--element)
+    - [to(distance: any, options?: PartialOptions)](#todistance-any-options-partialoptions)
+    - [toTop(distance: any, options?: PartialOptions)](#totopdistance-any-options-partialoptions)
+    - [toLeft(distance: any, options?: PartialOptions)](#toleft-distance-any-options-partialoptions)
+    - [toElement($el: Element, options?: PartialOptions)](#toelementel-element-options-partialoptions)
+    - [update(options: PartialOptions)](#updateoptions-partialoptions)
+    - [stop(gotoEnd: boolean = true)](#stopgotoend-boolean--true)
+    - [destroy()](#destroy)
+    - [Callbacks](#callbacks)
+* [Browser Support](#browser-support)
+    - [Scrolling with IE9](#scrolling-with-ie9)
+* [CHANGELOG](#changelog)
+* [Contibute](#contibute)
+    - [Development](#development)
+* [License](#license)
+
+
+
+
+## Usage
 
 ### 1. Install
 
@@ -36,27 +80,24 @@ $ npm install sweet-scroll
 
 ##### use
 
-```javascript
-import SweetScroll from "sweet-scroll"
+```typescript
+import SweetScroll from 'sweet-scroll';
 ```
-
 
 #### via MANUAL
 
 1. Download the [sweet-scroll.min.js](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/sweet-scroll.min.js)
-2. Load it in the script tag.
+1. Load it in the script tag.
 
 ```html
 <script src="sweet-scroll.min.js"></script>
 ```
-
 
 #### via CDN (UNPKG)
 
 ```html
 <script src="https://unpkg.com/sweet-scroll/sweet-scroll.min.js"></script>
 ```
-
 
 
 ### 2. Setup of HTML
@@ -68,53 +109,55 @@ import SweetScroll from "sweet-scroll"
 ```
 
 
-
 ### 3. Initialize SweetScroll
 
 You need to initialize an instance after `DOMContentLoaded`.
 
-```javascript
-document.addEventListener("DOMContentLoaded", () => {
-  const sweetScroll = new SweetScroll({/* some options */});
+```typescript
+document.addEventListener('DOMContentLoaded', () => {
+  const scroller = new SweetScroll({/* some options */});
 }, false);
 ```
 
 
 
-## OPTIONS
+
+## Options
 
 The following options are applied by default. It can be customized as needed.
 
-```javascript
+```typescript
 {
-  trigger: "[data-scroll]",       // Selector for trigger (must be a valid css selector)
-  header: "[data-scroll-header]", // Selector for fixed header (must be a valid css selector)
+  trigger: '[data-scroll]',       // Selector for trigger (must be a valid css selector)
+  header: '[data-scroll-header]', // Selector or Element for fixed header (Selector of must be a valid css selector)
   duration: 1000,                 // Specifies animation duration in integer
-  delay: 0,                       // Specifies timer for delaying the execution of the scroll in milliseconds
-  easing: "easeOutQuint",         // Specifies the pattern of easing
+  easing: 'easeOutQuint',         // Specifies the pattern of easing
   offset: 0,                      // Specifies the value to offset the scroll position in pixels
-  verticalScroll: true,           // Enable the vertical scroll
-  horizontalScroll: false,        // Enable the horizontal scroll
-  stopScroll: true,               // When fired wheel or touchstart events to stop scrolling
-  updateURL: false,               // Update the URL hash on after scroll (true | false | "push" | "replace")
+  vertical: true,                 // Enable the vertical scroll
+  horizontal: false,              // Enable the horizontal scroll
+  cancellable: true,              // When fired wheel or touchstart events to stop scrolling
+  updateURL: false,               // Update the URL hash on after scroll (true | false | 'push' | 'replace')
   preventDefault: true,           // Cancels the container element click event
   stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
-  outputLog: false,               // Specify level of output to log
   quickMode: false,               // Instantly scroll to the destination! (It's recommended to use it with `easeOutExpo`)
 
   // Callbacks
-  beforeScroll: null,
-  afterScroll: null,
-  cancelScroll: null,
-  completeScroll: null,
-  stepScroll: null
+  before: null,
+  after: null,
+  cancel: null,
+  complete: null,
+  step: null,
 }
 ```
 
 
-### Easings
+
+
+## Easings
 
 Supports the following easing.
+
+### Built-in (22)
 
 * **Normal**
     - `linear`
@@ -146,26 +189,202 @@ Supports the following easing.
     - `easeInCirc`
     - `easeOutCirc`
     - `easeInOutCirc`
-* **Elastic**
-    - `easeInElastic`
-    - `easeOutElastic`
-    - `easeInOutElastic`
-* **Back**
-    - `easeInBack`
-    - `easeOutBack`
-    - `easeInOutBack`
-* **Bounce**
-    - `easeInBounce`
-    - `easeOutBounce`
-    - `easeInOutBounce`
+
+### Advanced (9)
+
+Easing functions that are not built in can pass functions directly.
+
+```typescript
+const scroller = new SweetScroll({
+  easing: advancedEasingFunction,
+});
+```
+
+
+#### Elastic
+
+<details>
+  <summary><code>easeInElastic</code></summary>
+
+  ```typescript
+  const easeInElastic = (_, t, b, c, d) => {
+    let s = 1.70158;
+    let p = 0;
+    let a = c;
+    if (t === 0) return b;
+    if ((t /= d) === 1) return b + c;
+    if (!p) p = d * 0.3;
+    if (a < Math.abs(c)) {
+      a = c;
+      s = p / 4;
+    } else {
+      s = p / (2 * Math.PI) * asin(c / a);
+    }
+    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * PI) / p)) + b;
+  };
+  ```
+</details>
+
+<details>
+  <summary><code>easeOutElastic</code></summary>
+
+  ```typescript
+  const easeOutElastic = (_, t, b, c, d) => {
+    let s = 1.70158;
+    let p = 0;
+    let a = c;
+    if (t === 0) return b;
+    if ((t /= d) === 1) return b + c;
+    if (!p) p = d * 0.3;
+    if (a < Math.abs(c)) {
+      a = c;
+      s = p / 4;
+    } else {
+      s = p / (2 * Math.PI) * asin(c / a);
+    }
+    return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
+  };
+  ```
+</details>
+
+<details>
+  <summary><code>easeInOutElastic</code></summary>
+
+  ```typescript
+  const easeInOutElastic = (_, t, b, c, d) => {
+    let s = 1.70158;
+    let p = 0;
+    let a = c;
+    if (t === 0) return b;
+    if ((t /= d / 2) === 2) return b + c;
+    if (!p) p = d * (0.3 * 1.5);
+    if (a < Math.abs(c)) {
+      a = c;
+      s = p / 4;
+    } else {
+      s = p / (2 * Math.PI) * Math.asin(c / a);
+    }
+    if (t < 1) {
+      return -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+    }
+    return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * 0.5 + c + b;
+  };
+  ```
+</details>
+
+
+#### Back
+
+<details>
+  <summary><code>easeInBack</code></summary>
+
+  ```typescript
+  const easeInBack = (_, t, b, c, d, s = 1.70158) => (
+    c * (t /= d) * t * ((s + 1) * t - s) + b
+  );
+  ```
+</details>
+
+<details>
+  <summary><code>easeOutBack</code></summary>
+
+  ```typescript
+  const easeOutBack = (_, t, b, c, d, s = 1.70158) => (
+    c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b
+  );
+  ```
+</details>
+
+<details>
+  <summary><code>easeInOutBack</code></summary>
+
+  ```typescript
+  const easeInOutBack = (_, t, b, c, d, s = 1.70158) => (
+    (t /= d / 2) < 1
+      ? c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b
+      : c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b
+  );
+  ```
+</details>
+
+
+#### Bounce
+
+<details>
+  <summary><code>easeOutBounce</code></summary>
+
+  ```typescript
+  const easeOutBounce = (_, t, b, c, d) => {
+    if ((t /= d) < (1 / 2.75)) {
+      return c * (7.5625 * t * t) + b;
+    } else if (t < (2 / 2.75)) {
+      return c * (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75) + b;
+    } else if (t < (2.5 / 2.75)) {
+      return c * (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375) + b;
+    }
+    return c * (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375) + b;
+  };
+  ```
+</details>
+
+<details>
+  <summary><code>easeInBounce</code></summary>
+
+  ```typescript
+  const easeOutBounce = (_, t, b, c, d) => {
+    if ((t /= d) < (1 / 2.75)) {
+      return c * (7.5625 * t * t) + b;
+    } else if (t < (2 / 2.75)) {
+      return c * (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75) + b;
+    } else if (t < (2.5 / 2.75)) {
+      return c * (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375) + b;
+    }
+    return c * (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375) + b;
+  };
+
+  const easeInBounce = (x, t, b, c, d) => (
+    c - easeOutBounce(x, d - t, 0, c, d) + b
+  );
+  ```
+</details>
+
+<details>
+  <summary><code>easeInOutBounce</code></summary>
+
+  ```typescript
+  const easeOutBounce = (_, t, b, c, d) => {
+    if ((t /= d) < (1 / 2.75)) {
+      return c * (7.5625 * t * t) + b;
+    } else if (t < (2 / 2.75)) {
+      return c * (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75) + b;
+    } else if (t < (2.5 / 2.75)) {
+      return c * (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375) + b;
+    }
+    return c * (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375) + b;
+  };
+
+  const easeInBounce = (x, t, b, c, d) => (
+    c - easeOutBounce(x, d - t, 0, c, d) + b
+  );
+
+  const easeInOutBounce = (x, t, b, c, d) => (
+    t < d / 2
+      ? easeInBounce(x, t * 2, 0, c, d) * 0.5 + b
+      : easeOutBounce(x, t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b
+  );
+  ```
+</details>
+
+---
 
 [Live demo](http://tsuyoshiwada.github.io/sweet-scroll/easings.html)
 
 
 
-### Customizing Tips
 
-#### Specifies the container
+## Customizing Tips
+
+### Specifying container elements
 
 In the following example we have specified in the container for scrolling the `#container`.
 
@@ -177,16 +396,16 @@ In the following example we have specified in the container for scrolling the `#
 </div>
 ```
 
-```javascript
+```typescript
 // Specified in the CSS Selector
-const sweetScroll = new SweetScroll({/* some options */}, "#container");
+const scroller = new SweetScroll({/* some options */}, '#container');
 
 // Specified in the Element
-const sweetScroll = new SweetScroll({/* some options */}, document.getElementById("container"));
+const scroller = new SweetScroll({/* some options */}, document.getElementById('container'));
 ```
 
 
-#### Specifies a fixed header
+### Specify fixed header
 
 Add the `data-scroll-header` attribute in order to offset the height of the fixed header.
 
@@ -196,23 +415,23 @@ Add the `data-scroll-header` attribute in order to offset the height of the fixe
 
 Specify the CSS Selector in `header` option instead of the `data-scroll-header` attribute.
 
-```javascript
-const sweetScroll = new SweetScroll({
-  header: "#header"
+```typescript
+const scroller = new SweetScroll({
+  header: '#header',
 });
 ```
 
 
-#### Override of options for each element
+### Override of options for each element
 
 You can override the default options by passing the option in `JSON` format to the `data-scroll-options`.
 
 ```html
-<a href="#target" data-scroll data-scroll-options='{"easing": "easeOutBounce"}'>Go to Target</a>
+<a href="#target" data-scroll data-scroll-options='{"easing": "easeOutExpo"}'>Go to Target</a>
 ```
 
 
-#### if you want to use in non anchor element
+### if you want to use in non anchor element
 
 Will use the data-scroll attribute instead of href.
 
@@ -221,14 +440,14 @@ Will use the data-scroll attribute instead of href.
 ```
 
 
-#### Do you feel scrolling is slow?
+### Do you feel scrolling is slow?
 
 You can solve with `quickMode` options!
 
-```javascript
-const sweetScroll = new SweetScroll({
+```typescript
+const scroller = new SweetScroll({
   quickMode: true,
-  easing: "easeOutExpo" // Recommended
+  easing: 'easeOutExpo', // Recommended
 });
 ```
 
@@ -236,23 +455,23 @@ const sweetScroll = new SweetScroll({
 
 
 
-#### Scroll animation in a other page
+### Scrolling animation in another page
 
 The following, Introduce one of the mounting method.
 
-```javascript
-document.addEventListener("DOMContentLoaded", () => {
-  const sweetScroll = new SweetScroll();
+```typescript
+document.addEventListener('DOMContentLoaded', () => {
+  const scroller = new SweetScroll();
   const hash = window.location.hash;
   const needsInitialScroll = document.getElementById(hash.substr(1)) != null;
 
   if (needsInitialScroll) {
-    window.location.hash = "";
+    window.location.hash = '';
   }
 
-  window.addEventListener("load", () => {
+  window.addEventListener('load', () => {
     if (needsInitialScroll) {
-      sweetScroll.to(hash, { updateURL: "replace" });
+      scroller.to(hash, { updateURL: 'replace' });
     }
   }, false);
 }, false);
@@ -266,140 +485,112 @@ You can also achieve the same thing in other ways by using the provided API.
 
 ## API
 
-* [new SweetScroll(options = {}, container = "body, html")](#new-sweetscrolloptions---container--body-html)
-* [to(distance, options = {})](#todistance-options--)
-* [toTop(distance, options = {})](#totopdistance-options--)
-* [toLeft(distance, options = {})](#toleftdistance-options--)
-* [toElement(el, options = {})](#toelementel-options--)
-* [update(options = {})](#updateoptions--)
-* [stop(gotoEnd = false)](#stopgotoend--true)
-* [destroy()](#destroy)
-* [Callbacks](#callbacks)
-    - `beforeScroll(toScroll, trigger) {}`
-    - `cancelScroll() {}`
-    - `afterScroll(toScroll, trigger) {}`
-    - `completeScroll(isCancel) {}`
-    - `stepScroll(currentTime, props) {}`
 
-`distance` to can specify the CSS Selector or scroll position.
-
-**Example:**
-
-```javascript
-const SweetScroll = new SweetScroll();
-
-// CSS Selector of target element
-sweetScroll.to("#footer");
-
-// Object
-sweetScroll.to({top: 1000, left: 20});
-
-// Array (top:0, left:1000)
-sweetScroll.to([0, 1000]);
-
-// Number (Priority to vertical scroll position. by default.)
-sweetScroll.to(500);
-
-// String (Like object syntax)
-sweetScroll.to("top: 500, left: 100");
-
-// String (Relative position)
-sweetScroll.to("+=500");
-sweetScroll.to("-=200");
-```
-
-
-### new SweetScroll(options = {}, container = "body, html")
-
-**options: {Object}**  
-**container: {String | Element}**  
+### new SweetScroll(options?: PartialOptions, container?: string | Element)
 
 Will generate a SweetScroll instance.
 
 **Example:**
 
-```javascript
-const sweetScroll = new SweetScroll({
+```typescript
+const scroller = new SweetScroll({
   duration: 1200,
-  easing: "easeOutBounce"
-}, "#container");
+  easing: 'easeOutExpo',
+}, '#container');
 ```
 
 
-### to(distance, options = {})
+### SweetScroll.create(options?: PartialOptions, container?: string | Element)
 
-**distance: {String | Array | Object}**  
-**options: {Object}**
-
-Scroll animation to the specified `distance`.
+Will generate a SweetScroll instance. (factory method)
 
 **Example:**
 
-```javascript
-sweetScroll.to({top: 1500, left: 400});
+```typescript
+const scroller = SweetScroll.create({
+  duration: 1200,
+  easing: 'easeOutExpo',
+}, '#container');
 ```
 
 
-### toTop(distance, options = {})
+### to(distance: any, options?: PartialOptions)
 
-**distance: {String | Array | Object}**  
-**options: {Object}**
+Scroll animation to the specified `distance`.  
+`distance` to can specify the CSS Selector or scroll position.
+
+**Example:**
+
+```typescript
+const scroller = new SweetScroll();
+
+// CSS Selector of target element
+scroller.to('#footer');
+
+// Object
+scroller.to({ top: 1000, left: 20 });
+
+// Array (top:0, left:1000)
+scroller.to([0, 1000]);
+
+// Number (Priority to vertical scroll position. by default.)
+scroller.to(500);
+
+// String (Relative position)
+scroller.to('+=500');
+scroller.to('-=200');
+```
+
+
+### toTop(distance: any, options?: PartialOptions)
 
 Vertical scroll animation to the specified `distance`.  
 
 **Example:**
 
-```javascript
-sweetScroll.toTop(0);
+```typescript
+scroller.toTop(0);
 ```
 
 
-### toLeft(distance, options = {})
-
-**distance: {String | Array | Object}**  
-**options: {Object}**
+### toLeft(distance: any, options?: PartialOptions)
 
 Horizontal scroll animation to the specified `distance`.  
 
 **Example:**
 
-```javascript
-sweetScroll.toLeft(1500);
+```typescript
+scroller.toLeft(1500);
 ```
 
 
-### toElement(el, options = {})
-
-**el: {Element}**  
-**options: {Object}**
+### toElement($el: Element, options?: PartialOptions)
 
 Scroll animation to the specified `Element`.
 
 **Example:**
 
-```javascript
-sweetScroll.toElement(document.getElementById("content"));
+```typescript
+scroller.toElement(document.getElementById('content'));
 ```
 
 
-### update(options = {})
-
-**options: {Object}**
+### update(options: PartialOptions)
 
 Will update the SweetScroll instance.  
 Primarily used in the case of option update.
 
 **Example:**
 
-```javascript
-sweetScroll.update({
-  trigger: "a[href^='#']"
-  duration: 3000
+```typescript
+scroller.update({
+  trigger: 'a[href^="#"]',
+  duration: 3000,
 });
 ```
 
 
-### stop(gotoEnd = true)
+### stop(gotoEnd: boolean = true)
 
 **gotoEnd: {Boolean}**
 
@@ -407,8 +598,8 @@ Will stop the current scroll animation.
 
 **Example:**
 
-```javascript
-sweetScroll.stop(true);
+```typescript
+scroller.stop(true);
 ```
 
 
@@ -419,48 +610,48 @@ Disable of the method and event handler.
 
 **Example:**
 
-```javascript
-sweetScroll.destroy();
+```typescript
+scroller.destroy();
 ```
 
 
 ### Callbacks
 
-In `beforeScroll` and `afterScroll`, you will pass the coordinates and the triggering element in the argument.  
-In addition, you can stop the scrolling by return a `beforeScroll` in `false`.
+In `before` and `after`, you will pass the coordinates and the triggering element in the argument.  
+In addition, you can stop the scrolling by return a `before` in `false`.
 
 **Example:**
 
-```javascript
-const sweetScroll = new SweetScroll({
+```typescript
+const scroller = new SweetScroll({
 
   // Stop scrolling case of trigger element that contains the `is-disabled` class.
-  beforeScroll(toScroll, trigger) {
-    console.log("Before!!");
-    if (trigger && trigger.classList.contains("is-disabled")) {
+  before: (offset: Offset, $trigger: Element | null, scroller: SweetScroll): boolean | void => {
+    console.log('Before!!', offset, scroller);
+    if ($trigger && $trigger.classList.contains('is-disabled')) {
       return false;
     }
   },
 
   // If the `wheel` or `touchstart` event is called
-  cancelScroll() {
-    console.log("Cancel!!");
+  cancel: (scroller: SweetScroll): void => {
+    console.log('Cancel!!', scroller);
   },
 
   // Scroll animation is complete
-  afterScroll(toScroll, trigger) {
-    console.log("After!!");
+  after: (offset: Offset, $trigger: Element | null, scroller: SweetScroll): void => {
+    console.log('After!!', offset, $trigger, scroller);
   },
 
   // Scroll animation is complete (`after` or `cancel`)
-  completeScroll(isCancel) {
-    console.log("Complete!!", isCancel);
+  complete: (isCancel: boolean, scroller: SweetScroll): void => {
+    console.log('Complete!!', isCancel, scroller);
   },
 
   // Each animation frame
-  stepScroll(currentTime, props) {
-    console.log("step", currentTime, props);
-  }
+  step: (time: number, scroller: SweetScroll): void => {
+    console.log('step', time, scroller);
+  },
 });
 ```
 
@@ -468,37 +659,62 @@ const sweetScroll = new SweetScroll({
 
 The following is a pattern to override a method in the inheritance destination class.
 
-```javascript
+```typescript
+import SweetScroll, { Offset } from 'sweet-scroll';
+
 class MyScroll extends SweetScroll {
-  beforeScroll(toScroll, trigger) {
+  protected onBefore(offset: Offset, $trigger: Element | null): boolean | void {
     // Stop scrolling case of trigger element that contains the `is-disabled` class.
-    console.log("Before!!");
-    if (trigger && trigger.classList.contains("is-disabled")) {
+    console.log('Before!!', offset);
+    if ($trigger && $trigger.classList.contains('is-disabled')) {
       return false;
     }
   }
 
-  cancelScroll() {
-    console.log("Canell!!");
+  protected onCancel(): void {
+    console.log('Canell!!');
   }
 
-  afterScroll(toScroll, trigger) {
-    console.log("After!!");
+  protected onAfter(offset: Offset, $trigger: Element | null): void {
+    console.log('After!!', offset, $trigger);
   }
 
-  completeScroll(isCancel) {
-    console.log("Complete!!", isCancel);
+  protected onComplete(isCancel: boolean): void {
+    console.log('Complete!!', isCancel);
   }
 
-  stepScroll(currentTime, props) {
-    console.log("step", currentTime, props);
+  protected onStep(time: number): void {
+    console.log('step', time);
   }
 }
 ```
 
-## BROWSER SUPPORT
 
-Works in `IE9+`, and all modern browsers.
+
+
+## Browser Support
+
+Works in `IE10+`, and all modern browsers.
+
+
+### Scrolling with IE9
+
+It is necessary to use [polyfill](https://gist.github.com/paulirish/1579671) or ponyfill of `requestAnimationFrame`.
+
+<details>
+  <summary>Example ponyfill</summary>
+
+  Using [raf](https://github.com/chrisdickinson/raf) module.
+
+  ```typescript
+  import raf from 'raf';
+  import SweetScroll from 'sweet-scroll';
+
+  SweetScroll.raf = raf;
+  SweetScroll.caf = raf.cancel;
+  ```
+</details>
+
 
 
 
@@ -508,61 +724,40 @@ See the [CHANGELOG.md](https://github.com/tsuyoshiwada/sweet-scroll/blob/master/
 
 
 
-## LICENCE
 
-Released under the [MIT Licence](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
+## Contibute
 
+1. Fork it!
+1. Create your feature branch: `git checkout -b my-new-feature`
+1. Commit your changes: `git commit -am 'Add some feature'`
+1. Push to the branch: `git push origin my-new-feature`
+1. Submit a pull request :muscle:
 
-
-## AUTHOR
-
-[tsuyoshiwada](https://github.com/tsuyoshiwada)
-
-
-
-## DEVELOPMENT
-
-Initialization of the project.
-
-```bash
-$ cd /your/project/dir
-$ git clone https://github.com/tsuyoshiwada/sweet-scroll.git
-```
-
-Install some dependencies.
-
-```bash
-$ npm install
-```
-
-Start the development.  
-You can access to the `http://localhost:3000/`.
-
-```bash
-$ npm start
-```
-
-Run lint and testing.
-
-```bash
-$ npm test
-```
-
-Generates build file.
-
-```bash
-$ npm run build
-```
-
-
-## CONTRIBUTION
-
-Thank you for your interest in sweet-scroll.js.  
 Bugs, feature requests and comments are more than welcome in the [issues](https://github.com/tsuyoshiwada/sweet-scroll/issues).
 
-**Before you open a PR:**
 
-Be careful to follow the code style of the project. Run `npm test` after your changes and ensure you do not introduce any new errors or warnings.
-All new features and changes need documentation.
+### Development
 
-Thanks!
+We will develop using the following npm scripts.
+
+
+#### `npm start`
+
+Launch the local server and let the demo run. Opening http://localhost:3000 in your browser.
+
+
+#### `npm run build`
+
+Compile TypeScript and create type definitions.
+
+
+#### `npm run test`
+
+Run unit testing with Jest.
+
+
+
+
+## License
+
+[MIT © tsuyoshiwada](./LICENSE)
