@@ -1,5 +1,6 @@
 /tmp
 /.rpt2_cache
+/docs/sweet-scroll.js
 
 # Since this project mainly uses yarn, lock file is excluded.
 package-lock.json
