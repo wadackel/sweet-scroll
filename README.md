@@ -1,15 +1,11 @@
 ![sweet-scroll](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/artwork/repo-banner.png)
 
----
-
 [![Build Status](http://img.shields.io/travis/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://travis-ci.org/tsuyoshiwada/sweet-scroll)
 [![npm version](https://img.shields.io/npm/v/sweet-scroll.svg?style=flat-square)](http://badge.fury.io/js/sweet-scroll)
 [![David](https://img.shields.io/david/dev/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://david-dm.org/tsuyoshiwada/sweet-scroll/#info=devDependencies&view=table)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
 
-ECMAScript2015+ & TypeScript Friendly, dependency-free smooth scroll library.
-
----
+> ECMAScript2015+ & TypeScript Friendly, dependency-free smooth scroll library.
 
 :lollipop: [See Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
 
@@ -52,7 +48,7 @@ ECMAScript2015+ & TypeScript Friendly, dependency-free smooth scroll library.
     - [SweetScroll.create(options?: PartialOptions, container?: string | Element)](#sweetscrollcreateoptions-partialoptions-container-string--element)
     - [to(distance: any, options?: PartialOptions)](#todistance-any-options-partialoptions)
     - [toTop(distance: any, options?: PartialOptions)](#totopdistance-any-options-partialoptions)
-    - [toLeft(distance: any, options?: PartialOptions)](#toleft-distance-any-options-partialoptions)
+    - [toLeft(distance: any, options?: PartialOptions)](#toleftdistance-any-options-partialoptions)
     - [toElement($el: Element, options?: PartialOptions)](#toelementel-element-options-partialoptions)
     - [update(options: PartialOptions)](#updateoptions-partialoptions)
     - [stop(gotoEnd: boolean = true)](#stopgotoend-boolean--true)
@@ -220,7 +216,7 @@ const scroller = new SweetScroll({
     } else {
       s = p / (2 * Math.PI) * asin(c / a);
     }
-    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * PI) / p)) + b;
+    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
   };
   ```
 </details>
