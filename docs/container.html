@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
   <link rel="stylesheet" href="./lib/icomoon/style.css">
   <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./style.css">
   <style type="text/css">
     #container {
       width: 100%;
@@ -92,7 +92,7 @@
             ...
             </p>
             <h2 id="demo-footer">Footer</h2>
-            <p><a href="#top">Back to top</a></p>
+            <p><a href="#">Back to top</a></p>
           </div>
         </div>
       </div>
@@ -105,16 +105,16 @@
     <label class="quick-mode__control" for="quick-mode"></label>
   </div>
 
-  <script src="./js/sweet-scroll.js"></script>
+  <script src="./sweet-scroll.js"></script>
   <script>
-    var sweetScroll = new SweetScroll({
-      header: "",
-      trigger: "a[href^='#']"
-    }, "#container");
+    var scroller = new SweetScroll({
+      header: '',
+      trigger: 'a[href^="#"]',
+    }, '#container');
 
     // Toggle quickMode
-    document.querySelector("#quick-mode").addEventListener("change", function(e) {
-      sweetScroll.update({ quickMode: this.checked });
+    document.querySelector('#quick-mode').addEventListener('change', function(e) {
+      scroller.update({ quickMode: this.checked });
     }, false);
   </script>
 </body>

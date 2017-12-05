@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Didact+Gothic">
   <link rel="stylesheet" href="./lib/icomoon/style.css">
   <link rel="stylesheet" href="./lib/highlight/styles/tomorrow-night.css">
-  <link rel="stylesheet" href="./css/style.css">
+  <link rel="stylesheet" href="./style.css">
   <style type="text/css">
     .controller {
       width: 280px;
@@ -90,18 +90,18 @@
   <div class="demo-content" id="box3"></div>
   <div class="demo-content" id="box4"></div>
 
-  <script src="./js/sweet-scroll.js"></script>
+  <script src="./sweet-scroll.js"></script>
   <script>
-    var sweetScroll = new SweetScroll({ header: null, outputLog: true });
-    var controlBottom = document.getElementById("control-bottom");
-    var controlTop = document.getElementById("control-top");
+    var scroller = new SweetScroll({ header: null, outputLog: true });
+    var controlBottom = document.getElementById('control-bottom');
+    var controlTop = document.getElementById('control-top');
 
-    controlBottom.addEventListener("click", function() {
-      sweetScroll.to("+=" + window.innerHeight);
+    controlBottom.addEventListener('click', function() {
+      scroller.to('+=' + window.innerHeight);
     }, false);
 
-    controlTop.addEventListener("click", function() {
-      sweetScroll.to("-=" + window.innerHeight);
+    controlTop.addEventListener('click', function() {
+      scroller.to('-=' + window.innerHeight);
     }, false);
   </script>
 </body>

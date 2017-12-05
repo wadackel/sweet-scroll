@@ -1,3 +1,58 @@
+## 3.0.0
+
+TypeScript support and file size down are the main changes. `3.x` is a version that contains many destructive changes.
+
+### New features
+
+* Support TypeScript :tada:
+* Reduce file size by 43.04% !
+    - We reviewed many options and functions and cut unnecessary items.
+* Add factory method (`SweetScroll.create(options?: PartialOptions, container?: string | Element)`)
+    - This is useful if you do not like the coding style using `new` or you do not need to manage instances.
+
+### Breaking changes
+
+* IE9 was excluded from browser support
+    - It can correspond by using polyfill of `requestAnimationFrame`.
+* Remove options
+    - `delay`
+    - `outputLog`
+* Rename options
+    - `verticalScroll` -> `vertical`
+    - `horizontalScroll` -> `horizontal`
+    - `stopScroll` -> `cancellable`
+    - `beforeScroll` -> `before`
+    - `afterScroll` -> `after`
+    - `canelScroll` -> `canel`
+    - `completeScroll` -> `complete`
+    - `stepScroll` -> `step`
+* Remove easings (You can use the same easing by passing the function described in README instead.)
+    - `easeInElastic`
+    - `easeOutElastic`
+    - `easeInOutElastic`
+    - `easeInBack`
+    - `easeOutBack`
+    - `easeInOutBack`
+    - `easeInBounce`
+    - `easeOutBounce`
+    - `easeInOutBounce`
+* Remove `distance` argument pattern
+    - Object like string (`top:0, left:100`)
+* Rename callback methods
+    - `beforeScroll` -> `onBefore`
+    - `afterScroll` -> `onAfter`
+    - `cancelScroll` -> `onCancel`
+    - `completeScroll` -> `onComplete`
+    - `stepScroll` -> `onStep`
+
+
+### Minor changes
+
+* Fixed headers can now be specified from elements. (`header`)
+* Add an instance to the final argument to the optional callback.
+    - It corresponds to a problem that can not refer to `this` when using arrow function.
+
+
 ## 2.2.0
 
 * Support server-side rendering

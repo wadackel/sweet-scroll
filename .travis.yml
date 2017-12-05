@@ -1,7 +1,3 @@
-branches:
-  only:
-    - master
-    - dev
 notifications:
   email: false
 language: node_js
