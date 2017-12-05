@@ -58,7 +58,7 @@
     "dts-bundle": "^0.7.3",
     "gh-pages": "^1.1.0",
     "jest": "^21.2.1",
-    "rollup": "^0.41.6",
+    "rollup": "^0.52.1",
     "rollup-plugin-typescript2": "^0.8.2",
     "rollup-watch": "^4.3.1",
     "tslint": "^5.8.0",
