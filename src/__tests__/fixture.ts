@@ -1,19 +1,4 @@
-<style type="text/css">
-  * {
-    margin: 0;
-    padding: 0;
-  }
-  #container {
-    width: 1440px;
-    height: 900px;
-    overflow: auto;
-  }
-  section {
-    width: 2880px;
-    height: 500px;
-  }
-</style>
-
+export const fixture = `
 <div id="container">
   <ul>
     <li><a href="#content01">Content 01</a></li>
@@ -29,3 +14,4 @@
   <section id="content04"><h2>Content 04</h2><a href="#">page top</a></section>
   <section id="content05"><h2>Content 05</h2><a href="#">page top</a></section>
 </div>
+`;
