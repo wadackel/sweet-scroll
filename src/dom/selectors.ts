@@ -44,7 +44,7 @@ export const findScrollable = (selectors: string | Element, direction: Direction
       $div.style.width = `${$el.clientWidth + 1}px`;
       $div.style.height = `${$el.clientHeight + 1}px`;
       $el.appendChild($div);
-      $el[method] = 1.5 / zoom;
+      $el[method] = Math.max(1, 1.5 / zoom);
       if ($el[method] > 0) {
         $result = $el;
       }
