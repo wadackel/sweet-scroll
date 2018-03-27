@@ -1,4 +1,4 @@
-/*! @preserve sweet-scroll v3.0.0 - tsuyoshiwada | MIT License */
+/*! @preserve sweet-scroll v3.0.1 - tsuyoshiwada | MIT License */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
