@@ -1,6 +1,6 @@
 ## 3.0.1
 
-### Minor Changes
+### Bugfixes
 
 * Fix bug that did not scroll when opening devtools [#44](https://github.com/tsuyoshiwada/sweet-scroll/pull/44) (Resolves [#38](https://github.com/tsuyoshiwada/sweet-scroll/issues/38))
     - Big thanks :pray:
