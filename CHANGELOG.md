@@ -1,3 +1,14 @@
+## 3.0.1
+
+### Minor Changes
+
+* Fix bug that did not scroll when opening devtools [#44](https://github.com/tsuyoshiwada/sweet-scroll/pull/44) (Resolves [#38](https://github.com/tsuyoshiwada/sweet-scroll/issues/38))
+    - Big thanks :pray:
+        - [@adamkarminski](https://github.com/adamkarminski)
+        - [@amritk](https://github.com/amritk)
+        - [@h6ah4i](https://github.com/h6ah4i)
+
+
 ## 3.0.0
 
 TypeScript support and file size down are the main changes. `3.x` is a version that contains many destructive changes.
