@@ -101,6 +101,67 @@
         easeInOutCirc: function (_, t, b, c, d) { return ((t /= d / 2) < 1 ? -c / 2 * (sqrt(1 - t * t) - 1) + b : c / 2 * (sqrt(1 - (t -= 2) * t) + 1) + b); },
     };
 
+    var $$ = function (selector) { return (Array.prototype.slice.call((!selector ? [] : document.querySelectorAll(selector)))); };
+    var $ = function (selector) { return ($$(selector).shift() || null); };
+    var matches = function ($el, selector) {
+        if (isElement(selector)) {
+            return $el === selector;
+        }
+        var results = $$(selector);
+        var i = results.length;
+        // tslint:disable-next-line no-empty
+        while (--i >= 0 && results[i] !== $el) { }
+        return i > -1;
+    };
+    var isRootContainer = function ($el) { return ($el === document.documentElement || $el === document.body); };
+    var findScrollable = function (selectors, direction) {
+        var $elements = isElement(selectors) ? [selectors] : $$(selectors);
+        var overflowStyleName = "overflow-" + direction;
+        for (var i = 0; i < $elements.length; i += 1) {
+            var $el = $elements[i];
+            var $result = null;
+            if (isRootContainer($el)) {
+                $result = $el;
+            }
+            else {
+                var computedStyle = window.getComputedStyle($el);
+                var canScroll = (computedStyle[overflowStyleName] === 'auto' ||
+                    computedStyle[overflowStyleName] === 'scroll');
+                if (canScroll) {
+                    $result = $el;
+                }
+            }
+            if ($result) {
+                return $result;
+            }
+        }
+        return null;
+    };
+
+    var getHeight = function ($el) { return (Math.max($el.scrollHeight, $el.clientHeight, $el.offsetHeight)); };
+    var getWidth = function ($el) { return (Math.max($el.scrollWidth, $el.clientWidth, $el.offsetWidth)); };
+    var getSize = function ($el) { return ({
+        width: getWidth($el),
+        height: getHeight($el),
+    }); };
+    var getViewportAndElementSizes = function ($el) {
+        var isRoot = isRootContainer($el);
+        return {
+            viewport: {
+                width: isRoot
+                    ? Math.min(window.innerWidth, document.documentElement.clientWidth)
+                    : $el.clientWidth,
+                height: isRoot ? window.innerHeight : $el.clientHeight,
+            },
+            size: isRoot
+                ? {
+                    width: Math.max(getWidth(document.body), getWidth(document.documentElement)),
+                    height: Math.max(getHeight(document.body), getHeight(document.documentElement)),
+                }
+                : getSize($el),
+        };
+    };
+
     var directionMethodMap = {
         y: 'scrollTop',
         x: 'scrollLeft',
@@ -135,73 +196,6 @@
             };
         }
         return rect;
-    };
-
-    var $$ = function (selector) { return (Array.prototype.slice.call((!selector ? [] : document.querySelectorAll(selector)))); };
-    var $ = function (selector) { return ($$(selector).shift() || null); };
-    var matches = function ($el, selector) {
-        if (isElement(selector)) {
-            return $el === selector;
-        }
-        var results = $$(selector);
-        var i = results.length;
-        // tslint:disable-next-line no-empty
-        while (--i >= 0 && results[i] !== $el) { }
-        return i > -1;
-    };
-    var isRootContainer = function ($el) { return ($el === document.documentElement || $el === document.body); };
-    var findScrollable = function (selectors, direction) {
-        var method = directionMethodMap[direction];
-        var $elements = isElement(selectors) ? [selectors] : $$(selectors);
-        var $div = document.createElement('div');
-        for (var i = 0; i < $elements.length; i += 1) {
-            var $el = $elements[i];
-            var $result = null;
-            if ($el[method] > 0) {
-                $result = $el;
-            }
-            else {
-                var outerWidth_1 = window.outerWidth, innerWidth_1 = window.innerWidth;
-                var zoom = outerWidth_1 ? outerWidth_1 / innerWidth_1 : 1;
-                $div.style.width = $el.clientWidth + 1 + "px";
-                $div.style.height = $el.clientHeight + 1 + "px";
-                $el.appendChild($div);
-                $el[method] = Math.max(1, 1.5 / zoom);
-                if ($el[method] > 0) {
-                    $result = $el;
-                }
-                $el[method] = 0;
-                $el.removeChild($div);
-            }
-            if ($result) {
-                return $result;
-            }
-        }
-        return null;
-    };
-
-    var getHeight = function ($el) { return (Math.max($el.scrollHeight, $el.clientHeight, $el.offsetHeight)); };
-    var getWidth = function ($el) { return (Math.max($el.scrollWidth, $el.clientWidth, $el.offsetWidth)); };
-    var getSize = function ($el) { return ({
-        width: getWidth($el),
-        height: getHeight($el),
-    }); };
-    var getViewportAndElementSizes = function ($el) {
-        var isRoot = isRootContainer($el);
-        return {
-            viewport: {
-                width: isRoot
-                    ? Math.min(window.innerWidth, document.documentElement.clientWidth)
-                    : $el.clientWidth,
-                height: isRoot ? window.innerHeight : $el.clientHeight,
-            },
-            size: isRoot
-                ? {
-                    width: Math.max(getWidth(document.body), getWidth(document.documentElement)),
-                    height: Math.max(getHeight(document.body), getHeight(document.documentElement)),
-                }
-                : getSize($el),
-        };
     };
 
     var wheelEventName = (function () {
