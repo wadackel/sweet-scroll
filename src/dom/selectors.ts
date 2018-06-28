@@ -1,5 +1,5 @@
 import { isElement } from '../utils/lang';
-import { directionMethodMap, Direction } from './offsets';
+import { Direction } from './offsets';
 
 export const $$ = (selector: string): Element[] => (
   Array.prototype.slice.call(((!selector ? [] : document.querySelectorAll(selector)) as Element[]))
@@ -28,28 +28,24 @@ export const isRootContainer = ($el: Element): boolean => (
 );
 
 export const findScrollable = (selectors: string | Element, direction: Direction): Element | null => {
-  const method = directionMethodMap[direction];
   const $elements = isElement(selectors) ? [selectors] : $$(selectors);
-  const $div = document.createElement('div');
+  const overflowStyleName = `overflow-${direction}`;
 
   for (let i = 0; i < $elements.length; i += 1) {
     const $el = $elements[i];
     let $result = null;
 
-    if ($el[method] > 0) {
+    if (isRootContainer($el)) {
       $result = $el;
     } else {
-      const { outerWidth, innerWidth } = window;
-      const zoom = outerWidth ? outerWidth / innerWidth : 1;
-      $div.style.width = `${$el.clientWidth + 1}px`;
-      $div.style.height = `${$el.clientHeight + 1}px`;
-      $el.appendChild($div);
-      $el[method] = Math.max(1, 1.5 / zoom);
-      if ($el[method] > 0) {
+      const computedStyle = window.getComputedStyle($el);
+      const canScroll = (
+        computedStyle[overflowStyleName] === 'auto' ||
+        computedStyle[overflowStyleName] === 'scroll');
+
+      if (canScroll) {
         $result = $el;
       }
-      $el[method] = 0;
-      $el.removeChild($div);
     }
 
     if ($result) {
