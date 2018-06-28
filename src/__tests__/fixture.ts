@@ -1,4 +1,10 @@
 export const fixture = `
+<style>
+#container {
+  overflow-x: auto;
+  overflow-y: auto;
+}
+</style>
 <div id="container">
   <ul>
     <li><a href="#content01">Content 01</a></li>
