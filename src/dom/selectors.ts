@@ -55,3 +55,14 @@ export const findScrollable = (selectors: string | Element, direction: Direction
 
   return null;
 };
+
+export const documentScrollingElement = () => {
+  if ('scrollingElement' in document && document.scrollingElement) {
+    return document.scrollingElement;
+  } else if (navigator.userAgent.indexOf('WebKit') !== -1) {
+    // Fallback for legacy browsers
+    return document.body;
+  } else {
+    return document.documentElement;
+  }
+};

@@ -3,7 +3,7 @@ import * as Lang from './utils/lang';
 import { RequestAnimationFrame, CancelAnimationFrame, raf, caf } from './animation/requestAnimationFrame';
 import { easings } from './animation/easings';
 import { EasingFunction } from './animation/easings';
-import { $, findScrollable, matches } from './dom/selectors';
+import { $, findScrollable, matches, documentScrollingElement } from './dom/selectors';
 import { getSize, getViewportAndElementSizes } from './dom/dimensions';
 import { getOffset, getScroll, setScroll, Offset } from './dom/offsets';
 import { addEvent, removeEvent } from './dom/events';
@@ -77,15 +77,14 @@ export default class SweetScroll {
   public constructor(options?: PartialOptions, container?: string | Element) {
     const opts = { ...defaultOptions, ...(options || {}) };
     const { vertical, horizontal } = opts;
-    const selector = container === undefined ? 'body,html' : container;
     let $container = null;
 
     if (canUseDOM) {
       if (vertical) {
-        $container = findScrollable(selector, 'y');
+        $container = findScrollable(container || documentScrollingElement(), 'y');
       }
       if (!$container && horizontal) {
-        $container = findScrollable(selector, 'x');
+        $container = findScrollable(container || documentScrollingElement(), 'x');
       }
     }
 

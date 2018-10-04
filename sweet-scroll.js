@@ -137,6 +137,18 @@
         }
         return null;
     };
+    var documentScrollingElement = function () {
+        if ('scrollingElement' in document && document.scrollingElement) {
+            return document.scrollingElement;
+        }
+        else if (navigator.userAgent.indexOf('WebKit') !== -1) {
+            // Fallback for legacy browsers
+            return document.body;
+        }
+        else {
+            return document.documentElement;
+        }
+    };
 
     var getHeight = function ($el) { return (Math.max($el.scrollHeight, $el.clientHeight, $el.offsetHeight)); };
     var getWidth = function ($el) { return (Math.max($el.scrollWidth, $el.clientWidth, $el.offsetWidth)); };
@@ -400,14 +412,13 @@
             };
             var opts = __assign({}, defaultOptions, (options || {}));
             var vertical = opts.vertical, horizontal = opts.horizontal;
-            var selector = container === undefined ? 'body,html' : container;
             var $container = null;
             if (canUseDOM) {
                 if (vertical) {
-                    $container = findScrollable(selector, 'y');
+                    $container = findScrollable(container || documentScrollingElement(), 'y');
                 }
                 if (!$container && horizontal) {
-                    $container = findScrollable(selector, 'x');
+                    $container = findScrollable(container || documentScrollingElement(), 'x');
                 }
             }
             if ($container) {
