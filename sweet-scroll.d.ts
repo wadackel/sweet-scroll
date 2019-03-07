@@ -5,7 +5,8 @@ declare module 'sweet-scroll' {
     import { EasingFunction } from 'sweet-scroll/decls/animation/easings';
     import { Offset } from 'sweet-scroll/decls/dom/offsets';
     import { Options, PartialOptions } from 'sweet-scroll/decls/options';
-    export { Options, PartialOptions, EasingFunction, Offset, RequestAnimationFrame, CancelAnimationFrame };
+    import { ScrollableElement } from 'sweet-scroll/decls/types';
+    export { Options, PartialOptions, EasingFunction, Offset, RequestAnimationFrame, CancelAnimationFrame, };
     export default class SweetScroll {
             /**
                 * You can set Polyfill (or Ponyfill) for browsers that do not support requestAnimationFrame.
@@ -15,11 +16,11 @@ declare module 'sweet-scroll' {
             /**
                 * SweetScroll instance factory.
                 */
-            static create(options?: PartialOptions, container?: string | Element): SweetScroll;
+            static create(options?: PartialOptions, container?: string | ScrollableElement): SweetScroll;
             /**
                 * Constructor
                 */
-            constructor(options?: PartialOptions, container?: string | Element);
+            constructor(options?: PartialOptions, container?: string | ScrollableElement);
             /**
                 * Scroll animation to the specified position.
                 */
@@ -71,7 +72,7 @@ declare module 'sweet-scroll' {
             /**
                 * Callback function and method call.
                 */
-            protected hook(options: Options, type: string, ...args: any[]): any;
+            protected hook(options: Options, type: 'before' | 'after' | 'step' | 'cancel' | 'complete', ...args: any[]): any;
             /**
                 * Bind events of container element.
                 */
@@ -113,22 +114,21 @@ declare module 'sweet-scroll/decls/animation/easings' {
 }
 
 declare module 'sweet-scroll/decls/dom/offsets' {
+    import { ScrollableElement } from 'sweet-scroll/decls/types';
     export interface Offset {
         top: number;
         left: number;
     }
     export type Direction = 'x' | 'y';
     export const directionMethodMap: {
-        y: string;
-        x: string;
+        [P in Direction]: 'scrollTop' | 'scrollLeft';
     };
     export const directionPropMap: {
-        y: string;
-        x: string;
+        [P in Direction]: 'pageXOffset' | 'pageYOffset';
     };
-    export const getScroll: ($el: Element, direction: Direction) => number;
-    export const setScroll: ($el: Element, offset: number, direction: Direction) => void;
-    export const getOffset: ($el: Element, $context: Element) => Offset;
+    export const getScroll: ($el: ScrollableElement, direction: Direction) => number;
+    export const setScroll: ($el: ScrollableElement, offset: number, direction: Direction) => void;
+    export const getOffset: ($el: Element, $context: ScrollableElement) => Offset;
 }
 
 declare module 'sweet-scroll/decls/options' {
@@ -162,7 +162,6 @@ declare module 'sweet-scroll/decls/options' {
         updateURL: boolean | string;
         preventDefault: boolean;
         stopPropagation: boolean;
-        quickMode: boolean;
         before: BeforeHandler | null;
         after: AfterHandler | null;
         step: StepHandler | null;
@@ -172,5 +171,9 @@ declare module 'sweet-scroll/decls/options' {
     export interface PartialOptions extends Partial<Options> {
     }
     export const defaultOptions: Options;
+}
+
+declare module 'sweet-scroll/decls/types' {
+    export type ScrollableElement = Element | Window;
 }
 

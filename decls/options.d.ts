@@ -28,7 +28,6 @@ export interface Options {
     updateURL: boolean | string;
     preventDefault: boolean;
     stopPropagation: boolean;
-    quickMode: boolean;
     before: BeforeHandler | null;
     after: AfterHandler | null;
     step: StepHandler | null;

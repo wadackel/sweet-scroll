@@ -2,7 +2,8 @@ import { RequestAnimationFrame, CancelAnimationFrame } from './animation/request
 import { EasingFunction } from './animation/easings';
 import { Offset } from './dom/offsets';
 import { Options, PartialOptions } from './options';
-export { Options, PartialOptions, EasingFunction, Offset, RequestAnimationFrame, CancelAnimationFrame };
+import { ScrollableElement } from './types';
+export { Options, PartialOptions, EasingFunction, Offset, RequestAnimationFrame, CancelAnimationFrame, };
 export default class SweetScroll {
     /**
      * You can set Polyfill (or Ponyfill) for browsers that do not support requestAnimationFrame.
@@ -12,7 +13,7 @@ export default class SweetScroll {
     /**
      * SweetScroll instance factory.
      */
-    static create(options?: PartialOptions, container?: string | Element): SweetScroll;
+    static create(options?: PartialOptions, container?: string | ScrollableElement): SweetScroll;
     /**
      * Instance properties.
      */
@@ -22,7 +23,7 @@ export default class SweetScroll {
     /**
      * Constructor
      */
-    constructor(options?: PartialOptions, container?: string | Element);
+    constructor(options?: PartialOptions, container?: string | ScrollableElement);
     /**
      * Scroll animation to the specified position.
      */
@@ -74,7 +75,7 @@ export default class SweetScroll {
     /**
      * Callback function and method call.
      */
-    protected hook(options: Options, type: string, ...args: any[]): any;
+    protected hook(options: Options, type: 'before' | 'after' | 'step' | 'cancel' | 'complete', ...args: any[]): any;
     /**
      * Bind events of container element.
      */

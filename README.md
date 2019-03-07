@@ -9,60 +9,55 @@
 
 :lollipop: [See Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
 
-
-
-
 ## Features
 
-* Dependecy-free!!
-* ECMAScript2015+ & TypeScript friendly
-* Use `requestAnimationFrame` API
-* Supports vertical and horizontal scroll
-* Supports dynamic trigger (event delegation)
-* Supports container for the scroll
-* Supports many easing types
-* Supports server-side rendering (Can load without putting out errors.)
+- Dependecy-free!!
+- ECMAScript2015+ & TypeScript friendly
+- Use `requestAnimationFrame` API
+- Supports vertical and horizontal scroll
+- Supports dynamic trigger (event delegation)
+- Supports container for the scroll
+- Supports many easing types
+- Supports server-side rendering (Can load without putting out errors.)
 
+## Migration Guide
 
-
+See the [Migration Guide](./MIGRATION.md)
 
 ## Table of Contents
 
-* [Usage](#usage)
-    - [1. Install](#1-install)
-    - [2. Setup of HTML](#2-setup-of-html)
-    - [3. Initialize SweetScroll](#3-initialize-sweetscroll)
-* [Options](#options)
-* [Easings](#easings)
-    - [Built-in (22)](#built-in-22)
-    - [Advanced (9)](#advanced-9)
-* [Customizing Tips](#customizing-tips)
-    - [Specifying container elements](#specifying-container-elements)
-    - [Specify fixed header](#specify-fixed-header)
-    - [Override of options for each element](#override-of-options-for-each-element)
-    - [if you want to use in non anchor element](#if-you-want-to-use-in-non-anchor-element)
-    - [Do you feel scrolling is slow?](#do-you-feel-scrolling-is-slow)
-    - [Scrolling animation in another page](#scrolling-animation-in-another-page)
-* [API](#api)
-    - [new SweetScroll(options?: PartialOptions, container?: string | Element)](#new-sweetscrolloptions-partialoptions-container-string--element)
-    - [SweetScroll.create(options?: PartialOptions, container?: string | Element)](#sweetscrollcreateoptions-partialoptions-container-string--element)
-    - [to(distance: any, options?: PartialOptions)](#todistance-any-options-partialoptions)
-    - [toTop(distance: any, options?: PartialOptions)](#totopdistance-any-options-partialoptions)
-    - [toLeft(distance: any, options?: PartialOptions)](#toleftdistance-any-options-partialoptions)
-    - [toElement($el: Element, options?: PartialOptions)](#toelementel-element-options-partialoptions)
-    - [update(options: PartialOptions)](#updateoptions-partialoptions)
-    - [stop(gotoEnd: boolean = true)](#stopgotoend-boolean--true)
-    - [destroy()](#destroy)
-    - [Callbacks](#callbacks)
-* [Browser Support](#browser-support)
-    - [Scrolling with IE9](#scrolling-with-ie9)
-* [CHANGELOG](#changelog)
-* [Contibute](#contibute)
-    - [Development](#development)
-* [License](#license)
-
-
-
+- [Usage](#usage)
+  - [1. Install](#1-install)
+  - [2. Setup of HTML](#2-setup-of-html)
+  - [3. Initialize SweetScroll](#3-initialize-sweetscroll)
+- [Options](#options)
+- [Easings](#easings)
+  - [Built-in (22)](#built-in-22)
+  - [Advanced (9)](#advanced-9)
+- [Customizing Tips](#customizing-tips)
+  - [Specifying container elements](#specifying-container-elements)
+  - [Specify fixed header](#specify-fixed-header)
+  - [Override of options for each element](#override-of-options-for-each-element)
+  - [If you want to use in non anchor element](#if-you-want-to-use-in-non-anchor-element)
+  - [Do you feel scrolling is slow?](#do-you-feel-scrolling-is-slow)
+  - [Scrolling animation in another page](#scrolling-animation-in-another-page)
+- [API](#api)
+  - [new SweetScroll(options?: PartialOptions, container?: string | Element)](#new-sweetscrolloptions-partialoptions-container-string--element)
+  - [SweetScroll.create(options?: PartialOptions, container?: string | Element)](#sweetscrollcreateoptions-partialoptions-container-string--element)
+  - [to(distance: any, options?: PartialOptions)](#todistance-any-options-partialoptions)
+  - [toTop(distance: any, options?: PartialOptions)](#totopdistance-any-options-partialoptions)
+  - [toLeft(distance: any, options?: PartialOptions)](#toleftdistance-any-options-partialoptions)
+  - [toElement(\$el: Element, options?: PartialOptions)](#toelementel-element-options-partialoptions)
+  - [update(options: PartialOptions)](#updateoptions-partialoptions)
+  - [stop(gotoEnd: boolean = true)](#stopgotoend-boolean--true)
+  - [destroy()](#destroy)
+  - [Callbacks](#callbacks)
+- [Browser Support](#browser-support)
+  - [Scrolling with IE9](#scrolling-with-ie9)
+- [CHANGELOG](#changelog)
+- [Contibute](#contibute)
+  - [Development](#development)
+- [License](#license)
 
 ## Usage
 
@@ -95,7 +90,6 @@ import SweetScroll from 'sweet-scroll';
 <script src="https://unpkg.com/sweet-scroll/sweet-scroll.min.js"></script>
 ```
 
-
 ### 2. Setup of HTML
 
 ```html
@@ -104,19 +98,21 @@ import SweetScroll from 'sweet-scroll';
 <div id="intro">Introduction</div>
 ```
 
-
 ### 3. Initialize SweetScroll
 
 You need to initialize an instance after `DOMContentLoaded`.
 
 ```typescript
-document.addEventListener('DOMContentLoaded', () => {
-  const scroller = new SweetScroll({/* some options */});
-}, false);
+document.addEventListener(
+  'DOMContentLoaded',
+  () => {
+    const scroller = new SweetScroll({
+      /* some options */
+    });
+  },
+  false,
+);
 ```
-
-
-
 
 ## Options
 
@@ -135,7 +131,6 @@ The following options are applied by default. It can be customized as needed.
   updateURL: false,               // Update the URL hash on after scroll (true | false | 'push' | 'replace')
   preventDefault: true,           // Cancels the container element click event
   stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
-  quickMode: false,               // Instantly scroll to the destination! (It's recommended to use it with `easeOutExpo`)
 
   // Callbacks
   before: null,
@@ -146,45 +141,42 @@ The following options are applied by default. It can be customized as needed.
 }
 ```
 
-
-
-
 ## Easings
 
 Supports the following easing.
 
 ### Built-in (22)
 
-* **Normal**
-    - `linear`
-* **Quad**
-    - `easeInQuad`
-    - `easeOutQuad`
-    - `easeInOutQuad`
-* **Cubic**
-    - `easeInCubic`
-    - `easeOutCubic`
-    - `easeInOutCubic`
-* **Quart**
-    - `easeInQuart`
-    - `easeOutQuart`
-    - `easeInOutQuart`
-* **Quint**
-    - `easeInQuint`
-    - `easeOutQuint` **(default)**
-    - `easeInOutQuint`
-* **Sine**
-    - `easeInSine`
-    - `easeOutSine`
-    - `easeInOutSine`
-* **Expo**
-    - `easeInExpo`
-    - `easeOutExpo`
-    - `easeInOutExpo`
-* **Circ**
-    - `easeInCirc`
-    - `easeOutCirc`
-    - `easeInOutCirc`
+- **Normal**
+  - `linear`
+- **Quad**
+  - `easeInQuad`
+  - `easeOutQuad`
+  - `easeInOutQuad`
+- **Cubic**
+  - `easeInCubic`
+  - `easeOutCubic`
+  - `easeInOutCubic`
+- **Quart**
+  - `easeInQuart`
+  - `easeOutQuart`
+  - `easeInOutQuart`
+- **Quint**
+  - `easeInQuint`
+  - `easeOutQuint` **(default)**
+  - `easeInOutQuint`
+- **Sine**
+  - `easeInSine`
+  - `easeOutSine`
+  - `easeInOutSine`
+- **Expo**
+  - `easeInExpo`
+  - `easeOutExpo`
+  - `easeInOutExpo`
+- **Circ**
+  - `easeInCirc`
+  - `easeOutCirc`
+  - `easeInOutCirc`
 
 ### Advanced (9)
 
@@ -196,187 +188,185 @@ const scroller = new SweetScroll({
 });
 ```
 
-
 #### Elastic
 
 <details>
   <summary><code>easeInElastic</code></summary>
 
-  ```typescript
-  const easeInElastic = (_, t, b, c, d) => {
-    let s = 1.70158;
-    let p = 0;
-    let a = c;
-    if (t === 0) return b;
-    if ((t /= d) === 1) return b + c;
-    if (!p) p = d * 0.3;
-    if (a < Math.abs(c)) {
-      a = c;
-      s = p / 4;
-    } else {
-      s = p / (2 * Math.PI) * asin(c / a);
-    }
-    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
-  };
-  ```
+```typescript
+const easeInElastic = (_, t, b, c, d) => {
+  let s = 1.70158;
+  let p = 0;
+  let a = c;
+  if (t === 0) return b;
+  if ((t /= d) === 1) return b + c;
+  if (!p) p = d * 0.3;
+  if (a < Math.abs(c)) {
+    a = c;
+    s = p / 4;
+  } else {
+    s = (p / (2 * Math.PI)) * asin(c / a);
+  }
+  return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin(((t * d - s) * (2 * Math.PI)) / p)) + b;
+};
+```
+
 </details>
 
 <details>
   <summary><code>easeOutElastic</code></summary>
 
-  ```typescript
-  const easeOutElastic = (_, t, b, c, d) => {
-    let s = 1.70158;
-    let p = 0;
-    let a = c;
-    if (t === 0) return b;
-    if ((t /= d) === 1) return b + c;
-    if (!p) p = d * 0.3;
-    if (a < Math.abs(c)) {
-      a = c;
-      s = p / 4;
-    } else {
-      s = p / (2 * Math.PI) * asin(c / a);
-    }
-    return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
-  };
-  ```
+```typescript
+const easeOutElastic = (_, t, b, c, d) => {
+  let s = 1.70158;
+  let p = 0;
+  let a = c;
+  if (t === 0) return b;
+  if ((t /= d) === 1) return b + c;
+  if (!p) p = d * 0.3;
+  if (a < Math.abs(c)) {
+    a = c;
+    s = p / 4;
+  } else {
+    s = (p / (2 * Math.PI)) * asin(c / a);
+  }
+  return a * Math.pow(2, -10 * t) * Math.sin(((t * d - s) * (2 * Math.PI)) / p) + c + b;
+};
+```
+
 </details>
 
 <details>
   <summary><code>easeInOutElastic</code></summary>
 
-  ```typescript
-  const easeInOutElastic = (_, t, b, c, d) => {
-    let s = 1.70158;
-    let p = 0;
-    let a = c;
-    if (t === 0) return b;
-    if ((t /= d / 2) === 2) return b + c;
-    if (!p) p = d * (0.3 * 1.5);
-    if (a < Math.abs(c)) {
-      a = c;
-      s = p / 4;
-    } else {
-      s = p / (2 * Math.PI) * Math.asin(c / a);
-    }
-    if (t < 1) {
-      return -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
-    }
-    return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * 0.5 + c + b;
-  };
-  ```
-</details>
+```typescript
+const easeInOutElastic = (_, t, b, c, d) => {
+  let s = 1.70158;
+  let p = 0;
+  let a = c;
+  if (t === 0) return b;
+  if ((t /= d / 2) === 2) return b + c;
+  if (!p) p = d * (0.3 * 1.5);
+  if (a < Math.abs(c)) {
+    a = c;
+    s = p / 4;
+  } else {
+    s = (p / (2 * Math.PI)) * Math.asin(c / a);
+  }
+  if (t < 1) {
+    return (
+      -0.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin(((t * d - s) * (2 * Math.PI)) / p)) + b
+    );
+  }
+  return (
+    a * Math.pow(2, -10 * (t -= 1)) * Math.sin(((t * d - s) * (2 * Math.PI)) / p) * 0.5 + c + b
+  );
+};
+```
 
+</details>
 
 #### Back
 
 <details>
   <summary><code>easeInBack</code></summary>
 
-  ```typescript
-  const easeInBack = (_, t, b, c, d, s = 1.70158) => (
-    c * (t /= d) * t * ((s + 1) * t - s) + b
-  );
-  ```
+```typescript
+const easeInBack = (_, t, b, c, d, s = 1.70158) => c * (t /= d) * t * ((s + 1) * t - s) + b;
+```
+
 </details>
 
 <details>
   <summary><code>easeOutBack</code></summary>
 
-  ```typescript
-  const easeOutBack = (_, t, b, c, d, s = 1.70158) => (
-    c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b
-  );
-  ```
+```typescript
+const easeOutBack = (_, t, b, c, d, s = 1.70158) =>
+  c * ((t = t / d - 1) * t * ((s + 1) * t + s) + 1) + b;
+```
+
 </details>
 
 <details>
   <summary><code>easeInOutBack</code></summary>
 
-  ```typescript
-  const easeInOutBack = (_, t, b, c, d, s = 1.70158) => (
-    (t /= d / 2) < 1
-      ? c / 2 * (t * t * (((s *= (1.525)) + 1) * t - s)) + b
-      : c / 2 * ((t -= 2) * t * (((s *= (1.525)) + 1) * t + s) + 2) + b
-  );
-  ```
-</details>
+```typescript
+const easeInOutBack = (_, t, b, c, d, s = 1.70158) =>
+  (t /= d / 2) < 1
+    ? (c / 2) * (t * t * (((s *= 1.525) + 1) * t - s)) + b
+    : (c / 2) * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
+```
 
+</details>
 
 #### Bounce
 
 <details>
   <summary><code>easeOutBounce</code></summary>
 
-  ```typescript
-  const easeOutBounce = (_, t, b, c, d) => {
-    if ((t /= d) < (1 / 2.75)) {
-      return c * (7.5625 * t * t) + b;
-    } else if (t < (2 / 2.75)) {
-      return c * (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75) + b;
-    } else if (t < (2.5 / 2.75)) {
-      return c * (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375) + b;
-    }
-    return c * (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375) + b;
-  };
-  ```
+```typescript
+const easeOutBounce = (_, t, b, c, d) => {
+  if ((t /= d) < 1 / 2.75) {
+    return c * (7.5625 * t * t) + b;
+  } else if (t < 2 / 2.75) {
+    return c * (7.5625 * (t -= 1.5 / 2.75) * t + 0.75) + b;
+  } else if (t < 2.5 / 2.75) {
+    return c * (7.5625 * (t -= 2.25 / 2.75) * t + 0.9375) + b;
+  }
+  return c * (7.5625 * (t -= 2.625 / 2.75) * t + 0.984375) + b;
+};
+```
+
 </details>
 
 <details>
   <summary><code>easeInBounce</code></summary>
 
-  ```typescript
-  const easeOutBounce = (_, t, b, c, d) => {
-    if ((t /= d) < (1 / 2.75)) {
-      return c * (7.5625 * t * t) + b;
-    } else if (t < (2 / 2.75)) {
-      return c * (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75) + b;
-    } else if (t < (2.5 / 2.75)) {
-      return c * (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375) + b;
-    }
-    return c * (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375) + b;
-  };
+```typescript
+const easeOutBounce = (_, t, b, c, d) => {
+  if ((t /= d) < 1 / 2.75) {
+    return c * (7.5625 * t * t) + b;
+  } else if (t < 2 / 2.75) {
+    return c * (7.5625 * (t -= 1.5 / 2.75) * t + 0.75) + b;
+  } else if (t < 2.5 / 2.75) {
+    return c * (7.5625 * (t -= 2.25 / 2.75) * t + 0.9375) + b;
+  }
+  return c * (7.5625 * (t -= 2.625 / 2.75) * t + 0.984375) + b;
+};
 
-  const easeInBounce = (x, t, b, c, d) => (
-    c - easeOutBounce(x, d - t, 0, c, d) + b
-  );
-  ```
+const easeInBounce = (x, t, b, c, d) => c - easeOutBounce(x, d - t, 0, c, d) + b;
+```
+
 </details>
 
 <details>
   <summary><code>easeInOutBounce</code></summary>
 
-  ```typescript
-  const easeOutBounce = (_, t, b, c, d) => {
-    if ((t /= d) < (1 / 2.75)) {
-      return c * (7.5625 * t * t) + b;
-    } else if (t < (2 / 2.75)) {
-      return c * (7.5625 * (t -= (1.5 / 2.75)) * t + 0.75) + b;
-    } else if (t < (2.5 / 2.75)) {
-      return c * (7.5625 * (t -= (2.25 / 2.75)) * t + 0.9375) + b;
-    }
-    return c * (7.5625 * (t -= (2.625 / 2.75)) * t + 0.984375) + b;
-  };
+```typescript
+const easeOutBounce = (_, t, b, c, d) => {
+  if ((t /= d) < 1 / 2.75) {
+    return c * (7.5625 * t * t) + b;
+  } else if (t < 2 / 2.75) {
+    return c * (7.5625 * (t -= 1.5 / 2.75) * t + 0.75) + b;
+  } else if (t < 2.5 / 2.75) {
+    return c * (7.5625 * (t -= 2.25 / 2.75) * t + 0.9375) + b;
+  }
+  return c * (7.5625 * (t -= 2.625 / 2.75) * t + 0.984375) + b;
+};
 
-  const easeInBounce = (x, t, b, c, d) => (
-    c - easeOutBounce(x, d - t, 0, c, d) + b
-  );
+const easeInBounce = (x, t, b, c, d) => c - easeOutBounce(x, d - t, 0, c, d) + b;
 
-  const easeInOutBounce = (x, t, b, c, d) => (
-    t < d / 2
-      ? easeInBounce(x, t * 2, 0, c, d) * 0.5 + b
-      : easeOutBounce(x, t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b
-  );
-  ```
+const easeInOutBounce = (x, t, b, c, d) =>
+  t < d / 2
+    ? easeInBounce(x, t * 2, 0, c, d) * 0.5 + b
+    : easeOutBounce(x, t * 2 - d, 0, c, d) * 0.5 + c * 0.5 + b;
+```
+
 </details>
 
 ---
 
 [Live demo](http://tsuyoshiwada.github.io/sweet-scroll/easings.html)
-
-
-
 
 ## Customizing Tips
 
@@ -394,12 +384,21 @@ In the following example we have specified in the container for scrolling the `#
 
 ```typescript
 // Specified in the CSS Selector
-const scroller = new SweetScroll({/* some options */}, '#container');
+const scroller = new SweetScroll(
+  {
+    /* some options */
+  },
+  '#container',
+);
 
 // Specified in the Element
-const scroller = new SweetScroll({/* some options */}, document.getElementById('container'));
+const scroller = new SweetScroll(
+  {
+    /* some options */
+  },
+  document.getElementById('container'),
+);
 ```
-
 
 ### Specify fixed header
 
@@ -417,7 +416,6 @@ const scroller = new SweetScroll({
 });
 ```
 
-
 ### Override of options for each element
 
 You can override the default options by passing the option in `JSON` format to the `data-scroll-options`.
@@ -426,8 +424,7 @@ You can override the default options by passing the option in `JSON` format to t
 <a href="#target" data-scroll data-scroll-options='{"easing": "easeOutExpo"}'>Go to Target</a>
 ```
 
-
-### if you want to use in non anchor element
+### If you want to use in non anchor element
 
 Will use the data-scroll attribute instead of href.
 
@@ -435,84 +432,77 @@ Will use the data-scroll attribute instead of href.
 <button type="button" data-scroll="+=500">Scroll under 500px</button>
 ```
 
-
-### Do you feel scrolling is slow?
-
-You can solve with `quickMode` options!
-
-```typescript
-const scroller = new SweetScroll({
-  quickMode: true,
-  easing: 'easeOutExpo', // Recommended
-});
-```
-
-`quickMode` finishes scrolling in a moment.
-
-
-
 ### Scrolling animation in another page
 
 The following, Introduce one of the mounting method.
 
 ```typescript
-document.addEventListener('DOMContentLoaded', () => {
-  const scroller = new SweetScroll();
-  const hash = window.location.hash;
-  const needsInitialScroll = document.getElementById(hash.substr(1)) != null;
+document.addEventListener(
+  'DOMContentLoaded',
+  () => {
+    const scroller = new SweetScroll();
+    const hash = window.location.hash;
+    const needsInitialScroll = document.getElementById(hash.substr(1)) != null;
 
-  if (needsInitialScroll) {
-    window.location.hash = '';
-  }
-
-  window.addEventListener('load', () => {
     if (needsInitialScroll) {
-      scroller.to(hash, { updateURL: 'replace' });
+      window.location.hash = '';
     }
-  }, false);
-}, false);
+
+    window.addEventListener(
+      'load',
+      () => {
+        if (needsInitialScroll) {
+          scroller.to(hash, { updateURL: 'replace' });
+        }
+      },
+      false,
+    );
+  },
+  false,
+);
 ```
 
 [Live demo](http://tsuyoshiwada.github.io/sweet-scroll/initial-scroll.html#footer)
 
 You can also achieve the same thing in other ways by using the provided API.
 
-
-
 ## API
 
-
-### new SweetScroll(options?: PartialOptions, container?: string | Element)
+### new SweetScroll(options?: PartialOptions, container?: string | Element | Window)
 
 Will generate a SweetScroll instance.
 
 **Example:**
 
 ```typescript
-const scroller = new SweetScroll({
-  duration: 1200,
-  easing: 'easeOutExpo',
-}, '#container');
+const scroller = new SweetScroll(
+  {
+    duration: 1200,
+    easing: 'easeOutExpo',
+  },
+  '#container',
+);
 ```
 
-
-### SweetScroll.create(options?: PartialOptions, container?: string | Element)
+### SweetScroll.create(options?: PartialOptions, container?: string | Element | Window)
 
 Will generate a SweetScroll instance. (factory method)
 
 **Example:**
 
 ```typescript
-const scroller = SweetScroll.create({
-  duration: 1200,
-  easing: 'easeOutExpo',
-}, '#container');
+const scroller = SweetScroll.create(
+  {
+    duration: 1200,
+    easing: 'easeOutExpo',
+  },
+  '#container',
+);
 ```
-
 
 ### to(distance: any, options?: PartialOptions)
 
-Scroll animation to the specified `distance`.  
+Scroll animation to the specified `distance`.
 `distance` to can specify the CSS Selector or scroll position.
 
 **Example:**
@@ -537,10 +527,9 @@ scroller.to('+=500');
 scroller.to('-=200');
 ```
 
-
 ### toTop(distance: any, options?: PartialOptions)
 
-Vertical scroll animation to the specified `distance`.  
+Vertical scroll animation to the specified `distance`.
 
 **Example:**
 
@@ -548,10 +537,9 @@ Vertical scroll animation to the specified `distance`.
 scroller.toTop(0);
 ```
 
-
 ### toLeft(distance: any, options?: PartialOptions)
 
-Horizontal scroll animation to the specified `distance`.  
+Horizontal scroll animation to the specified `distance`.
 
 **Example:**
 
@@ -559,8 +547,7 @@ Horizontal scroll animation to the specified `distance`.
 scroller.toLeft(1500);
 ```
 
-
-### toElement($el: Element, options?: PartialOptions)
+### toElement(\$el: Element, options?: PartialOptions)
 
 Scroll animation to the specified `Element`.
 
@@ -570,10 +557,9 @@ Scroll animation to the specified `Element`.
 scroller.toElement(document.getElementById('content'));
 ```
 
-
 ### update(options: PartialOptions)
 
-Will update the SweetScroll instance.  
+Will update the SweetScroll instance.
 Primarily used in the case of option update.
 
 **Example:**
@@ -584,7 +570,6 @@ scroller.update({
   duration: 3000,
 });
 ```
-
 
 ### stop(gotoEnd: boolean = true)
 
@@ -598,10 +583,9 @@ Will stop the current scroll animation.
 scroller.stop(true);
 ```
 
-
 ### destroy()
 
-Will destroy the SweetScroll instance.  
+Will destroy the SweetScroll instance.
 Disable of the method and event handler.
 
 **Example:**
@@ -610,17 +594,15 @@ Disable of the method and event handler.
 scroller.destroy();
 ```
 
-
 ### Callbacks
 
-In `before` and `after`, you will pass the coordinates and the triggering element in the argument.  
+In `before` and `after`, you will pass the coordinates and the triggering element in the argument.
 In addition, you can stop the scrolling by return a `before` in `false`.
 
 **Example:**
 
 ```typescript
 const scroller = new SweetScroll({
-
   // Stop scrolling case of trigger element that contains the `is-disabled` class.
   before: (offset: Offset, $trigger: Element | null, scroller: SweetScroll): boolean | void => {
     console.log('Before!!', offset, scroller);
@@ -685,13 +667,9 @@ class MyScroll extends SweetScroll {
 }
 ```
 
-
-
-
 ## Browser Support
 
 Works in `IE10+`, and all modern browsers.
-
 
 ### Scrolling with IE9
 
@@ -700,26 +678,21 @@ It is necessary to use [polyfill](https://gist.github.com/paulirish/1579671) or 
 <details>
   <summary>Example ponyfill</summary>
 
-  Using [raf](https://github.com/chrisdickinson/raf) module.
+Using [raf](https://github.com/chrisdickinson/raf) module.
 
-  ```typescript
-  import raf from 'raf';
-  import SweetScroll from 'sweet-scroll';
+```typescript
+import raf from 'raf';
+import SweetScroll from 'sweet-scroll';
 
-  SweetScroll.raf = raf;
-  SweetScroll.caf = raf.cancel;
-  ```
+SweetScroll.raf = raf;
+SweetScroll.caf = raf.cancel;
+```
+
 </details>
-
-
-
 
 ## CHANGELOG
 
-See the [CHANGELOG.md](https://github.com/tsuyoshiwada/sweet-scroll/blob/master/CHANGELOG.md)
-
-
-
+See the [CHANGELOG.md](./CHANGELOG.md)
 
 ## Contibute
 
@@ -731,28 +704,21 @@ See the [CHANGELOG.md](https://github.com/tsuyoshiwada/sweet-scroll/blob/master/
 
 Bugs, feature requests and comments are more than welcome in the [issues](https://github.com/tsuyoshiwada/sweet-scroll/issues).
 
-
 ### Development
 
 We will develop using the following npm scripts.
 
-
-#### `npm start`
+#### `yarn start`
 
 Launch the local server and let the demo run. Opening http://localhost:3000 in your browser.
 
-
-#### `npm run build`
+#### `yarn build`
 
 Compile TypeScript and create type definitions.
 
-
-#### `npm run test`
+#### `yarn test`
 
 Run unit testing with Jest.
-
-
-
 
 ## License
 

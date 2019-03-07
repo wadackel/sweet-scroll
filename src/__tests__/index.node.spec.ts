@@ -26,7 +26,7 @@ describe('SweetScroll', () => {
     ss.toLeft(200);
     jest.runAllTimers();
 
-    ss.toElement((null as any));
+    ss.toElement(null as any);
     jest.runAllTimers();
 
     ss.update({ duration: 1000 });

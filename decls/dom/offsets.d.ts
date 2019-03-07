@@ -1,16 +1,15 @@
+import { ScrollableElement } from '../types';
 export interface Offset {
     top: number;
     left: number;
 }
 export declare type Direction = 'x' | 'y';
 export declare const directionMethodMap: {
-    y: string;
-    x: string;
+    [P in Direction]: 'scrollTop' | 'scrollLeft';
 };
 export declare const directionPropMap: {
-    y: string;
-    x: string;
+    [P in Direction]: 'pageXOffset' | 'pageYOffset';
 };
-export declare const getScroll: ($el: Element, direction: Direction) => number;
-export declare const setScroll: ($el: Element, offset: number, direction: Direction) => void;
-export declare const getOffset: ($el: Element, $context: Element) => Offset;
+export declare const getScroll: ($el: ScrollableElement, direction: Direction) => number;
+export declare const setScroll: ($el: ScrollableElement, offset: number, direction: Direction) => void;
+export declare const getOffset: ($el: Element, $context: ScrollableElement) => Offset;

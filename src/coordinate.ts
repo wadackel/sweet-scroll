@@ -14,7 +14,7 @@ export const parseCoordinate = (coordinate: any, enableVertical: boolean): Coord
   if (Lang.hasProp(coordinate, 'top') || Lang.hasProp(coordinate, 'left')) {
     res = { ...res, ...coordinate };
 
-  // Array ([{n}, [{n}])
+    // Array ([{n}, [{n}])
   } else if (Lang.isArray(coordinate)) {
     if (coordinate.length > 1) {
       res.top = coordinate[0];
@@ -26,7 +26,7 @@ export const parseCoordinate = (coordinate: any, enableVertical: boolean): Coord
       return null;
     }
 
-  // Number
+    // Number
   } else if (Lang.isNumeric(coordinate)) {
     if (enableVertical) {
       res.top = coordinate;
@@ -34,7 +34,7 @@ export const parseCoordinate = (coordinate: any, enableVertical: boolean): Coord
       res.left = coordinate;
     }
 
-  // String ('+={n}', '-={n}')
+    // String ('+={n}', '-={n}')
   } else if (Lang.isString(coordinate)) {
     const m = coordinate.trim().match(reRelativeToken);
     if (!m) {
@@ -51,7 +51,6 @@ export const parseCoordinate = (coordinate: any, enableVertical: boolean): Coord
       res.left = !enableVertical ? -val : 0;
     }
     res.relative = true;
-
   } else {
     return null;
   }
