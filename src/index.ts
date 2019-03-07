@@ -1,18 +1,20 @@
 import { canUseDOM, canUseHistory } from './utils/supports';
 import * as Lang from './utils/lang';
-import { RequestAnimationFrame, CancelAnimationFrame, raf, caf } from './animation/requestAnimationFrame';
+import {
+  RequestAnimationFrame,
+  CancelAnimationFrame,
+  raf,
+  caf,
+} from './animation/requestAnimationFrame';
 import { easings } from './animation/easings';
 import { EasingFunction } from './animation/easings';
-import { $, findScrollable, matches } from './dom/selectors';
+import { $, matches, isElement } from './dom/selectors';
 import { getSize, getViewportAndElementSizes } from './dom/dimensions';
-import { getOffset, getScroll, setScroll, Offset } from './dom/offsets';
+import { getOffset, getScroll, setScroll, Offset, Direction } from './dom/offsets';
 import { addEvent, removeEvent } from './dom/events';
 import { parseCoordinate } from './coordinate';
-import {
-  Options,
-  PartialOptions,
-  defaultOptions,
-} from './options';
+import { Options, PartialOptions, defaultOptions } from './options';
+import { ScrollableElement } from './types';
 
 export {
   Options,
@@ -49,7 +51,10 @@ export default class SweetScroll {
   /**
    * SweetScroll instance factory.
    */
-  public static create(options?: PartialOptions, container?: string | Element): SweetScroll {
+  public static create(
+    options?: PartialOptions,
+    container?: string | ScrollableElement,
+  ): SweetScroll {
     return new SweetScroll(options, container);
   }
 
@@ -57,7 +62,7 @@ export default class SweetScroll {
    * Instance properties.
    */
   private opts: Options;
-  private $el: Element | null;
+  private $el: ScrollableElement | null = null;
   private ctx: Context = {
     $trigger: null,
     opts: null,
@@ -74,24 +79,24 @@ export default class SweetScroll {
   /**
    * Constructor
    */
-  public constructor(options?: PartialOptions, container?: string | Element) {
-    const opts = { ...defaultOptions, ...(options || {}) };
-    const { vertical, horizontal } = opts;
-    const selector = container === undefined ? 'body,html' : container;
+  public constructor(options?: PartialOptions, container?: string | ScrollableElement) {
+    this.opts = { ...defaultOptions, ...(options || {}) };
+
     let $container = null;
 
     if (canUseDOM) {
-      if (vertical) {
-        $container = findScrollable(selector, 'y');
-      }
-      if (!$container && horizontal) {
-        $container = findScrollable(selector, 'x');
+      if (typeof container === 'string') {
+        $container = $(container);
+      } else if (container != null) {
+        $container = container;
+      } else {
+        $container = window;
       }
     }
 
+    this.$el = $container;
+
     if ($container) {
-      this.opts = opts;
-      this.$el = $container;
       this.bind(true, false);
     }
   }
@@ -106,10 +111,11 @@ export default class SweetScroll {
 
     const { $el, ctx, opts: currentOptions } = this;
     const { $trigger } = ctx;
-    const opts = { ...currentOptions, ...options || {} };
+    const opts = { ...currentOptions, ...(options || {}) };
     const { offset: optOffset, vertical, horizontal } = opts;
-    const $header = Lang.isElement(opts.header) ? opts.header : $(opts.header);
-    const hash = Lang.isString(distance) && /^#/.test(distance) ? distance : null;
+    const $header = isElement(opts.header) ? opts.header : $(opts.header);
+    const reg = /^#/;
+    const hash = Lang.isString(distance) && reg.test(distance) ? distance : null;
 
     ctx.opts = opts; // Temporary options
     ctx.cancel = false; // Disable the call flag of `cancel`
@@ -150,11 +156,11 @@ export default class SweetScroll {
     }
 
     if ($header) {
-      scroll.top = Math.max(0, scroll.top - getSize(($header as HTMLElement)).height);
+      scroll.top = Math.max(0, scroll.top - getSize($header as HTMLElement).height);
     }
 
     // Normalize scroll offset
-    const { viewport, size } = getViewportAndElementSizes(($el as HTMLElement));
+    const { viewport, size } = getViewportAndElementSizes($el as HTMLElement);
 
     scroll.top = vertical
       ? Math.max(0, Math.min(size.height - viewport.height, scroll.top))
@@ -186,7 +192,7 @@ export default class SweetScroll {
    */
   public toTop(distance: any, options?: PartialOptions): void {
     this.to(distance, {
-      ...options || {},
+      ...(options || {}),
       vertical: true,
       horizontal: false,
     });
@@ -197,7 +203,7 @@ export default class SweetScroll {
    */
   public toLeft(distance: any, options?: PartialOptions): void {
     this.to(distance, {
-      ...options || {},
+      ...(options || {}),
       vertical: false,
       horizontal: true,
     });
@@ -268,7 +274,9 @@ export default class SweetScroll {
    * Callback methods.
    */
   /* tslint:disable:no-empty */
-  protected onBefore(_: Offset, __: Element | null): boolean | void { return true; }
+  protected onBefore(_: Offset, __: Element | null): boolean | void {
+    return true;
+  }
   protected onStep(_: number): void {}
   protected onAfter(_: Offset, __: Element | null): void {}
   protected onCancel(): void {}
@@ -285,11 +293,10 @@ export default class SweetScroll {
     ctx.progress = true;
     ctx.easing = Lang.isFunction(opts.easing)
       ? (opts.easing as EasingFunction)
-      : easings[(opts.easing as string)];
+      : easings[opts.easing as string];
 
     // Update start offset.
-    const $container = (this.$el as Element);
-    const offset = (ctx.pos as Offset);
+    const $container = this.$el as Element;
     const start = {
       top: getScroll($container, 'y'),
       left: getScroll($container, 'x'),
@@ -328,23 +335,25 @@ export default class SweetScroll {
       return;
     }
 
-    const options = (ctx.opts as Options);
-    const offset = (ctx.pos as Offset);
+    const options = ctx.opts as Options;
+    const offset = ctx.pos as Offset;
     const start = ctx.start;
-    const startOffset = (ctx.startPos as Offset);
-    const easing = (ctx.easing as EasingFunction);
+    const startOffset = ctx.startPos as Offset;
+    const easing = ctx.easing as EasingFunction;
     const { duration } = options;
     const directionMap = { top: 'y', left: 'x' };
     const timeElapsed = time - start;
     const t = Math.min(1, Math.max(timeElapsed / duration, 0));
 
     Object.keys(offset).forEach((key) => {
-      const value = offset[key];
-      const initial = startOffset[key];
+      const value = offset[key as keyof Offset];
+      const initial = startOffset[key as keyof Offset];
       const delta = value - initial;
       if (delta !== 0) {
         const val = easing(t, duration * t, 0, 1, duration);
-        setScroll($el, Math.round(initial + delta * val), directionMap[key]);
+        setScroll($el, Math.round(initial + delta * val), directionMap[
+          key as keyof Offset
+        ] as Direction);
       }
     });
 
@@ -354,7 +363,7 @@ export default class SweetScroll {
     } else {
       this.stop(true);
     }
-  }
+  };
 
   /**
    * Handle the completion of scrolling animation.
@@ -391,18 +400,22 @@ export default class SweetScroll {
   /**
    * Callback function and method call.
    */
-  protected hook(options: Options, type: string, ...args: any[]): any {
+  protected hook(
+    options: Options,
+    type: 'before' | 'after' | 'step' | 'cancel' | 'complete',
+    ...args: any[]
+  ): any {
     const callback = options[type];
     let callbackResult: any;
     let methodResult: any;
 
     // callback
     if (Lang.isFunction(callback)) {
-      callbackResult = callback.apply(this, [...args, this]);
+      callbackResult = (callback as any).apply(this, [...args, this]);
     }
 
     // method
-    methodResult = this[`on${type[0].toUpperCase() + type.slice(1)}`](...args);
+    methodResult = (this as any)[`on${type[0].toUpperCase() + type.slice(1)}`](...args);
 
     return callbackResult !== undefined ? callbackResult : methodResult;
   }
@@ -411,7 +424,10 @@ export default class SweetScroll {
    * Bind events of container element.
    */
   protected bind(click: boolean, stop: boolean): void {
-    const { $el, ctx: { opts } } = this;
+    const {
+      $el,
+      ctx: { opts },
+    } = this;
     if ($el) {
       if (click) {
         addEvent($el, CONTAINER_CLICK_EVENT, this.handleClick, false);
@@ -426,7 +442,10 @@ export default class SweetScroll {
    * Unbind events of container element.
    */
   protected unbind(click: boolean, stop: boolean): void {
-    const { $el, ctx: { opts } } = this;
+    const {
+      $el,
+      ctx: { opts },
+    } = this;
     if ($el) {
       if (click) {
         removeEvent($el, CONTAINER_CLICK_EVENT, this.handleClick, false);
@@ -442,7 +461,7 @@ export default class SweetScroll {
    */
   protected handleClick = (e: Event) => {
     const { opts } = this;
-    let $el: any = (e.target as any);
+    let $el = e.target as any;
 
     for (; $el && $el !== document; $el = $el.parentNode) {
       if (!matches($el, opts.trigger)) {
@@ -467,14 +486,16 @@ export default class SweetScroll {
       this.ctx.$trigger = $el;
 
       if (horizontal && vertical) {
-        this.to(to, (options as PartialOptions));
+        this.to(to, options as PartialOptions);
       } else if (vertical) {
-        this.toTop(to, (options as PartialOptions));
+        this.toTop(to, options as PartialOptions);
       } else if (horizontal) {
-        this.toLeft(to, (options as PartialOptions));
+        this.toLeft(to, options as PartialOptions);
       }
+
+      break;
     }
-  }
+  };
 
   /**
    * Handling of container stop events.
@@ -489,5 +510,5 @@ export default class SweetScroll {
     } else {
       e.preventDefault();
     }
-  }
+  };
 }
