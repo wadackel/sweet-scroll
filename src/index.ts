@@ -302,18 +302,6 @@ export default class SweetScroll {
       left: getScroll($container, 'x'),
     };
 
-    if (opts.quickMode) {
-      const { viewport: { width, height } } = getViewportAndElementSizes(($container as HTMLElement));
-
-      if (Math.abs(start.top - offset.top) > height) {
-        start.top = start.top > offset.top ? offset.top + height : offset.top - height;
-      }
-
-      if (Math.abs(start.left - offset.left) > width) {
-        start.left = start.left > offset.left ? offset.left + width : offset.left - width;
-      }
-    }
-
     ctx.startPos = start;
 
     // Loop
