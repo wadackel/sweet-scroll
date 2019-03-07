@@ -1,9 +1,9 @@
-/*! @preserve sweet-scroll v3.0.1 - tsuyoshiwada | MIT License */
+/*! @preserve sweet-scroll v4.0.0 - tsuyoshiwada | MIT License */
 (function (global, factory) {
     typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
     typeof define === 'function' && define.amd ? define(factory) :
-    (global.SweetScroll = factory());
-}(this, (function () { 'use strict';
+    (global = global || self, global.SweetScroll = factory());
+}(this, function () { 'use strict';
 
     /*! *****************************************************************************
     Copyright (c) Microsoft Corporation. All rights reserved.
@@ -20,12 +20,15 @@
     and limitations under the License.
     ***************************************************************************** */
 
-    var __assign = Object.assign || function __assign(t) {
-        for (var s, i = 1, n = arguments.length; i < n; i++) {
-            s = arguments[i];
-            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
-        }
-        return t;
+    var __assign = function() {
+        __assign = Object.assign || function __assign(t) {
+            for (var s, i = 1, n = arguments.length; i < n; i++) {
+                s = arguments[i];
+                for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p)) t[p] = s[p];
+            }
+            return t;
+        };
+        return __assign.apply(this, arguments);
     };
 
     // @link https://github.com/JedWatson/exenv/blob/master/index.js
@@ -34,9 +37,7 @@
         window.document.createElement);
     var canUseHistory = !canUseDOM
         ? false
-        : (window.history &&
-            'pushState' in window.history &&
-            window.location.protocol !== 'file:');
+        : window.history && 'pushState' in window.history && window.location.protocol !== 'file:';
     var canUsePassiveOption = (function () {
         var support = false;
         if (!canUseDOM) {
@@ -44,11 +45,14 @@
         }
         /* tslint:disable:no-empty */
         try {
-            window.addEventListener('test', null, Object.defineProperty({}, 'passive', {
+            var win = window;
+            var opts = Object.defineProperty({}, 'passive', {
                 get: function () {
                     support = true;
                 },
-            }));
+            });
+            win.addEventListener('test', null, opts);
+            win.removeEventListener('test', null, opts);
         }
         catch (e) { }
         /* tslint:enable */
@@ -58,87 +62,75 @@
     var isString = function (obj) { return typeof obj === 'string'; };
     var isFunction = function (obj) { return typeof obj === 'function'; };
     var isArray = function (obj) { return Array.isArray(obj); };
-    var isNumeric = function (obj) { return !isArray(obj) && ((obj - parseFloat(obj)) + 1) >= 0; };
-    var isElement = function (obj) { return obj instanceof Element; };
-    var hasProp = function (obj, key) { return (obj && obj.hasOwnProperty(key)); };
+    var isNumeric = function (obj) { return !isArray(obj) && obj - parseFloat(obj) + 1 >= 0; };
+    var hasProp = function (obj, key) { return obj && obj.hasOwnProperty(key); };
 
-    var raf = canUseDOM ? window.requestAnimationFrame.bind(window) : null;
-    var caf = canUseDOM ? window.cancelAnimationFrame.bind(window) : null;
+    var raf = canUseDOM
+        ? window.requestAnimationFrame.bind(window)
+        : null;
+    var caf = canUseDOM
+        ? window.cancelAnimationFrame.bind(window)
+        : null;
 
     /* tslint:disable:curly */
     /* tslint:disable:no-conditional-assignment */
     var cos = Math.cos, sin = Math.sin, pow = Math.pow, sqrt = Math.sqrt, PI = Math.PI;
     var easings = {
         linear: function (p) { return p; },
-        easeInQuad: function (_, t, b, c, d) { return (c * (t /= d) * t + b); },
-        easeOutQuad: function (_, t, b, c, d) { return (-c * (t /= d) * (t - 2) + b); },
-        easeInOutQuad: function (_, t, b, c, d) { return ((t /= d / 2) < 1 ? c / 2 * t * t + b : -c / 2 * ((--t) * (t - 2) - 1) + b); },
-        easeInCubic: function (_, t, b, c, d) { return (c * (t /= d) * t * t + b); },
-        easeOutCubic: function (_, t, b, c, d) { return (c * ((t = t / d - 1) * t * t + 1) + b); },
-        easeInOutCubic: function (_, t, b, c, d) { return ((t /= d / 2) < 1 ? c / 2 * t * t * t + b : c / 2 * ((t -= 2) * t * t + 2) + b); },
-        easeInQuart: function (_, t, b, c, d) { return (c * (t /= d) * t * t * t + b); },
-        easeOutQuart: function (_, t, b, c, d) { return (-c * ((t = t / d - 1) * t * t * t - 1) + b); },
-        easeInOutQuart: function (_, t, b, c, d) { return ((t /= d / 2) < 1 ? c / 2 * t * t * t * t + b : -c / 2 * ((t -= 2) * t * t * t - 2) + b); },
-        easeInQuint: function (_, t, b, c, d) { return (c * (t /= d) * t * t * t * t + b); },
-        easeOutQuint: function (_, t, b, c, d) { return (c * ((t = t / d - 1) * t * t * t * t + 1) + b); },
-        easeInOutQuint: function (_, t, b, c, d) { return ((t /= d / 2) < 1 ? c / 2 * t * t * t * t * t + b : c / 2 * ((t -= 2) * t * t * t * t + 2) + b); },
-        easeInSine: function (_, t, b, c, d) { return (-c * cos(t / d * (PI / 2)) + c + b); },
-        easeOutSine: function (_, t, b, c, d) { return (c * sin(t / d * (PI / 2)) + b); },
-        easeInOutSine: function (_, t, b, c, d) { return (-c / 2 * (cos(PI * t / d) - 1) + b); },
-        easeInExpo: function (_, t, b, c, d) { return ((t === 0) ? b : c * pow(2, 10 * (t / d - 1)) + b); },
-        easeOutExpo: function (_, t, b, c, d) { return ((t === d) ? b + c : c * (-pow(2, -10 * t / d) + 1) + b); },
+        easeInQuad: function (_, t, b, c, d) { return c * (t /= d) * t + b; },
+        easeOutQuad: function (_, t, b, c, d) { return -c * (t /= d) * (t - 2) + b; },
+        easeInOutQuad: function (_, t, b, c, d) {
+            return (t /= d / 2) < 1 ? (c / 2) * t * t + b : (-c / 2) * (--t * (t - 2) - 1) + b;
+        },
+        easeInCubic: function (_, t, b, c, d) { return c * (t /= d) * t * t + b; },
+        easeOutCubic: function (_, t, b, c, d) { return c * ((t = t / d - 1) * t * t + 1) + b; },
+        easeInOutCubic: function (_, t, b, c, d) {
+            return (t /= d / 2) < 1 ? (c / 2) * t * t * t + b : (c / 2) * ((t -= 2) * t * t + 2) + b;
+        },
+        easeInQuart: function (_, t, b, c, d) { return c * (t /= d) * t * t * t + b; },
+        easeOutQuart: function (_, t, b, c, d) { return -c * ((t = t / d - 1) * t * t * t - 1) + b; },
+        easeInOutQuart: function (_, t, b, c, d) {
+            return (t /= d / 2) < 1 ? (c / 2) * t * t * t * t + b : (-c / 2) * ((t -= 2) * t * t * t - 2) + b;
+        },
+        easeInQuint: function (_, t, b, c, d) { return c * (t /= d) * t * t * t * t + b; },
+        easeOutQuint: function (_, t, b, c, d) { return c * ((t = t / d - 1) * t * t * t * t + 1) + b; },
+        easeInOutQuint: function (_, t, b, c, d) {
+            return (t /= d / 2) < 1
+                ? (c / 2) * t * t * t * t * t + b
+                : (c / 2) * ((t -= 2) * t * t * t * t + 2) + b;
+        },
+        easeInSine: function (_, t, b, c, d) { return -c * cos((t / d) * (PI / 2)) + c + b; },
+        easeOutSine: function (_, t, b, c, d) { return c * sin((t / d) * (PI / 2)) + b; },
+        easeInOutSine: function (_, t, b, c, d) { return (-c / 2) * (cos((PI * t) / d) - 1) + b; },
+        easeInExpo: function (_, t, b, c, d) { return (t === 0 ? b : c * pow(2, 10 * (t / d - 1)) + b); },
+        easeOutExpo: function (_, t, b, c, d) { return (t === d ? b + c : c * (-pow(2, (-10 * t) / d) + 1) + b); },
         easeInOutExpo: function (_, t, b, c, d) {
             if (t === 0)
                 return b;
             if (t === d)
                 return b + c;
             if ((t /= d / 2) < 1)
-                return c / 2 * pow(2, 10 * (t - 1)) + b;
-            return c / 2 * (-pow(2, -10 * --t) + 2) + b;
+                return (c / 2) * pow(2, 10 * (t - 1)) + b;
+            return (c / 2) * (-pow(2, -10 * --t) + 2) + b;
         },
-        easeInCirc: function (_, t, b, c, d) { return (-c * (sqrt(1 - (t /= d) * t) - 1) + b); },
-        easeOutCirc: function (_, t, b, c, d) { return (c * sqrt(1 - (t = t / d - 1) * t) + b); },
-        easeInOutCirc: function (_, t, b, c, d) { return ((t /= d / 2) < 1 ? -c / 2 * (sqrt(1 - t * t) - 1) + b : c / 2 * (sqrt(1 - (t -= 2) * t) + 1) + b); },
+        easeInCirc: function (_, t, b, c, d) { return -c * (sqrt(1 - (t /= d) * t) - 1) + b; },
+        easeOutCirc: function (_, t, b, c, d) { return c * sqrt(1 - (t = t / d - 1) * t) + b; },
+        easeInOutCirc: function (_, t, b, c, d) {
+            return (t /= d / 2) < 1
+                ? (-c / 2) * (sqrt(1 - t * t) - 1) + b
+                : (c / 2) * (sqrt(1 - (t -= 2) * t) + 1) + b;
+        },
     };
 
-    var directionMethodMap = {
-        y: 'scrollTop',
-        x: 'scrollLeft',
+    var $$ = function (selector) {
+        return Array.prototype.slice.call((!selector ? [] : document.querySelectorAll(selector)));
     };
-    var directionPropMap = {
-        y: 'pageYOffset',
-        x: 'pageXOffset',
+    var $ = function (selector) { return $$(selector).shift() || null; };
+    var isElement = function (obj) { return obj instanceof Element; };
+    var isWindow = function ($el) { return $el === window; };
+    var isRootContainer = function ($el) {
+        return $el === document.documentElement || $el === document.body;
     };
-    var getScroll = function ($el, direction) { return ($el[directionMethodMap[direction]]); };
-    var setScroll = function ($el, offset, direction) {
-        $el[directionMethodMap[direction]] = offset;
-    };
-    var getOffset = function ($el, $context) {
-        var rect = $el.getBoundingClientRect();
-        if (rect.width || rect.height) {
-            var scroll_1 = { top: 0, left: 0 };
-            var $ctx = void 0;
-            if (isRootContainer($context)) {
-                $ctx = document.documentElement;
-                scroll_1.top = window[directionPropMap.y];
-                scroll_1.left = window[directionPropMap.x];
-            }
-            else {
-                $ctx = $context;
-                var cRect = $ctx.getBoundingClientRect();
-                scroll_1.top = (cRect.top * -1) + $ctx[directionMethodMap.y];
-                scroll_1.left = (cRect.left * -1) + $ctx[directionMethodMap.x];
-            }
-            return {
-                top: (rect.top + scroll_1.top) - $ctx.clientTop,
-                left: (rect.left + scroll_1.left) - $ctx.clientLeft,
-            };
-        }
-        return rect;
-    };
-
-    var $$ = function (selector) { return (Array.prototype.slice.call((!selector ? [] : document.querySelectorAll(selector)))); };
-    var $ = function (selector) { return ($$(selector).shift() || null); };
     var matches = function ($el, selector) {
         if (isElement(selector)) {
             return $el === selector;
@@ -149,45 +141,19 @@
         while (--i >= 0 && results[i] !== $el) { }
         return i > -1;
     };
-    var isRootContainer = function ($el) { return ($el === document.documentElement || $el === document.body); };
-    var findScrollable = function (selectors, direction) {
-        var method = directionMethodMap[direction];
-        var $elements = isElement(selectors) ? [selectors] : $$(selectors);
-        var $div = document.createElement('div');
-        for (var i = 0; i < $elements.length; i += 1) {
-            var $el = $elements[i];
-            var $result = null;
-            if ($el[method] > 0) {
-                $result = $el;
-            }
-            else {
-                var outerWidth_1 = window.outerWidth, innerWidth_1 = window.innerWidth;
-                var zoom = outerWidth_1 ? outerWidth_1 / innerWidth_1 : 1;
-                $div.style.width = $el.clientWidth + 1 + "px";
-                $div.style.height = $el.clientHeight + 1 + "px";
-                $el.appendChild($div);
-                $el[method] = Math.max(1, 1.5 / zoom);
-                if ($el[method] > 0) {
-                    $result = $el;
-                }
-                $el[method] = 0;
-                $el.removeChild($div);
-            }
-            if ($result) {
-                return $result;
-            }
-        }
-        return null;
-    };
 
-    var getHeight = function ($el) { return (Math.max($el.scrollHeight, $el.clientHeight, $el.offsetHeight)); };
-    var getWidth = function ($el) { return (Math.max($el.scrollWidth, $el.clientWidth, $el.offsetWidth)); };
+    var getHeight = function ($el) {
+        return Math.max($el.scrollHeight, $el.clientHeight, $el.offsetHeight);
+    };
+    var getWidth = function ($el) {
+        return Math.max($el.scrollWidth, $el.clientWidth, $el.offsetWidth);
+    };
     var getSize = function ($el) { return ({
         width: getWidth($el),
         height: getHeight($el),
     }); };
     var getViewportAndElementSizes = function ($el) {
-        var isRoot = isRootContainer($el);
+        var isRoot = isWindow($el) || isRootContainer($el);
         return {
             viewport: {
                 width: isRoot
@@ -204,6 +170,50 @@
         };
     };
 
+    var directionMethodMap = {
+        y: 'scrollTop',
+        x: 'scrollLeft',
+    };
+    var directionPropMap = {
+        y: 'pageYOffset',
+        x: 'pageXOffset',
+    };
+    var getScroll = function ($el, direction) {
+        return isWindow($el) ? $el[directionPropMap[direction]] : $el[directionMethodMap[direction]];
+    };
+    var setScroll = function ($el, offset, direction) {
+        if (isWindow($el)) {
+            var top_1 = direction === 'y';
+            $el.scrollTo(!top_1 ? offset : $el.pageXOffset, top_1 ? offset : $el.pageYOffset);
+        }
+        else {
+            $el[directionMethodMap[direction]] = offset;
+        }
+    };
+    var getOffset = function ($el, $context) {
+        var rect = $el.getBoundingClientRect();
+        if (rect.width || rect.height) {
+            var scroll_1 = { top: 0, left: 0 };
+            var $ctx = void 0;
+            if (isWindow($context) || isRootContainer($context)) {
+                $ctx = document.documentElement;
+                scroll_1.top = window[directionPropMap.y];
+                scroll_1.left = window[directionPropMap.x];
+            }
+            else {
+                $ctx = $context;
+                var cRect = $ctx.getBoundingClientRect();
+                scroll_1.top = cRect.top * -1 + $ctx[directionMethodMap.y];
+                scroll_1.left = cRect.left * -1 + $ctx[directionMethodMap.x];
+            }
+            return {
+                top: rect.top + scroll_1.top - $ctx.clientTop,
+                left: rect.left + scroll_1.left - $ctx.clientLeft,
+            };
+        }
+        return rect;
+    };
+
     var wheelEventName = (function () {
         if (!canUseDOM) {
             return 'wheel';
@@ -216,12 +226,8 @@
             $el[method](eventName(name), listener, canUsePassiveOption ? { passive: passive } : false);
         });
     };
-    var addEvent = function ($el, event, listener, passive) {
-        apply($el, 'addEventListener', event, listener, passive);
-    };
-    var removeEvent = function ($el, event, listener, passive) {
-        apply($el, 'removeEventListener', event, listener, passive);
-    };
+    var addEvent = function ($el, event, listener, passive) { return apply($el, 'addEventListener', event, listener, passive); };
+    var removeEvent = function ($el, event, listener, passive) { return apply($el, 'removeEventListener', event, listener, passive); };
 
     var reRelativeToken = /^(\+|-)=(\d+(?:\.\d+)?)$/;
     var parseCoordinate = function (coordinate, enableVertical) {
@@ -289,7 +295,6 @@
         updateURL: false,
         preventDefault: true,
         stopPropagation: true,
-        quickMode: false,
         // Callbacks
         before: null,
         after: null,
@@ -306,6 +311,7 @@
          */
         function SweetScroll(options, container) {
             var _this = this;
+            this.$el = null;
             this.ctx = {
                 $trigger: null,
                 opts: null,
@@ -388,6 +394,7 @@
                     else if (horizontal) {
                         _this.toLeft(to, options);
                     }
+                    break;
                 }
             };
             /**
@@ -404,21 +411,21 @@
                     e.preventDefault();
                 }
             };
-            var opts = __assign({}, defaultOptions, (options || {}));
-            var vertical = opts.vertical, horizontal = opts.horizontal;
-            var selector = container === undefined ? 'body,html' : container;
+            this.opts = __assign({}, defaultOptions, (options || {}));
             var $container = null;
             if (canUseDOM) {
-                if (vertical) {
-                    $container = findScrollable(selector, 'y');
+                if (typeof container === 'string') {
+                    $container = $(container);
                 }
-                if (!$container && horizontal) {
-                    $container = findScrollable(selector, 'x');
+                else if (container != null) {
+                    $container = container;
+                }
+                else {
+                    $container = window;
                 }
             }
+            this.$el = $container;
             if ($container) {
-                this.opts = opts;
-                this.$el = $container;
                 this.bind(true, false);
             }
         }
@@ -437,10 +444,11 @@
             }
             var _a = this, $el = _a.$el, ctx = _a.ctx, currentOptions = _a.opts;
             var $trigger = ctx.$trigger;
-            var opts = __assign({}, currentOptions, options || {});
+            var opts = __assign({}, currentOptions, (options || {}));
             var optOffset = opts.offset, vertical = opts.vertical, horizontal = opts.horizontal;
             var $header = isElement(opts.header) ? opts.header : $(opts.header);
-            var hash = isString(distance) && /^#/.test(distance) ? distance : null;
+            var reg = /^#/;
+            var hash = isString(distance) && reg.test(distance) ? distance : null;
             ctx.opts = opts; // Temporary options
             ctx.cancel = false; // Disable the call flag of `cancel`
             ctx.hash = hash;
@@ -503,13 +511,13 @@
          * Scroll animation to specified left position.
          */
         SweetScroll.prototype.toTop = function (distance, options) {
-            this.to(distance, __assign({}, options || {}, { vertical: true, horizontal: false }));
+            this.to(distance, __assign({}, (options || {}), { vertical: true, horizontal: false }));
         };
         /**
          * Scroll animation to specified top position.
          */
         SweetScroll.prototype.toLeft = function (distance, options) {
-            this.to(distance, __assign({}, options || {}, { vertical: false, horizontal: true }));
+            this.to(distance, __assign({}, (options || {}), { vertical: false, horizontal: true }));
         };
         /**
          * Scroll animation to specified element.
@@ -567,7 +575,9 @@
          * Callback methods.
          */
         /* tslint:disable:no-empty */
-        SweetScroll.prototype.onBefore = function (_, __) { return true; };
+        SweetScroll.prototype.onBefore = function (_, __) {
+            return true;
+        };
         SweetScroll.prototype.onStep = function (_) { };
         SweetScroll.prototype.onAfter = function (_, __) { };
         SweetScroll.prototype.onCancel = function () { };
@@ -585,20 +595,10 @@
                 : easings[opts.easing];
             // Update start offset.
             var $container = this.$el;
-            var offset = ctx.pos;
             var start = {
                 top: getScroll($container, 'y'),
                 left: getScroll($container, 'x'),
             };
-            if (opts.quickMode) {
-                var _a = getViewportAndElementSizes($container).viewport, width = _a.width, height = _a.height;
-                if (Math.abs(start.top - offset.top) > height) {
-                    start.top = start.top > offset.top ? offset.top + height : offset.top - height;
-                }
-                if (Math.abs(start.left - offset.left) > width) {
-                    start.left = start.left > offset.left ? offset.left + width : offset.left - width;
-                }
-            }
             ctx.startPos = start;
             // Loop
             ctx.id = SweetScroll.raf(this.loop);
@@ -637,6 +637,7 @@
             for (var _i = 2; _i < arguments.length; _i++) {
                 args[_i - 2] = arguments[_i];
             }
+            var _a;
             var callback = options[type];
             var callbackResult;
             var methodResult;
@@ -645,7 +646,7 @@
                 callbackResult = callback.apply(this, args.concat([this]));
             }
             // method
-            methodResult = this["on" + (type[0].toUpperCase() + type.slice(1))].apply(this, args);
+            methodResult = (_a = this)["on" + (type[0].toUpperCase() + type.slice(1))].apply(_a, args);
             return callbackResult !== undefined ? callbackResult : methodResult;
         };
         /**
@@ -686,4 +687,4 @@
 
     return SweetScroll;
 
-})));
+}));
