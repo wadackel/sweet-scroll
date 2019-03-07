@@ -94,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
   updateURL: false,               // Update the URL hash on after scroll (true | false | 'push' | 'replace')
   preventDefault: true,           // Cancels the container element click event
   stopPropagation: true,          // Prevents further propagation of the container element click event in the bubbling phase
-  quickMode: false,               // Instantly scroll to the destination! (It's recommended to use it with `easeOutExpo`)
 
   // Callbacks
   before: null,
@@ -168,11 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
   <p class="copyright">copyright &copy; sweet-scroll.js all right reserved.</p>
   <p class="license">sweet-scroll.js licensed under MIT.</p>
-  <div class="quick-mode">
-    <span class="quick-mode__label">QuickMode!!</span>
-    <input type="checkbox" id="quick-mode">
-    <label class="quick-mode__control" for="quick-mode"></label>
-  </div>
 
   <script async defer src="https://buttons.github.io/buttons.js"></script>
   <script src="./lib/highlight/highlight.pack.js"></script>
@@ -198,11 +192,6 @@ document.addEventListener('DOMContentLoaded', () => {
         if (needsInitialScroll) {
           scroller.to(hash, { updateURL: 'replace' });
         }
-      }, false);
-
-      // Toggle quickMode
-      document.querySelector('#quick-mode').addEventListener('change', function(e) {
-        scroller.update({ quickMode: this.checked });
       }, false);
     }, false);
   </script>
