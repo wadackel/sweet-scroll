@@ -7,11 +7,7 @@ export const canUseDOM = !!(
 
 export const canUseHistory = !canUseDOM
   ? false
-  : (
-    window.history &&
-    'pushState' in window.history &&
-    window.location.protocol !== 'file:'
-  );
+  : window.history && 'pushState' in window.history && window.location.protocol !== 'file:';
 
 export const canUsePassiveOption = (() => {
   let support = false;
@@ -22,11 +18,15 @@ export const canUsePassiveOption = (() => {
 
   /* tslint:disable:no-empty */
   try {
-    window.addEventListener('test', (null as any), Object.defineProperty({}, 'passive', {
+    const win = window;
+    const opts = Object.defineProperty({}, 'passive', {
       get() {
         support = true;
       },
-    }));
+    });
+
+    win.addEventListener('test', null as any, opts);
+    win.removeEventListener('test', null as any, opts);
   } catch (e) {}
   /* tslint:enable */
 

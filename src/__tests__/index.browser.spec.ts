@@ -12,7 +12,7 @@ const trigger = ($el: Element, eventName: string): void => {
   $el.dispatchEvent(e);
 };
 
-const getContainer = () => ($('#container') as Element);
+const getContainer = () => $('#container') as Element;
 const context = (ss: any): any => ss.ctx;
 
 describe('SweetScroll#Browser', () => {
@@ -31,10 +31,21 @@ describe('SweetScroll#Browser', () => {
   });
 
   describe('Initialize', () => {
-    it('Should be initialize', () => {
+    it('Should be initialize - constrcutor', () => {
       const $el = getContainer();
       const ss = new SweetScroll({}, '#container');
       expect((ss as any).$el).toBe($el);
+    });
+
+    it('Should be initialize - factory', () => {
+      const $el = getContainer();
+      const ss = SweetScroll.create({}, '#container');
+      expect((ss as any).$el).toBe($el);
+    });
+
+    it('Should be compile', () => {
+      SweetScroll.create({}, window);
+      expect(true).toBe(true);
     });
 
     it('Should be match specified container element', () => {
@@ -88,11 +99,14 @@ describe('SweetScroll#Browser', () => {
     });
 
     it('Should be use current options + method options', () => {
-      const ss = new SweetScroll({
-        duration: 1,
-        vertical: true,
-        horizontal: true,
-      }, getContainer());
+      const ss = new SweetScroll(
+        {
+          duration: 1,
+          vertical: true,
+          horizontal: true,
+        },
+        getContainer(),
+      );
 
       expect((ss as any).opts.duration).toBe(1);
       expect((ss as any).opts.vertical).toBe(true);
@@ -144,11 +158,14 @@ describe('SweetScroll#Browser', () => {
 
   describe('update()', () => {
     it('Should be update options', () => {
-      const ss = new SweetScroll({
-        duration: 2000,
-        cancellable: false,
-        easing: 'linear',
-      }, getContainer());
+      const ss = new SweetScroll(
+        {
+          duration: 2000,
+          cancellable: false,
+          easing: 'linear',
+        },
+        getContainer(),
+      );
 
       ss.update({
         duration: 10,
@@ -173,11 +190,7 @@ describe('SweetScroll#Browser', () => {
       ss.to(1000);
 
       expect(before.mock.calls.length).toBe(1);
-      expect(before.mock.calls[0]).toEqual([
-        { top: 0, left: 0, relative: false },
-        null,
-        ss,
-      ]);
+      expect(before.mock.calls[0]).toEqual([{ top: 0, left: 0, relative: false }, null, ss]);
     });
 
     it('Should be call after and complete callback', () => {
@@ -196,11 +209,7 @@ describe('SweetScroll#Browser', () => {
       jest.runAllTimers();
 
       expect(after.mock.calls.length).toBe(1);
-      expect(after.mock.calls[0]).toEqual([
-        { top: 0, left: 0, relative: false },
-        null,
-        ss,
-      ]);
+      expect(after.mock.calls[0]).toEqual([{ top: 0, left: 0, relative: false }, null, ss]);
 
       expect(complete.mock.calls.length).toBe(1);
       expect(complete.mock.calls[0]).toEqual([false, ss]);
@@ -268,10 +277,7 @@ describe('SweetScroll#Browser', () => {
       ss.to(1000);
 
       expect(before.length).toBe(1);
-      expect(before[0]).toEqual([
-        { top: 0, left: 0, relative: false },
-        null,
-      ]);
+      expect(before[0]).toEqual([{ top: 0, left: 0, relative: false }, null]);
     });
 
     it('Should be call onAfter and onComplete callback method', () => {
@@ -301,10 +307,7 @@ describe('SweetScroll#Browser', () => {
       jest.runAllTimers();
 
       expect(after.length).toBe(1);
-      expect(after[0]).toEqual([
-        { top: 0, left: 0, relative: false },
-        null,
-      ]);
+      expect(after[0]).toEqual([{ top: 0, left: 0, relative: false }, null]);
 
       expect(complete.length).toBe(1);
       expect(complete[0]).toEqual([false]);
@@ -378,7 +381,7 @@ describe('SweetScroll#Browser', () => {
 
   describe('Handle click of trigger element', () => {
     it('Should be handle click event', () => {
-      const $link = (document.querySelector('[href="#content01"]') as Element);
+      const $link = document.querySelector('[href="#content01"]') as Element;
       const ss = new SweetScroll({ trigger: 'a[href^="#"]' }, getContainer());
       expect((ss as any).ctx.$trigger).not.toBe($link);
       trigger($link, 'click');
