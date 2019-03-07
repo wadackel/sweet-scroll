@@ -12,7 +12,7 @@
 ### Bug fixes
 
 - Fixed a performance problem in which unnecessary matching was execute in `onclick` handling.
-    - Performance improves when there is a lot of DOM.
+  - Performance improves when there is a lot of DOM.
 
 ## 3.0.1
 
