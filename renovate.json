@@ -1,0 +1,8 @@
+{
+  "extends": ["config:base"],
+  "timezone": "Asia/Tokyo",
+  "unpublishSafe": true,
+  "semanticCommits": true,
+  "semanticCommitType": "update",
+  "semanticCommitScope": null
+}
