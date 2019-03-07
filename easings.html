@@ -118,12 +118,6 @@
     </div>
   </section>
 
-  <div class="quick-mode">
-    <span class="quick-mode__label">QuickMode!!</span>
-    <input type="checkbox" id="quick-mode">
-    <label class="quick-mode__control" for="quick-mode"></label>
-  </div>
-
   <script src="./sweet-scroll.js"></script>
   <script>
     var easeInElastic = function(_, t, b, c, d) {
@@ -241,11 +235,6 @@
       var name = $easings.options[$easings.selectedIndex].value;
       var easing = registry.hasOwnProperty(name) ? registry[name] : name;
       scroller.update({ easing: easing });
-    }, false);
-
-    // Toggle quickMode
-    document.querySelector('#quick-mode').addEventListener('change', function(e) {
-      scroller.update({ quickMode: this.checked });
     }, false);
   </script>
 </body>
