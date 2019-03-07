@@ -1,6 +1,6 @@
 {
   "name": "sweet-scroll",
-  "version": "3.0.1",
+  "version": "4.0.0",
   "description": "Modern and the sweet smooth scroll library.",
   "main": "sweet-scroll.js",
   "types": "sweet-scroll.d.ts",
@@ -10,23 +10,26 @@
     "build:bundle": "rollup -c",
     "build:minify": "uglifyjs -c -m --comments -o sweet-scroll.min.js -- sweet-scroll.js",
     "build:decls": "dts-bundle --baseDir ./ --name sweet-scroll --main decls/index.d.ts",
-    "build:watch": "npm run build:bundle -- --watch",
-    "prebuild": "npm run clean",
+    "build:watch": "yarn build:bundle --watch",
+    "prebuild": "yarn clean",
     "clean": "rm -rf decls .rpt2_cache",
-    "test": "npm-run-all test:lint test:unit",
+    "test": "npm-run-all lint test:unit",
     "test:unit": "npm-run-all test:browser test:node",
     "test:browser": "jest --setupTestFrameworkScriptFile=./jest/setup-for-browser.js --testPathPattern \"browser.spec.ts\"",
-    "test:browser:watch": "npm run test:browser -- --watch",
+    "test:browser:watch": "yarn test:browser --watch",
     "test:node": "jest --env=node --testPathPattern \"node.spec.ts\"",
-    "test:node:watch": "npm run test:node -- --watch",
-    "test:lint": "tslint -c tslint.json \"src/**/*.ts\"",
+    "test:node:watch": "yarn test:node --watch",
+    "lint": "tslint -c tslint.json \"src/**/*.ts\"",
     "docs": "npm-run-all -p docs:server docs:watch",
     "docs:server": "browser-sync start -s docs -f \"docs/**/*\" --no-notify --no-ghost-mode --no-open",
     "docs:build": "cpx sweet-scroll.js docs",
-    "docs:watch": "npm run docs:build -- --watch",
+    "docs:watch": "yarn docs:build --watch",
     "docs:deploy": "gh-pages -t -d docs",
-    "predocs:deploy": "npm run docs:build",
-    "prepublishOnly": "npm run build"
+    "format": "npm-run-all format:tslint format:prettier",
+    "format:tslint": "yarn lint --fix",
+    "format:prettier": "prettier --write \"src/**/*\" \"*.md\"",
+    "predocs:deploy": "yarn docs:build",
+    "prepublishOnly": "yarn build"
   },
   "files": [
     "decls",
@@ -52,31 +55,33 @@
   },
   "homepage": "https://github.com/tsuyoshiwada/sweet-scroll",
   "devDependencies": {
-    "@types/jest": "^22.2.2",
-    "browser-sync": "^2.23.6",
+    "@types/jest": "^24.0.9",
+    "browser-sync": "^2.26.3",
     "cpx": "^1.5.0",
     "dts-bundle": "^0.7.3",
-    "gh-pages": "^1.1.0",
-    "jest": "^22.4.3",
-    "npm-run-all": "^4.1.2",
-    "rollup": "^0.57.1",
-    "rollup-plugin-typescript2": "^0.12.0",
+    "gh-pages": "^2.0.1",
+    "jest": "^24.1.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.16.4",
+    "rollup": "^1.4.1",
+    "rollup-plugin-typescript2": "^0.19.3",
     "rollup-watch": "^4.3.1",
-    "tslint": "^5.9.1",
-    "typescript": "^2.7.2",
+    "ts-jest": "^24.0.0",
+    "tslint": "^5.13.1",
+    "typescript": "^3.3.3333",
     "uglify-es": "^3.3.9"
   },
   "jest": {
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "<rootDir>/preprocessor.js"
-    },
-    "testMatch": [
-      "**/__tests__/*.spec.ts?(x)"
-    ]
+    "preset": "ts-jest"
+  },
+  "prettier": {
+    "trailingComma": "all",
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "semi": true,
+    "singleQuote": true,
+    "bracketSpacing": true,
+    "arrowParens": "always"
   }
 }
