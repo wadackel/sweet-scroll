@@ -2,7 +2,6 @@
 
 [![CircleCI Status](https://img.shields.io/circleci/project/github/tsuyoshiwada/sweet-scroll/master.svg?style=flat-square)](https://circleci.com/gh/tsuyoshiwada/sweet-scroll/)
 [![npm version](https://img.shields.io/npm/v/sweet-scroll.svg?style=flat-square)](https://www.npmjs.com/package/sweet-scroll)
-[![David](https://img.shields.io/david/dev/tsuyoshiwada/sweet-scroll.svg?style=flat-square)](https://david-dm.org/tsuyoshiwada/sweet-scroll/#info=devDependencies&view=table)
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?style=flat-square)](https://raw.githubusercontent.com/tsuyoshiwada/sweet-scroll/master/LICENSE)
 
 > ECMAScript2015+ & TypeScript Friendly, dependency-free smooth scroll library.
