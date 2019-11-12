@@ -6,7 +6,7 @@
 
 > ECMAScript2015+ & TypeScript Friendly, dependency-free smooth scroll library.
 
-:lollipop: [See Demo](http://tsuyoshiwada.github.io/sweet-scroll/)
+:lollipop: [See Demo](https://wadackel.github.io/sweet-scroll/)
 
 ## Features
 
@@ -365,7 +365,7 @@ const easeInOutBounce = (x, t, b, c, d) =>
 
 ---
 
-[Live demo](http://tsuyoshiwada.github.io/sweet-scroll/easings.html)
+[Live demo](http://wadackel.github.io/sweet-scroll/easings.html)
 
 ## Customizing Tips
 
@@ -461,7 +461,7 @@ document.addEventListener(
 );
 ```
 
-[Live demo](http://tsuyoshiwada.github.io/sweet-scroll/initial-scroll.html#footer)
+[Live demo](http://wadackel.github.io/sweet-scroll/initial-scroll.html#footer)
 
 You can also achieve the same thing in other ways by using the provided API.
 
