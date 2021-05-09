@@ -19,7 +19,7 @@ references:
 jobs:
   build:
     docker:
-      - image: circleci/node:10
+      - image: circleci/node:15
     working_directory: ~/workspace
     steps:
       - checkout
