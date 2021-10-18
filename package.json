@@ -68,7 +68,7 @@
     "rollup-watch": "4.3.1",
     "ts-jest": "24.0.0",
     "tslint": "5.13.1",
-    "typescript": "3.3.3333",
+    "typescript": "3.9.10",
     "uglify-es": "3.3.9"
   },
   "jest": {
