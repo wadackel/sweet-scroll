@@ -59,7 +59,7 @@
     "browser-sync": "2.26.3",
     "cpx": "1.5.0",
     "dts-bundle": "0.7.3",
-    "gh-pages": "2.0.1",
+    "gh-pages": "3.2.3",
     "jest": "24.3.1",
     "npm-run-all": "4.1.5",
     "prettier": "1.16.4",
