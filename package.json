@@ -56,7 +56,7 @@
   "homepage": "https://github.com/tsuyoshiwada/sweet-scroll",
   "devDependencies": {
     "@types/jest": "24.0.9",
-    "browser-sync": "2.26.3",
+    "browser-sync": "2.29.3",
     "cpx": "1.5.0",
     "dts-bundle": "0.7.3",
     "gh-pages": "2.0.1",
